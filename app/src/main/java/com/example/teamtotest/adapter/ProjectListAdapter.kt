@@ -7,8 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
-import com.example.teamtotest.activity.ChatActivity
 import com.example.teamtotest.R
+import com.example.teamtotest.activity.ChatActivity
 import kotlinx.android.synthetic.main.project_list_format.view.*
 
 class ProjectListAdapter(
@@ -38,7 +38,12 @@ class ProjectListAdapter(
         holder.itemView.last_message.text = projectInfoList[position]["lastMessage"]
         holder.itemView.last_message_sent_time.text =
             projectInfoList[position]["lastMessageSentTime"]
-
+        if(projectInfoList[position]["noReadMessageCount"]=="0") {
+            holder.itemView.noReadMessageCount.visibility = View.INVISIBLE
+        }else{
+            holder.itemView.noReadMessageCount.text = projectInfoList[position]["noReadMessageCount"]
+            holder.itemView.noReadMessageCount.visibility = View.VISIBLE
+        }
         holder.itemView.setOnClickListener {
             val intent = Intent(context, ChatActivity::class.java)
             intent.putExtra("PID", projectInfoList[position]["PID"])

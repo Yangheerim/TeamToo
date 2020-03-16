@@ -10,7 +10,7 @@ import com.example.teamtotest.R
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.chat_list_format.view.*
 import kotlinx.android.synthetic.main.chat_list_format2.view.*
-import java.util.ArrayList
+import java.util.*
 
 class ChatListAdapter(var ChatMessage : ArrayList<HashMap<String,String>>)//MyAdapter의 constructor
     : RecyclerView.Adapter<ChatListAdapter.MyViewHolder>() {
@@ -61,14 +61,25 @@ class ChatListAdapter(var ChatMessage : ArrayList<HashMap<String,String>>)//MyAd
             holder.itemView.message_sent_time1.text = ChatMessageList!!.get(position)["date"]
             holder.itemView.member_name1.text = ChatMessageList!!.get(position)["who"]
             holder.itemView.message1.text = ChatMessageList!!.get(position)["message"]
+            if(ChatMessageList!!.get(position)["isRead"]=="0") {
+                holder.itemView.chat_list_format_isRead.visibility = View.INVISIBLE
+            }else{
+                holder.itemView.chat_list_format_isRead.text = ChatMessageList!!.get(position)["isRead"]
+                holder.itemView.chat_list_format_isRead.visibility = View.VISIBLE
+            }
         } else if (viewType == 2) {  // 나일때
             holder.itemView.message_sent_time2.text = ChatMessageList!!.get(position)["date"]
             holder.itemView.member_name2.text = ChatMessageList!!.get(position)["who"]
             holder.itemView.message2.text = ChatMessageList!!.get(position)["message"]
+            if(ChatMessageList!!.get(position)["isRead"]=="0") {
+                holder.itemView.chat_list_format2_isRead.visibility = View.INVISIBLE
+            }else{
+                holder.itemView.chat_list_format2_isRead.text = ChatMessageList!!.get(position)["isRead"]
+                holder.itemView.chat_list_format2_isRead.visibility = View.VISIBLE
+            }
         } else {
             Log.d("View type 오류 : ", viewType.toString() + "")
         }
-
     }
 
 

@@ -89,6 +89,7 @@ class ChatActivity : AppCompatActivity() {
                     startActivity(intent)
                     chat_drawer.closeDrawer(GravityCompat.END)
                 }
+
 //                R.id.drawer_finaltest -> setFrag(3)
 //                R.id.drawer_exit -> setFrag(3)
 
@@ -200,17 +201,6 @@ class ChatActivity : AppCompatActivity() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 ChatMessageList.clear()    // 갱신될 때 이미 있던 데이터는 날리기
                 val myUID : String = firebaseAuth!!.currentUser!!.uid
-                // 읽은 데이터에 나의 uid 저장
-                for (snapshot in dataSnapshot.children) {
-                    val messageDTO = snapshot.getValue(MessageDTO::class.java)  // 데이터를 가져와서
-                    if(!messageDTO!!.read!!.contains(myUID)) { // 내 uid가 없으면! 추가해준당
-                        messageDTO!!.read!!.add(myUID)
-                        Log.d("Add complete!! ----> ", myUID)
-                        databaseReference =
-                            firebaseDatabase!!.getReference("ProjectList").child(PID.toString()).child("messageList").child(snapshot.key.toString())
-                        databaseReference!!.setValue(messageDTO)  // 덮어쓰기
-                    }
-                }
 
                 // list를 보여주기 위해 db에서 데이터를 받아 adapter에 데이터 전달
                 for (snapshot in dataSnapshot.children) {
