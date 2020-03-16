@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/drawer_members"
+            android:icon="@drawable/ic_person_black"
+            android:title="팀원" />
+        <item
+            android:id="@+id/drawer_file"
+            android:icon="@drawable/ic_file"
+            android:title="파일" />
+        <item
+            android:id="@+id/drawer_schedule"
+            android:icon="@drawable/ic_calender"
+            android:title="스케줄" />
+        <item
+            android:id="@+id/drawer_todo"
+            android:icon="@drawable/ic_todolist"
+            android:title="할일" />
+        <item
+            android:id="@+id/drawer_finaltest"
+            android:icon="@drawable/ic_done"
+            android:title="최종평가" />
+        <item
+            android:id="@+id/drawer_exit"
+            android:icon="@drawable/ic_exit2"
+            android:title="던지고 이름빼기" />
+    </group>
+
+</menu>

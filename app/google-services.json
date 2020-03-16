@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "472304530744",
+    "firebase_url": "https://teamtogether-bdfc9.firebaseio.com",
+    "project_id": "teamtogether-bdfc9",
+    "storage_bucket": "teamtogether-bdfc9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:472304530744:android:a9eb8e15af644cfaa97dcd",
+        "android_client_info": {
+          "package_name": "com.example.teamtotest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "472304530744-4na6e81j2b33a79p1lbqd8iffib6a67j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.teamtotest",
+            "certificate_hash": "7cff70623203d6f81c79d84ee048ec0b146c9b27"
+          }
+        },
+        {
+          "client_id": "472304530744-lf7o67kh42h9e06c4dhrc4gg3gcnkorg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATKbyhE2BQW33xK6tYDF8-Raj8ws0Ykbo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "472304530744-lf7o67kh42h9e06c4dhrc4gg3gcnkorg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
