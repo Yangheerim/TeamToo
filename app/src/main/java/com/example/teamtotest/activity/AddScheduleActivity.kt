@@ -1,9 +1,7 @@
 package com.example.teamtotest.activity
 
-import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -13,6 +11,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.teamtotest.R
 import com.example.teamtotest.dto.ScheduleDTO
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_add_schedule.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -35,6 +35,9 @@ class AddScheduleActivity : AppCompatActivity() {
         )
     }
     private var alarmPosition = 0
+    private lateinit var firebaseDatabase: FirebaseDatabase
+    private lateinit var databaseReference: DatabaseReference
+    private var PID: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -135,10 +138,12 @@ class AddScheduleActivity : AppCompatActivity() {
                     alarmPosition,
                     schedule_et_note.text.toString()
                 )
+                //DB에 업로드
+                firebaseDatabase = FirebaseDatabase.getInstance()
 
-                val intent = Intent()
-                intent.putExtra("schedule", scheduleDTO)
-                setResult(Activity.RESULT_OK, intent)
+                PID = intent.getStringExtra("PID")
+                databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("scheduleList")
+                databaseReference.push().setValue(scheduleDTO)
 
                 finish()
             }

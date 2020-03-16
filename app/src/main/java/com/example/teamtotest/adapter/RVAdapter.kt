@@ -22,7 +22,7 @@ class RVAdapter(private val context: Context) :
     private val baseCalendar = BaseCalendar()   //캘린더 객체 만들기
     private val cal = Calendar.getInstance()
     var currentMonth: String = ""
-    private val scheduleDTO = arrayListOf<ScheduleDTO>()
+    private var scheduleDTO: ArrayList<ScheduleDTO> = ArrayList()
 
     init {
         baseCalendar.initBaseCalendar {
@@ -115,8 +115,8 @@ class RVAdapter(private val context: Context) :
         currentMonth = SimpleDateFormat("yyyy MM", Locale.KOREAN).format(calendar.time)
     }
 
-    fun setData(dto: ScheduleDTO) {
-        scheduleDTO.add(dto)
+    fun setData(dto: ArrayList<ScheduleDTO>) {
+        scheduleDTO = dto
         notifyDataSetChanged()
     }
 

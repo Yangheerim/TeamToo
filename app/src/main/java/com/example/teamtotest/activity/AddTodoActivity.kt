@@ -1,11 +1,8 @@
 package com.example.teamtotest.activity
 
-import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.Intent
 import android.os.Bundle
-import android.print.PrinterId
 import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
@@ -14,9 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.teamtotest.R
 import com.example.teamtotest.dto.TodoDTO
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_add_todo.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -43,6 +38,8 @@ class AddTodoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_todo)
 
+        firebaseDatabase = FirebaseDatabase.getInstance()
+
         deadline_date.text = format1.format(deadline.time)
         deadline_time.text = format2.format(deadline.time)
 
@@ -55,7 +52,7 @@ class AddTodoActivity : AppCompatActivity() {
             val picker = DatePickerDialog(
                 this,
                 android.R.style.Theme_Holo_Light_Dialog_NoActionBar,
-                dateListener_start,
+                datelistener,
                 deadline.get(Calendar.YEAR),
                 deadline.get(Calendar.MONTH),
                 deadline.get(Calendar.DAY_OF_MONTH)
@@ -68,13 +65,18 @@ class AddTodoActivity : AppCompatActivity() {
             val picker = TimePickerDialog(
                 this,
                 android.R.style.Theme_Holo_Light_Dialog_NoActionBar,
-                timeListener_start,
+                timelistener,
                 deadline.get(Calendar.HOUR_OF_DAY),
                 deadline.get(Calendar.MINUTE),
                 false
             )
             picker.window!!.setBackgroundDrawableResource(android.R.color.transparent)
             picker.show()
+        }
+
+        //과제 수행자 지정
+        todo_btn_members.setOnClickListener {
+
         }
 
         //알림 설정
@@ -99,12 +101,11 @@ class AddTodoActivity : AppCompatActivity() {
                 val todoDTO = TodoDTO(
                     todo_et_name.text.toString(),
                     todo_et_note.text.toString(),
-                    deadline.time.toString(),
+                    deadline.time.time,
                     alarmPosition
                 )
                 //DB에 업로드
                 PID = intent.getStringExtra("PID")
-                firebaseDatabase = FirebaseDatabase.getInstance()
                 databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("todoList")
                 databaseReference.push().setValue(todoDTO)
 
@@ -123,7 +124,7 @@ class AddTodoActivity : AppCompatActivity() {
     }
 
     //마감기한 날짜 설정 눌렀을 때
-    private val dateListener_start: DatePickerDialog.OnDateSetListener =
+    private val datelistener: DatePickerDialog.OnDateSetListener =
         DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
             deadline.set(Calendar.YEAR, year)
             deadline.set(Calendar.MONTH, month)
@@ -134,7 +135,7 @@ class AddTodoActivity : AppCompatActivity() {
         }
 
     //마감기한 시간 설정 눌렀을 때
-    private val timeListener_start: TimePickerDialog.OnTimeSetListener =
+    private val timelistener: TimePickerDialog.OnTimeSetListener =
         TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
             deadline.set(Calendar.HOUR_OF_DAY, hourOfDay)
             deadline.set(Calendar.MINUTE, minute)

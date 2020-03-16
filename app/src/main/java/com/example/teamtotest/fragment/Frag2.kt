@@ -7,8 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.teamtotest.activity.NavigationbarActivity
 import com.example.teamtotest.R
+import com.example.teamtotest.activity.NavigationbarActivity
 import com.example.teamtotest.adapter.ProjectListAdapter
 import com.example.teamtotest.dto.MembersDTO
 import com.example.teamtotest.dto.MessageDTO
@@ -39,7 +39,6 @@ class Frag2 : Fragment() {
 
     override fun onStop() {
         databaseReference.removeEventListener(listener)
-
         super.onStop()
     }
 
@@ -54,10 +53,8 @@ class Frag2 : Fragment() {
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance()
 
-        mAdapter = ProjectListAdapter(
-            ProjectInfoList,
-            requireActivity()
-        )
+        mAdapter =
+            ProjectListAdapter(ProjectInfoList, requireActivity())
         //my_recycler_view.setAdapter(mAdapter)
         view.projectlist_recycler_view.adapter = mAdapter
         mAdapter.notifyDataSetChanged()
@@ -111,7 +108,8 @@ class Frag2 : Fragment() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // 각각 프로젝트별로, 멤버중에 나 자신이 있는지 확인.
                 ProjectInfoList.clear()    // 갱신될 때 이미 있던 데이터는 날리기
-
+                val myUID : String = firebaseAuth!!.currentUser!!.uid
+                var readCnt : Int = 0
                 for (snapshot in dataSnapshot.children) {
                     for (i in myProjectPIDlist.indices) {
                         if (myProjectPIDlist.get(i) == snapshot.key) { // 내 프로젝트면 ~
@@ -129,16 +127,25 @@ class Frag2 : Fragment() {
                             var date : Date?= null
                             var latestmessageDTO : MessageDTO?=null
 
-                            for(messageSnapshot : DataSnapshot in snapshot.child("messageList").children){
-
+                            for(messageSnapshot : DataSnapshot in snapshot.child("messageList").children){  // 최신메세지 찾기 / 안읽은 메세지 카운트
+//                                Log.d("Date", messageSnapshot.key)
+//                                Toast.makeText(requireActivity(), messageSnapshot.key, Toast.LENGTH_SHORT).show()
                                 var tmp = dateFormat.parse(messageSnapshot.key)
-
-                                Log.e("TAG", tmp.toString())
+//                                Log.e("TAG", tmp.toString())
                                 if(date==null || date < tmp){
                                     date = tmp
-                                    Log.e("It is latest!", date.toString())
+//                                    Log.e("It is latest!", date.toString())
+                                }
+
+                                val messageDTO = messageSnapshot.getValue(MessageDTO::class.java)  // 데이터를 가져와서
+                                if(!messageDTO!!.read!!.contains(myUID)) { // 내 uid가 없으면 count!
+                                    readCnt++
+                                    Log.e("isRead count test --->", readCnt.toString())
                                 }
                             }
+                            projectInfo["noReadMessageCount"] = readCnt.toString()
+                            readCnt=0
+
                             for(messageSnapshot : DataSnapshot in snapshot.child("messageList").children){
                                 if(date== dateFormat.parse(messageSnapshot.key)){
                                     latestmessageDTO = messageSnapshot.getValue(MessageDTO::class.java)!!

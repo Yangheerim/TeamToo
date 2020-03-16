@@ -5,23 +5,23 @@ import android.os.Parcelable
 import java.util.*
 
 data class TodoDTO(
-    var name: String? = "", //할일명
-    var note: String? = "", //상세내용
-    var deadLine: String? = "", //마감기한
+    var name: String? = "",
+    var note: String? = "",
+    var deadLine: Long = 0,
     //과제 수행자 추가해야함
-    var alarm: Int = 0  //알림설정
+    var alarm: Int = 0
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
         parcel.readString(),
-        parcel.readString(),
+        parcel.readLong(),
         parcel.readInt()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(name)
         parcel.writeString(note)
-        parcel.writeString(deadLine)
+        parcel.writeLong(deadLine)
         parcel.writeInt(alarm)
     }
 

@@ -1,6 +1,5 @@
 package com.example.teamtotest.activity
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -12,12 +11,16 @@ import com.example.teamtotest.BaseCalendar
 import com.example.teamtotest.R
 import com.example.teamtotest.adapter.RVAdapter
 import com.example.teamtotest.dto.ScheduleDTO
+import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_schedule.*
-import kotlinx.android.synthetic.main.activity_schedule_list.*
 import kotlinx.android.synthetic.main.fragment_calendarview.*
 
 class ScheduleActivity : AppCompatActivity() {
     private lateinit var scheduleRecyclerViewAdapter: RVAdapter
+    private var scheduleList: ArrayList<ScheduleDTO> = ArrayList()
+    private lateinit var firebaseDatabase: FirebaseDatabase
+    private lateinit var databaseReference: DatabaseReference
+    private var PID: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +29,27 @@ class ScheduleActivity : AppCompatActivity() {
         //상단바
         setSupportActionBar(schedule_toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        //PID에 해당하는 프로젝트 할일 가져오기
+        PID = intent.getStringExtra("PID")
+        firebaseDatabase = FirebaseDatabase.getInstance()
+        databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("scheduleList")
+
+        val dbScheduleEventListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                scheduleList.clear()
+                for (data in dataSnapshot.children){
+                    val scheduleDTO = data.getValue(ScheduleDTO::class.java)
+                    scheduleDTO?.let { scheduleList.add(it) }
+                    scheduleRecyclerViewAdapter.setData(scheduleList)
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.e("TAG", databaseError.toString())
+            }
+        }
+        databaseReference.addValueEventListener(dbScheduleEventListener)
 
         scheduleRecyclerViewAdapter = RVAdapter(this)
         refreshCurrentMonth()
@@ -48,7 +72,7 @@ class ScheduleActivity : AppCompatActivity() {
         }
         // + 버튼 눌렀을 때
         schedule_btn_add.setOnClickListener {
-            startActivityForResult(Intent(this, AddScheduleActivity::class.java),100)
+            startActivity(Intent(this, AddScheduleActivity::class.java).putExtra("PID",PID))
         }
 
     }
@@ -57,20 +81,7 @@ class ScheduleActivity : AppCompatActivity() {
         tv_current_month.text = scheduleRecyclerViewAdapter.currentMonth
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        //어댑터로 dto 보내기
-        if(resultCode == Activity.RESULT_OK && data != null){
-            var dto = data.getParcelableExtra<ScheduleDTO>("schedule")
-
-            scheduleRecyclerViewAdapter.setData(dto)
-        }
-        else{
-
-        }
-    }
-
+    //상단바
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {

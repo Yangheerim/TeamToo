@@ -34,8 +34,10 @@ class ChatActivity : AppCompatActivity() {
     private var howManyMembers : String? = null
     //private var userName: String? = null
 
+
     private var ChatMessageList: ArrayList<HashMap<String, String>> = ArrayList<HashMap<String, String>>()
     private var ChatMessageData: HashMap<String, String> = HashMap<String, String>()
+
 
     private lateinit var dbMessageeventListener : ValueEventListener
     private lateinit var members_listener: ValueEventListener
@@ -43,7 +45,6 @@ class ChatActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
-
 
         setSupportActionBar(chat_toolbar)   // xml에서 만든 toolbar를 이 activity의 툴바로 설정
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // 뒤로가기 버튼 만들기
@@ -63,6 +64,7 @@ class ChatActivity : AppCompatActivity() {
         chatList_recycler_view.adapter = myAdapter
         chatList_recycler_view.setHasFixedSize(true)
 
+        // 내 uid를 현재 있는 모든 message 객체 안에 배열에 넣는다 !!
 
 
         nav_view.setNavigationItemSelectedListener{
@@ -77,13 +79,13 @@ class ChatActivity : AppCompatActivity() {
 //                R.id.drawer_file -> setFrag(1)
                 R.id.drawer_schedule -> {
                     intent = Intent(this, ScheduleActivity::class.java)
-                    intent.putExtra("PID",PID)
+                    intent.putExtra("PID", PID)
                     startActivity(intent)
                     chat_drawer.closeDrawer(GravityCompat.END)
                 }
                 R.id.drawer_todo -> {
                     intent=Intent(this,TodoActivity::class.java)
-                    intent.putExtra("PID",PID)
+                    intent.putExtra("PID", PID)
                     startActivity(intent)
                     chat_drawer.closeDrawer(GravityCompat.END)
                 }
@@ -133,19 +135,26 @@ class ChatActivity : AppCompatActivity() {
         super.onStart()
         setListener_MessageData()
         setListener_theNumOfMembersFromMyProjects()
+        readCheckToDB()
     }
 
     override fun onStop() {
+        Log.d("here is onStop", databaseReference.toString())
         databaseReference!!.removeEventListener(dbMessageeventListener)
+        Log.d("here is onStop", dbMessageeventListener.toString())
         super.onStop()
     }
 
+
     private fun addMessageInfoToDB() {
+        var isReadList: ArrayList<String> = ArrayList<String>()
+        isReadList.add(firebaseAuth!!.currentUser!!.uid)
         val messageDTO =
             MessageDTO(
                 message.text.toString(),
-                firebaseAuth!!.getCurrentUser()!!.displayName.toString(),
-                firebaseAuth!!.getCurrentUser()!!.uid
+                firebaseAuth!!.currentUser!!.displayName.toString(),
+                firebaseAuth!!.currentUser!!.uid,
+                isReadList
             )  // 유저 이름과 메세지로 message data 만들기
 
         val date_format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
@@ -157,13 +166,53 @@ class ChatActivity : AppCompatActivity() {
         databaseReference!!.setValue(messageDTO)
     }
 
+    private fun readCheckToDB() {
+        databaseReference = firebaseDatabase!!.getReference("ProjectList").child(PID.toString()).child("messageList")
+        databaseReference!!.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val myUID: String = firebaseAuth!!.currentUser!!.uid
+                // 읽은 데이터에 나의 uid 저장
+                for (snapshot in dataSnapshot.children) {
+                    val messageDTO = snapshot.getValue(MessageDTO::class.java)  // 데이터를 가져와서
+                    if (!messageDTO!!.read!!.contains(myUID)) { // 내 uid가 없으면! 추가해준당
+                        messageDTO!!.read!!.add(myUID)
+                        Log.d("Add complete!! ----> ", myUID)
+                        databaseReference =
+                            firebaseDatabase!!.getReference("ProjectList").child(PID.toString())
+                                .child("messageList").child(snapshot.key.toString())
+                        databaseReference!!.setValue(messageDTO)  // 덮어쓰기
+                    }
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("ExtraUserInfoActivity", "loadPost:onCancelled",
+                    databaseError.toException()!!
+                )
+            }
+        })
+    }
+
+
 
     private fun setListener_MessageData() {
 
         dbMessageeventListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 ChatMessageList.clear()    // 갱신될 때 이미 있던 데이터는 날리기
+                val myUID : String = firebaseAuth!!.currentUser!!.uid
+                // 읽은 데이터에 나의 uid 저장
+                for (snapshot in dataSnapshot.children) {
+                    val messageDTO = snapshot.getValue(MessageDTO::class.java)  // 데이터를 가져와서
+                    if(!messageDTO!!.read!!.contains(myUID)) { // 내 uid가 없으면! 추가해준당
+                        messageDTO!!.read!!.add(myUID)
+                        Log.d("Add complete!! ----> ", myUID)
+                        databaseReference =
+                            firebaseDatabase!!.getReference("ProjectList").child(PID.toString()).child("messageList").child(snapshot.key.toString())
+                        databaseReference!!.setValue(messageDTO)  // 덮어쓰기
+                    }
+                }
 
+                // list를 보여주기 위해 db에서 데이터를 받아 adapter에 데이터 전달
                 for (snapshot in dataSnapshot.children) {
                     ChatMessageData = HashMap()
 
@@ -173,7 +222,10 @@ class ChatActivity : AppCompatActivity() {
                     ChatMessageData["who"] = messageDTO!!.who
                     ChatMessageData["message"] = messageDTO.message
                     ChatMessageData["userUID"] = messageDTO.userUID
-
+                    ChatMessageData["isRead"] = (Integer.parseInt(howManyMembers!!) - messageDTO.read!!.size).toString()
+//                    Log.d("messageReadLog", Integer.parseInt(howManyMembers!!).toString())
+//                    Log.d("messageReadLog", messageDTO.read!!.size.toString())
+//                    Log.d("messageReadLog", (Integer.parseInt(howManyMembers!!) - messageDTO.read!!.size).toString())
                     ChatMessageList.add(ChatMessageData)
                     myAdapter!!.notifyDataSetChanged()
                     chatList_recycler_view.scrollToPosition(ChatMessageList.size-1); // 메세지리스트의 가장 밑으로 스크롤바 위치조정! 꺄
