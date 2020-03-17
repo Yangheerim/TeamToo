@@ -41,8 +41,8 @@ class ScheduleActivity : AppCompatActivity() {
                 for (data in dataSnapshot.children){
                     val scheduleDTO = data.getValue(ScheduleDTO::class.java)
                     scheduleDTO?.let { scheduleList.add(it) }
-                    scheduleRecyclerViewAdapter.setData(scheduleList)
                 }
+                scheduleRecyclerViewAdapter.setData(scheduleList)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -54,7 +54,6 @@ class ScheduleActivity : AppCompatActivity() {
         scheduleRecyclerViewAdapter = RVAdapter(this)
         refreshCurrentMonth()
         rv_schedule.adapter = scheduleRecyclerViewAdapter   //adapter 설정
-
         rv_schedule.layoutManager = GridLayoutManager(this, BaseCalendar.DAYS_OF_WEEK)  //LayoutManager 설정
 
         // < 버튼 눌렀을 때

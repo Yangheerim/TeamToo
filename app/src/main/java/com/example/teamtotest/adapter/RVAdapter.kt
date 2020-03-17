@@ -62,7 +62,7 @@ class RVAdapter(private val context: Context) : RecyclerView.Adapter<RVAdapter.V
 
         //일주일 간 정렬해주기 위한 일주일단위 스케줄 리스트
         val weekList = getWeekList(position)
-        holder.adapter.setList(baseCalendar.data[position], weekList)
+        holder.adapter.setList(baseCalendar.data[position], weekList)   //그 날짜에 해당하는 Calendar 객체와 일주일단위 스케줄 리스트 넘김
 
         //리스트 보여주기 위한 하루단위 스케줄 리스트
         val dayList = getDayList(position)
@@ -105,16 +105,19 @@ class RVAdapter(private val context: Context) : RecyclerView.Adapter<RVAdapter.V
         }
     }
 
+    //달력 다시 그리기
     private fun refreshView(calendar: Calendar) {
-        notifyDataSetChanged()  //recyclerView 다시 그리기
+        notifyDataSetChanged()
         currentMonth = SimpleDateFormat("yyyy MM", Locale.KOREAN).format(calendar.time)
     }
 
+    //달력에 사용될 data 설정
     fun setData(dto: ArrayList<ScheduleDTO>) {
         scheduleDTO = dto
         notifyDataSetChanged()
     }
 
+    //그 주에 해당하는 스케줄인지
     private fun compareCalendarInRange(base: Calendar, dto: ScheduleDTO): Boolean {
         val calStart = Calendar.getInstance().apply {
             time = Date(dto.startTime)
@@ -135,6 +138,7 @@ class RVAdapter(private val context: Context) : RecyclerView.Adapter<RVAdapter.V
         return base.after(calStart) && base.before(calEnd)
     }
 
+    //그 날에 해당하는 스케줄인지
     private fun compareCalendarInRange2(base: Calendar, dto: ScheduleDTO): Boolean {
         val calStart = Calendar.getInstance().apply {
             time = Date(dto.startTime)
@@ -154,8 +158,7 @@ class RVAdapter(private val context: Context) : RecyclerView.Adapter<RVAdapter.V
     }
 
 
-    inner class ViewHolder(view: View, val adapter: ScheduleRVAdapter) :
-        RecyclerView.ViewHolder(view) {
+    inner class ViewHolder(view: View, val adapter: ScheduleRVAdapter) : RecyclerView.ViewHolder(view) {
         init {
             view.rv_schedule.adapter = adapter
         }

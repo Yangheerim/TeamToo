@@ -65,6 +65,7 @@ class ScheduleRVAdapter(private val context: Context) : RecyclerView.Adapter<Vie
         return cal.after(calStart) && cal.before(calEnd)
     }
 
+    //해당 날짜가 스케줄DTO 시작과 끝 사이에 있는지
     private fun compareCalendarInRange(base: Calendar, dto: ScheduleDTO): Boolean {
         val calStart = Calendar.getInstance().apply {
             time = Date(dto.startTime)

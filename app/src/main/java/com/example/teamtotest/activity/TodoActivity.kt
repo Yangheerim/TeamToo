@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.teamtotest.R
@@ -47,6 +48,12 @@ class TodoActivity : AppCompatActivity() {
             }
         }
         databaseReference.addValueEventListener(dbTodoEventListener)
+
+        //할일 데이터가 없을 때
+        if(todoList.isEmpty()){
+            tv_todo.visibility = View.VISIBLE
+            rv_todo.visibility = View.INVISIBLE
+        }
 
         // + 버튼 눌렀을 때
         todo_btn_add.setOnClickListener {

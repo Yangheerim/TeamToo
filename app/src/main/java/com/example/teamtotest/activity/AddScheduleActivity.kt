@@ -18,9 +18,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class AddScheduleActivity : AppCompatActivity() {
-    private var start = Calendar.getInstance().apply {
-        set(Calendar.MINUTE, 0)
-    }
+    private var start = Calendar.getInstance().apply { set(Calendar.MINUTE, 0) }
     private var end = Calendar.getInstance().apply {
         add(Calendar.HOUR, 1)
         set(Calendar.MINUTE, 0)
@@ -28,11 +26,7 @@ class AddScheduleActivity : AppCompatActivity() {
     private val format1 = SimpleDateFormat("yyyy / MM / dd", Locale.KOREA)
     private val format2 = SimpleDateFormat("a  h : mm", Locale.KOREA)
     private val spinnerAdapter by lazy {
-        ArrayAdapter(
-            this,
-            android.R.layout.simple_spinner_dropdown_item,
-            resources.getStringArray(R.array.spinner)
-        )
+        ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, resources.getStringArray(R.array.spinner))
     }
     private var alarmPosition = 0
     private lateinit var firebaseDatabase: FirebaseDatabase
@@ -43,10 +37,9 @@ class AddScheduleActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_schedule)
 
-        start_date.text = format1.format(start.time)
-        start_time.text = format2.format(start.time)
-        end_date.text = format1.format(end.time)
-        end_time.text = format2.format(end.time)
+        //시작,종료 textview 설정
+        setText(true)
+        setText(false)
 
         //알림 설정
         schedule_spinner.adapter = spinnerAdapter
@@ -55,12 +48,7 @@ class AddScheduleActivity : AppCompatActivity() {
                 schedule_spinner.prompt = "없음"
             }
 
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 //아이템이 클릭 되면 맨 위부터 position 0번부터 순서대로 동작하게 됩니다.
                 alarmPosition = position
             }

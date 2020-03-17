@@ -24,9 +24,8 @@ class ScheduleListActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         //어댑터, 레이아웃매니저 설정
-        rv_schedule_list.adapter =
-            ScheduleListRVAdapter(scheduleList!!)
-        rv_schedule_list.layoutManager = LinearLayoutManager(this) as RecyclerView.LayoutManager?
+        rv_schedule_list.adapter = ScheduleListRVAdapter(scheduleList!!)
+        rv_schedule_list.layoutManager = LinearLayoutManager(this)
     }
 
     //상단바
