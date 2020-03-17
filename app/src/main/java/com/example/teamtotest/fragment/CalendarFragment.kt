@@ -9,63 +9,38 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.teamtotest.BaseCalendar
 import com.example.teamtotest.R
 import com.example.teamtotest.adapter.RVAdapter
-import kotlinx.android.synthetic.main.fragment_calendar.view.*
 import kotlinx.android.synthetic.main.fragment_calendarview.view.*
 
 class CalendarFragment : Fragment() {
-    private lateinit var scheduleRecyclerViewAdapter: RVAdapter
+    private lateinit var calendarRVAdapter: RVAdapter
     private lateinit var mView: View
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.fragment_calendar, container, false)
         initView()
         return mView
     }
 
     private fun initView() {
-        scheduleRecyclerViewAdapter =
-            RVAdapter(requireContext())
+        calendarRVAdapter = RVAdapter(requireContext())
         refreshCurrentMonth()
-        mView.calendar_view.rv_schedule.layoutManager =
-            GridLayoutManager(context,
-                BaseCalendar.DAYS_OF_WEEK
-            ) //LayoutManager 설정
-        mView.calendar_view.rv_schedule.adapter =
-            scheduleRecyclerViewAdapter //RecyclerViewAdapter 설정
-        /*
-        mView.rv_schedule.addItemDecoration(
-            DividerItemDecoration(
-                context,
-                DividerItemDecoration.HORIZONTAL
-            )
-        )
-        */
+        mView.rv_schedule.layoutManager = GridLayoutManager(context, BaseCalendar.DAYS_OF_WEEK) //LayoutManager 설정
+        mView.rv_schedule.adapter = calendarRVAdapter //RecyclerViewAdapter 설정
 
-        /*
-        mView.rv_schedule.addItemDecoration(
-            DividerItemDecoration(
-                context,
-                DividerItemDecoration.VERTICAL
-            )
-        )
-        */
-
+        //이전달 클릭할 경우
         mView.tv_prev_month.setOnClickListener {
-            scheduleRecyclerViewAdapter.changeToPrevMonth() //이전달로 바꾸기
+            calendarRVAdapter.changeToPrevMonth()
             refreshCurrentMonth()
         }
-
+        //다음달 클릭할 경우
         mView.tv_next_month.setOnClickListener {
-            scheduleRecyclerViewAdapter.changeToNextMonth() //다음달로 바꾸기
+            calendarRVAdapter.changeToNextMonth()
             refreshCurrentMonth()
         }
     }
 
-    //월 문자열 바꾸기
+    //월 textview 바꾸기
     private fun refreshCurrentMonth() {
-        mView.tv_current_month.text = scheduleRecyclerViewAdapter.currentMonth
+        mView.tv_current_month.text = calendarRVAdapter.currentMonth
     }
 }

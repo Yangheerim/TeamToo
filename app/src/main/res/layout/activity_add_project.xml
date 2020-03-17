@@ -100,7 +100,7 @@
             android:layout_weight="3"
             android:text="양희림 / Heerim"
             android:textColor="@color/blue"
-            android:textSize="14dp"></TextView>
+            android:textSize="14dp" />
 
         <ImageView
             android:id="@+id/add_members_text"

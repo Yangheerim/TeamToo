@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.fragment_calendarview.*
 
 class ScheduleActivity : AppCompatActivity() {
     private lateinit var scheduleRecyclerViewAdapter: RVAdapter
-    private var scheduleList: ArrayList<ScheduleDTO> = ArrayList()
+    private var scheduleList = arrayListOf<ScheduleDTO>()
     private lateinit var firebaseDatabase: FirebaseDatabase
     private lateinit var databaseReference: DatabaseReference
     private var PID: String? = null
@@ -55,10 +55,7 @@ class ScheduleActivity : AppCompatActivity() {
         refreshCurrentMonth()
         rv_schedule.adapter = scheduleRecyclerViewAdapter   //adapter 설정
 
-        rv_schedule.layoutManager =
-            GridLayoutManager(this,
-                BaseCalendar.DAYS_OF_WEEK
-            ) as RecyclerView.LayoutManager? //LayoutManager 설정
+        rv_schedule.layoutManager = GridLayoutManager(this, BaseCalendar.DAYS_OF_WEEK)  //LayoutManager 설정
 
         // < 버튼 눌렀을 때
         tv_prev_month.setOnClickListener {

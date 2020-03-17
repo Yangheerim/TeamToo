@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import com.example.teamtotest.R
@@ -25,9 +24,9 @@ class ChatActivity : AppCompatActivity() {
     private var databaseReference: DatabaseReference? = null
     private var myAdapter: ChatListAdapter? = null
 
-    //    private var drawerFrag = DrawerFragment()
+//    private var drawerFrag = DrawerFragment()
 //    private lateinit var drawerLayout: DrawerLayout
-    private lateinit var drawerToggle : ActionBarDrawerToggle
+//    private lateinit var drawerToggle : ActionBarDrawerToggle
 
     private var PID : String? = null
     private var projectName : String? = null
@@ -52,11 +51,9 @@ class ChatActivity : AppCompatActivity() {
         val getintent = intent /*데이터 수신*/
         if(getintent!=null) {
             PID = getintent.extras!!.getString("PID")
-            //        Log.e("PID:Chat", PID)
             projectName = getintent.extras!!.getString("projectName")
             howManyMembers = getintent.extras!!.getString("howManyMembers")
             chat_toolbar.title=projectName
-//            chat_how_many_members.text=howManyMembers
         }
 
         // adapter 연결
@@ -70,29 +67,36 @@ class ChatActivity : AppCompatActivity() {
         nav_view.setNavigationItemSelectedListener{
             when (it.itemId) {
                 R.id.drawer_members -> {
+                    chat_drawer.closeDrawer(GravityCompat.END)
+                    chat_drawer.clearFocus()
                     intent = Intent(this, AddMemberActivity::class.java)
                     intent.putExtra("PID", PID)
                     intent.putExtra("howManyMembers", howManyMembers)
                     startActivity(intent)
-                    chat_drawer.closeDrawer(GravityCompat.END)
                 }
 //                R.id.drawer_file -> setFrag(1)
                 R.id.drawer_schedule -> {
+                    chat_drawer.closeDrawer(GravityCompat.END)
                     intent = Intent(this, ScheduleActivity::class.java)
                     intent.putExtra("PID", PID)
                     startActivity(intent)
-                    chat_drawer.closeDrawer(GravityCompat.END)
+
                 }
                 R.id.drawer_todo -> {
+                    chat_drawer.closeDrawer(GravityCompat.END)
                     intent=Intent(this,TodoActivity::class.java)
                     intent.putExtra("PID", PID)
                     startActivity(intent)
+
+                }
+                R.id.drawer_finaltest -> {
+                    // 코드 추가 해야함
                     chat_drawer.closeDrawer(GravityCompat.END)
                 }
-
-//                R.id.drawer_finaltest -> setFrag(3)
-//                R.id.drawer_exit -> setFrag(3)
-
+                R.id.drawer_exit -> {
+                    chat_drawer.closeDrawer(GravityCompat.END)
+                    exitProject()
+                }
                 else -> println("NavigationBar ERROR!")
             }
             true
@@ -141,11 +145,62 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onStop() {
         Log.d("here is onStop", databaseReference.toString())
+        // 리스너 삭제
+        databaseReference = firebaseDatabase!!.getReference("ProjectList").child(PID.toString()).child("messageList")
         databaseReference!!.removeEventListener(dbMessageeventListener)
-        Log.d("here is onStop", dbMessageeventListener.toString())
+        databaseReference = firebaseDatabase!!.getReference("ProjectList").child(PID.toString()).child("members")
+        databaseReference!!.removeEventListener(members_listener)
         super.onStop()
     }
 
+    private fun exitProject(){
+
+        val myUID = firebaseAuth!!.currentUser!!.uid
+
+        databaseReference = firebaseDatabase!!.getReference("ProjectList").child(PID.toString())
+        databaseReference!!.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for (snapshot in dataSnapshot.children) {
+                    if(snapshot.key == "members"){ // memberList에서 삭제
+                        val membersDTO :MembersDTO = snapshot.getValue(MembersDTO::class.java)!!
+                        if(membersDTO.UID_list!!.size<=1){// 나 혼자 남아있었다면 프로젝트 전체 삭제
+                            firebaseDatabase!!.getReference("ProjectList").child(PID.toString()).removeValue()
+                            onStop()
+                            finish()
+                            break
+                        }else { // 아니라면 memberList에서 내 정보만 삭제
+                            membersDTO.UID_list!!.remove(myUID)
+                            firebaseDatabase!!.getReference("ProjectList").child(PID.toString()).child("members").setValue(membersDTO)
+                        }
+                    }
+                    if(snapshot.key == "messageList"){
+//                        for(messageSnapshot in snapshot.children){  // 내가 보낸 메세지들의 보낸사람 이름을 알수없음으로
+//                            val messageDTOtoRemove: MessageDTO? = messageSnapshot.getValue(MessageDTO::class.java)
+//                            if(messageDTOtoRemove!!.userUID == myUID){
+//                                databaseReference!!.child("messageList").child(messageSnapshot.key.toString()).removeValue().addOnSuccessListener {
+//                                    Toast.makeText(this@ChatActivity, "messageList에서 삭제완료!", Toast.LENGTH_SHORT).show()
+//                                }.addOnFailureListener{
+//                                    Toast.makeText(this@ChatActivity, "messageList에서 삭제실패..", Toast.LENGTH_SHORT).show()
+//                                }
+//                            }
+//                        }
+                        for(messageSnapshot in snapshot.children){// 읽은 사람 목록에서 나 삭제
+                            val messageDTOtoRemove: MessageDTO? = messageSnapshot.getValue(MessageDTO::class.java)
+                            if(messageDTOtoRemove!!.read!!.contains(myUID)) {
+                                messageDTOtoRemove!!.read!!.remove(myUID)
+                                firebaseDatabase!!.getReference("ProjectList").child(PID.toString()).child("messageList").child(messageSnapshot.key.toString()).setValue(messageDTOtoRemove)
+                            }
+                        }
+                    }
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("ExtraUserInfoActivity", "loadPost:onCancelled", databaseError.toException())
+            }
+        })
+        onStop()
+        finish()
+    }
 
     private fun addMessageInfoToDB() {
         var isReadList: ArrayList<String> = ArrayList<String>()

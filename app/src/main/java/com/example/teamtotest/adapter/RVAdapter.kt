@@ -17,12 +17,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class RVAdapter(private val context: Context) :
-    RecyclerView.Adapter<RVAdapter.ViewHolder>() {
+class RVAdapter(private val context: Context) : RecyclerView.Adapter<RVAdapter.ViewHolder>() {
     private val baseCalendar = BaseCalendar()   //캘린더 객체 만들기
     private val cal = Calendar.getInstance()
     var currentMonth: String = ""
-    private var scheduleDTO: ArrayList<ScheduleDTO> = ArrayList()
+    private var scheduleDTO = arrayListOf<ScheduleDTO>()
 
     init {
         baseCalendar.initBaseCalendar {
@@ -44,9 +43,7 @@ class RVAdapter(private val context: Context) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         //일요일인 경우
         if (position % BaseCalendar.DAYS_OF_WEEK == 0) holder.itemView.tv_date.setTextColor(
-            Color.parseColor(
-                "#ff1200"
-            )
+            Color.parseColor("#ff1200")
         )
         else holder.itemView.tv_date.setTextColor(Color.parseColor("#676d6e"))
 
@@ -56,9 +53,7 @@ class RVAdapter(private val context: Context) :
             holder.itemView.tv_date.setTypeface(null, Typeface.BOLD)
         }
 
-        if (position < baseCalendar.prevMonthTailOffset
-            || position >= baseCalendar.prevMonthTailOffset + baseCalendar.currentMonthMaxDate
-        ) {
+        if (position < baseCalendar.prevMonthTailOffset || position >= baseCalendar.prevMonthTailOffset + baseCalendar.currentMonthMaxDate) {
             holder.itemView.tv_date.alpha = 0.3f    //이전달이나 다음달인 경우 연하게
         } else {
             holder.itemView.tv_date.alpha = 1f  //이번달인 경우 진하게

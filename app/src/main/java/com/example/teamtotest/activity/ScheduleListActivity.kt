@@ -19,16 +19,17 @@ class ScheduleListActivity : AppCompatActivity() {
 
         val scheduleList: ArrayList<ScheduleDTO>? = intent.getParcelableArrayListExtra("schedule list")
 
+        //상단바
+        setSupportActionBar(add_schedule_toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         //어댑터, 레이아웃매니저 설정
         rv_schedule_list.adapter =
             ScheduleListRVAdapter(scheduleList!!)
         rv_schedule_list.layoutManager = LinearLayoutManager(this) as RecyclerView.LayoutManager?
-
-        //상단바
-        setSupportActionBar(schedule_toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
+    //상단바
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {

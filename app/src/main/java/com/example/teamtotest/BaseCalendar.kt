@@ -6,8 +6,8 @@ import java.util.*
 class BaseCalendar {
 
     companion object {
-        const val DAYS_OF_WEEK = 7
-        const val LOW_OF_CALENDAR = 6
+        const val DAYS_OF_WEEK = 7  //가로 7칸
+        const val LOW_OF_CALENDAR = 6   //세로 6칸
     }
 
     private val calendar: Calendar = Calendar.getInstance()
@@ -27,9 +27,9 @@ class BaseCalendar {
         makeMonthDate(refreshCallback)
     }
 
-    //이전 달력으로 바꾸기
+    //이전 달로 바꾸기
     fun changeToPrevMonth(refreshCallback: (Calendar) -> Unit) {
-        if (calendar.get(Calendar.MONTH) == Calendar.JANUARY) {  //이전 달력이 12월인 경우
+        if (calendar.get(Calendar.MONTH) == Calendar.JANUARY) {  //이전 달이 12월인 경우
             calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR) - 1)
             calendar.set(Calendar.MONTH, Calendar.DECEMBER)
         } else {
@@ -38,9 +38,9 @@ class BaseCalendar {
         makeMonthDate(refreshCallback)
     }
 
-    //다음 달력으로 바꾸기
+    //다음 달로 바꾸기
     fun changeToNextMonth(refreshCallback: (Calendar) -> Unit) {
-        if (calendar.get(Calendar.MONTH) == Calendar.DECEMBER) {  //다음 달력이 12월인 경우
+        if (calendar.get(Calendar.MONTH) == Calendar.DECEMBER) {  //다음 달이 12월인 경우
             calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR) + 1)
             calendar.set(Calendar.MONTH, Calendar.JANUARY)
         } else {
@@ -56,13 +56,13 @@ class BaseCalendar {
         calendar.set(Calendar.DATE, 1)  //이전달 마지막주와 다음달 첫째주를 채우기 위해
 
         currentMonthMaxDate = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)  //이번달의 마지막 날짜
-        prevMonthTailOffset = calendar.get(Calendar.DAY_OF_WEEK) - 1    //1일이 무슨 요일인지 (WEEK에서 몇번째인지)
+        prevMonthTailOffset = calendar.get(Calendar.DAY_OF_WEEK) - 1    //이전달의 마지막주 날짜 개수
 
         makePrevMonthTail(calendar.clone() as Calendar) //이전달 마지막주 만들기
         makeCurrentMonth(calendar.clone() as Calendar)  //이번달 만들기
 
         nextMonthHeadOffset =
-            LOW_OF_CALENDAR * DAYS_OF_WEEK - (prevMonthTailOffset + currentMonthMaxDate)
+            LOW_OF_CALENDAR * DAYS_OF_WEEK - (prevMonthTailOffset + currentMonthMaxDate)    //다음달의 첫째주 날짜 개수
         makeNextMonthHead(calendar.clone() as Calendar) //다음달 첫째주 만들기
 
         refreshCallback(calendar)   //함수 호출하기
