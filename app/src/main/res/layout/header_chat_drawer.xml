@@ -70,7 +70,7 @@
 <!--                    android:layout_marginRight="20dp"-->
 <!--                    android:orientation="horizontal"-->
 <!--                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
-<!--                    tools:listitem="@layout/user_circle_format" />-->
+<!--                    tools:listitem="@layout/item_user_circle" />-->
 <!--            </LinearLayout>-->
 <!--        </LinearLayout>-->
 <!--        <View-->

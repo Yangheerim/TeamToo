@@ -15,7 +15,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/project_list_format" />
+                tools:listitem="@layout/item_project_list" />
         </LinearLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton

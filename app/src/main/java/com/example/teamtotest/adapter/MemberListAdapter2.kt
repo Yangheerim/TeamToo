@@ -7,7 +7,7 @@ import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teamtotest.R
 import com.example.teamtotest.activity.AddMemberActivity
-import kotlinx.android.synthetic.main.user_circle_format.view.*
+import kotlinx.android.synthetic.main.item_user_circle.view.*
 import java.util.*
 
 class MemberListAdapter2(val mDataset: ArrayList<String>, activity : AddMemberActivity?)//MyAdapter의 constructor
@@ -30,7 +30,7 @@ class MemberListAdapter2(val mDataset: ArrayList<String>, activity : AddMemberAc
     ): MyViewHolder { // create a new view
         val v = LayoutInflater.from(parent.context)
             .inflate(
-                R.layout.user_circle_format,
+                R.layout.item_user_circle,
                 parent,
                 false
             ) as LinearLayout  // 뷰 안에 특정 부분을 바꾸는거여서 inflate를 씀!

@@ -38,7 +38,7 @@
         app:itemIconTint="#000000"
         app:itemTextColor="#000000"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:menu="@menu/menu"
+        app:menu="@menu/menu_bottombar"
         />
 
 </LinearLayout>

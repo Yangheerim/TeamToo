@@ -54,7 +54,7 @@
                     android:layout_height="match_parent"
                     android:background="@drawable/border_layout"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/chat_list_format" />
+                    tools:listitem="@layout/item_chat_list1" />
             </LinearLayout>
 
             <LinearLayout
@@ -86,10 +86,10 @@
             android:layout_height="match_parent"
             android:layout_gravity="right"
             android:fitsSystemWindows="true"
-            app:menu="@menu/drawer_menu"
+            app:menu="@menu/menu_drawer"
             app:itemTextColor="@color/black"
             app:itemIconTint="@color/black"
-            app:headerLayout="@layout/chat_drawer" />
+            app:headerLayout="@layout/header_chat_drawer" />
 
     </androidx.drawerlayout.widget.DrawerLayout>
 </LinearLayout>

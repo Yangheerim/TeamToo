@@ -41,6 +41,7 @@ class TodoActivity : AppCompatActivity() {
                     todoDTO?.let { todoList.add(it) }
                     todoRVAdapter.notifyDataSetChanged()
                 }
+                changeView(todoList)    //투두리스트 개수에 따라 뷰 바꿔주기
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -48,12 +49,6 @@ class TodoActivity : AppCompatActivity() {
             }
         }
         databaseReference.addValueEventListener(dbTodoEventListener)
-
-        //할일 데이터가 없을 때
-        if(todoList.isEmpty()){
-            tv_todo.visibility = View.VISIBLE
-            rv_todo.visibility = View.INVISIBLE
-        }
 
         // + 버튼 눌렀을 때
         todo_btn_add.setOnClickListener {
@@ -74,6 +69,17 @@ class TodoActivity : AppCompatActivity() {
                 true
             }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    fun changeView(todoList: ArrayList<TodoDTO>){
+        if(todoList.isEmpty()){
+            tv_todo.visibility = View.VISIBLE
+            rv_todo.visibility = View.INVISIBLE
+        }
+        else{
+            tv_todo.visibility = View.INVISIBLE
+            rv_todo.visibility = View.VISIBLE
         }
     }
 }

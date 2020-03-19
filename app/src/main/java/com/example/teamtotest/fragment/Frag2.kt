@@ -160,17 +160,16 @@ class Frag2 : Fragment() {
                             }
 
                             ProjectInfoList.add(projectInfo)   // 데이터들을 담아서 list에 넣을 데이터를 담을 infolist에다가 넣는다!
-                            mAdapter.notifyDataSetChanged()
                         }
                     }
                 }
+                mAdapter.notifyDataSetChanged()
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.w("ExtraUserInfoActivity", "loadPost:onCancelled", databaseError.toException())
             }
         }
-
         databaseReference = firebaseDatabase.getReference("ProjectList")
         databaseReference.addValueEventListener(listener)       // Projectlist 경로에 있는 데이터가 뭔가가 바뀌면 알려주는 listener 설정!
     }

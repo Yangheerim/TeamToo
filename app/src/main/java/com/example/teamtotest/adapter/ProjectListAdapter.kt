@@ -9,7 +9,7 @@ import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teamtotest.R
 import com.example.teamtotest.activity.ChatActivity
-import kotlinx.android.synthetic.main.project_list_format.view.*
+import kotlinx.android.synthetic.main.item_project_list.view.*
 
 class ProjectListAdapter(
     private val projectInfoList: ArrayList<HashMap<String, String>>,
@@ -24,7 +24,7 @@ class ProjectListAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val v = LayoutInflater.from(parent.context)
             .inflate(
-                R.layout.project_list_format,
+                R.layout.item_project_list,
                 parent,
                 false
             ) as LinearLayout  // 뷰 안에 특정 부분을 바꾸는거여서 inflate를 씀!

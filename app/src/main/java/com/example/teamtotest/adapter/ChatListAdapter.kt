@@ -8,8 +8,8 @@ import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teamtotest.R
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.android.synthetic.main.chat_list_format.view.*
-import kotlinx.android.synthetic.main.chat_list_format2.view.*
+import kotlinx.android.synthetic.main.item_chat_list1.view.*
+import kotlinx.android.synthetic.main.item_chat_list2.view.*
 import java.util.*
 
 class ChatListAdapter(var ChatMessage : ArrayList<HashMap<String,String>>)//MyAdapter의 constructor
@@ -40,9 +40,9 @@ class ChatListAdapter(var ChatMessage : ArrayList<HashMap<String,String>>)//MyAd
         var layoutId = 0
 
         if (viewType == 1) {    // 남일때
-            layoutId = R.layout.chat_list_format
+            layoutId = R.layout.item_chat_list1
         } else if (viewType == 2) {  // 나일때
-            layoutId = R.layout.chat_list_format2
+            layoutId = R.layout.item_chat_list2
         } else {
             Log.d("View type 오류 : ", viewType.toString() + "")
         }

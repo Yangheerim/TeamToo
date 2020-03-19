@@ -71,12 +71,14 @@ class CalendarFragment : Fragment() {
         val dbScheduleEventListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 pidList.clear()
-                for (data in dataSnapshot.children) {   //PID마다 훑기
-                    val membersDTO = data.child("members").getValue(MembersDTO::class.java)!!
-                    if (uid in membersDTO.UID_list!!) {  //프로젝트에 속해있을 경우
-                        pidList.add(data.key.toString())    //프로젝트 id를 리스트에 넣음
+                    for (data in dataSnapshot.children) {   //PID마다 훑기
+                        if (data.child("members").getValue(MembersDTO::class.java)!=null){
+                            val membersDTO = data.child("members").getValue(MembersDTO::class.java)!!
+                            if (uid in membersDTO.UID_list!!) {  //프로젝트에 속해있을 경우
+                                pidList.add(data.key.toString())    //프로젝트 id를 리스트에 넣음
+                            }
+                        }
                     }
-                }
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
