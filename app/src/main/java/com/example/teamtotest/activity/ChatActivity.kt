@@ -5,8 +5,10 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import com.example.teamtotest.Push
 import com.example.teamtotest.R
 import com.example.teamtotest.adapter.ChatListAdapter
 import com.example.teamtotest.dto.MembersDTO
@@ -14,14 +16,20 @@ import com.example.teamtotest.dto.MessageDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_chat.*
+import org.json.JSONObject
+import java.lang.Exception
+import java.net.HttpURLConnection
+import java.net.URL
+import java.nio.charset.Charset
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
+@Suppress("CAST_NEVER_SUCCEEDS")
 class ChatActivity : AppCompatActivity() {
-
-    private var firebaseAuth: FirebaseAuth? = null
-    private var firebaseDatabase: FirebaseDatabase? = null
-    private var databaseReference: DatabaseReference? = null
+    private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var firebaseDatabase: FirebaseDatabase
+    private lateinit var databaseReference: DatabaseReference
     private var myAdapter: ChatListAdapter? = null
 
 //    private var drawerFrag = DrawerFragment()
@@ -33,10 +41,8 @@ class ChatActivity : AppCompatActivity() {
     private var howManyMembers : String? = null
     //private var userName: String? = null
 
-
     private var ChatMessageList: ArrayList<HashMap<String, String>> = ArrayList<HashMap<String, String>>()
     private var ChatMessageData: HashMap<String, String> = HashMap<String, String>()
-
 
     private lateinit var dbMessageeventListener : ValueEventListener
     private lateinit var members_listener: ValueEventListener
@@ -109,11 +115,12 @@ class ChatActivity : AppCompatActivity() {
         sendButton.setOnClickListener{
             if (message.length() > 0) {
                 addMessageInfoToDB()
+
+                Push(PID.toString(), message.text.toString())
                 message.setText("")
             }
         }
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_chat_toolbar, menu)
@@ -146,31 +153,31 @@ class ChatActivity : AppCompatActivity() {
     override fun onStop() {
         Log.d("here is onStop", databaseReference.toString())
         // 리스너 삭제
-        databaseReference = firebaseDatabase!!.getReference("ProjectList").child(PID.toString()).child("messageList")
-        databaseReference!!.removeEventListener(dbMessageeventListener)
-        databaseReference = firebaseDatabase!!.getReference("ProjectList").child(PID.toString()).child("members")
-        databaseReference!!.removeEventListener(members_listener)
+        databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("messageList")
+        databaseReference.removeEventListener(dbMessageeventListener)
+        databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("members")
+        databaseReference.removeEventListener(members_listener)
         super.onStop()
     }
 
     private fun exitProject(){
 
-        val myUID = firebaseAuth!!.currentUser!!.uid
+        val myUID = firebaseAuth.currentUser!!.uid
 
-        databaseReference = firebaseDatabase!!.getReference("ProjectList").child(PID.toString())
-        databaseReference!!.addListenerForSingleValueEvent(object : ValueEventListener {
+        databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString())
+        databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 for (snapshot in dataSnapshot.children) {
                     if(snapshot.key == "members"){ // memberList에서 삭제
                         val membersDTO :MembersDTO = snapshot.getValue(MembersDTO::class.java)!!
                         if(membersDTO.UID_list!!.size<=1){// 나 혼자 남아있었다면 프로젝트 전체 삭제
-                            firebaseDatabase!!.getReference("ProjectList").child(PID.toString()).removeValue()
+                            firebaseDatabase.getReference("ProjectList").child(PID.toString()).removeValue()
                             onStop()
                             finish()
                             break
                         }else { // 아니라면 memberList에서 내 정보만 삭제
                             membersDTO.UID_list!!.remove(myUID)
-                            firebaseDatabase!!.getReference("ProjectList").child(PID.toString()).child("members").setValue(membersDTO)
+                            firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("members").setValue(membersDTO)
                         }
                     }
                     if(snapshot.key == "messageList"){
@@ -187,8 +194,8 @@ class ChatActivity : AppCompatActivity() {
                         for(messageSnapshot in snapshot.children){// 읽은 사람 목록에서 나 삭제
                             val messageDTOtoRemove: MessageDTO? = messageSnapshot.getValue(MessageDTO::class.java)
                             if(messageDTOtoRemove!!.read!!.contains(myUID)) {
-                                messageDTOtoRemove!!.read!!.remove(myUID)
-                                firebaseDatabase!!.getReference("ProjectList").child(PID.toString()).child("messageList").child(messageSnapshot.key.toString()).setValue(messageDTOtoRemove)
+                                messageDTOtoRemove.read!!.remove(myUID)
+                                firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("messageList").child(messageSnapshot.key.toString()).setValue(messageDTOtoRemove)
                             }
                         }
                     }
@@ -203,46 +210,46 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun addMessageInfoToDB() {
-        var isReadList: ArrayList<String> = ArrayList<String>()
-        isReadList.add(firebaseAuth!!.currentUser!!.uid)
+        val isReadList: ArrayList<String> = ArrayList<String>()
+        isReadList.add(firebaseAuth.currentUser!!.uid)
         val messageDTO =
             MessageDTO(
                 message.text.toString(),
-                firebaseAuth!!.currentUser!!.displayName.toString(),
-                firebaseAuth!!.currentUser!!.uid,
+                firebaseAuth.currentUser!!.displayName.toString(),
+                firebaseAuth.currentUser!!.uid,
                 isReadList
             )  // 유저 이름과 메세지로 message data 만들기
 
         val date_format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         val date = date_format.format(System.currentTimeMillis())
 
-        databaseReference = firebaseDatabase!!.getReference()
+        databaseReference = firebaseDatabase.reference
         databaseReference =
-            databaseReference!!.child("ProjectList").child(PID.toString()).child("messageList").child(date)
-        databaseReference!!.setValue(messageDTO)
+            databaseReference.child("ProjectList").child(PID.toString()).child("messageList").child(date)
+        databaseReference.setValue(messageDTO)
     }
 
     private fun readCheckToDB() {
-        databaseReference = firebaseDatabase!!.getReference("ProjectList").child(PID.toString()).child("messageList")
-        databaseReference!!.addListenerForSingleValueEvent(object : ValueEventListener {
+        databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("messageList")
+        databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val myUID: String = firebaseAuth!!.currentUser!!.uid
+                val myUID: String = firebaseAuth.currentUser!!.uid
                 // 읽은 데이터에 나의 uid 저장
                 for (snapshot in dataSnapshot.children) {
                     val messageDTO = snapshot.getValue(MessageDTO::class.java)  // 데이터를 가져와서
                     if (!messageDTO!!.read!!.contains(myUID)) { // 내 uid가 없으면! 추가해준당
-                        messageDTO!!.read!!.add(myUID)
+                        messageDTO.read!!.add(myUID)
                         Log.d("Add complete!! ----> ", myUID)
                         databaseReference =
-                            firebaseDatabase!!.getReference("ProjectList").child(PID.toString())
+                            firebaseDatabase.getReference("ProjectList").child(PID.toString())
                                 .child("messageList").child(snapshot.key.toString())
-                        databaseReference!!.setValue(messageDTO)  // 덮어쓰기
+                        databaseReference.setValue(messageDTO)  // 덮어쓰기
                     }
                 }
             }
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.w("ExtraUserInfoActivity", "loadPost:onCancelled",
-                    databaseError.toException()!!
+                    databaseError.toException()
                 )
             }
         })
@@ -255,7 +262,7 @@ class ChatActivity : AppCompatActivity() {
         dbMessageeventListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 ChatMessageList.clear()    // 갱신될 때 이미 있던 데이터는 날리기
-                val myUID : String = firebaseAuth!!.currentUser!!.uid
+                val myUID : String = firebaseAuth.currentUser!!.uid
 
                 // list를 보여주기 위해 db에서 데이터를 받아 adapter에 데이터 전달
                 for (snapshot in dataSnapshot.children) {
@@ -279,13 +286,13 @@ class ChatActivity : AppCompatActivity() {
 
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.w("ExtraUserInfoActivity", "loadPost:onCancelled",
-                    databaseError.toException()!!
+                    databaseError.toException()
                 )
             }
         }
 
-        databaseReference = firebaseDatabase!!.getReference("ProjectList").child(PID.toString()).child("messageList")
-        databaseReference!!.addValueEventListener(dbMessageeventListener)       // Projectlist/PID/messageList 경로에 있는 데이터가 뭔가가 바뀌면 알려주는 listener 설정!
+        databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("messageList")
+        databaseReference.addValueEventListener(dbMessageeventListener)       // Projectlist/PID/messageList 경로에 있는 데이터가 뭔가가 바뀌면 알려주는 listener 설정!
     }
 
     private fun setListener_theNumOfMembersFromMyProjects() {
@@ -302,8 +309,8 @@ class ChatActivity : AppCompatActivity() {
             }
 
         }
-        databaseReference = firebaseDatabase!!.getReference("ProjectList").child(PID.toString()).child("members")
-        databaseReference!!.addValueEventListener(members_listener)       // Projectlist 경로에 있는 데이터가 뭔가가 바뀌면 알려주는 listener 설정!
+        databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("members")
+        databaseReference.addValueEventListener(members_listener)       // Projectlist 경로에 있는 데이터가 뭔가가 바뀌면 알려주는 listener 설정!
     }
 
 }

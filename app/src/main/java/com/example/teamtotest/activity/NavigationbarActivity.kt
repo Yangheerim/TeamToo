@@ -31,14 +31,11 @@ class NavigationbarActivity : AppCompatActivity() {
         setFrag(0) // default 화면은 첫번째!
     }
 
-    fun setFrag(n: Int) {
+    private fun setFrag(n: Int) {
         val ft = supportFragmentManager.beginTransaction()
         when (n) {
             0 -> {
-                ft.replace(
-                    R.id.Main_Frame,
-                    Frag1()
-                )
+                ft.replace(R.id.Main_Frame, Frag1())
                 ft.commit()
             }
 
@@ -48,18 +45,12 @@ class NavigationbarActivity : AppCompatActivity() {
             }
 
             2 -> {
-                ft.replace(
-                    R.id.Main_Frame,
-                    CalendarFragment()
-                )
+                ft.replace(R.id.Main_Frame, CalendarFragment())
                 ft.commit()
             }
 
             3 -> {
-                ft.replace(
-                    R.id.Main_Frame,
-                    Frag4()
-                )
+                ft.replace(R.id.Main_Frame, Frag4())
                 ft.commit()
             }
         }

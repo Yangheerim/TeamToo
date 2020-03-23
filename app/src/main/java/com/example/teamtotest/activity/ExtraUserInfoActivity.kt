@@ -12,6 +12,7 @@ import com.example.teamtotest.dto.UserDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
+import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.android.synthetic.main.activity_extra_user_info.*
 
 class ExtraUserInfoActivity :AppCompatActivity(){
@@ -57,9 +58,9 @@ class ExtraUserInfoActivity :AppCompatActivity(){
             if (duplicateComplete) {
                 //DB에 user정보 저장 (UID는 가져와서, 입력받은id, getCurrentUser-> email, name)
                 var id : String = userID.text.toString()
-                Log.e("TAG","add")
+//                Log.e("TAG","add")
                 addUserInfoToDB(id)
-                Log.e("TAG","finish")
+//                Log.e("TAG","finish")
 
                 finish()
             } else {
@@ -73,7 +74,7 @@ class ExtraUserInfoActivity :AppCompatActivity(){
         // 파이어베이스 에서 데이터를 가져 옴
         //getUserIdList();
         var tmp = "testtest"
-        Log.d("isUsableID ---> ", tmp)
+//        Log.d("isUsableID ---> ", tmp)
         databaseReference = FirebaseDatabase.getInstance().getReference("UserList")
         databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -85,12 +86,12 @@ class ExtraUserInfoActivity :AppCompatActivity(){
                             UserDTO::class.java)
 
                         UserIdList.add(user!!.id)
-                        Log.d("USERID ---> ", user!!.id)
+//                        Log.d("USERID ---> ", user!!.id)
                     }
                     //중복 체크
                     for (i in UserIdList.indices) {
 
-                        Log.d("저장된userlist ---> ", UserIdList[i]+i.toString())
+//                        Log.d("저장된userlist ---> ", UserIdList[i]+i.toString())
                         if (UserIdList[i] == inputID) { // DB에 있는 id중에 입력한 id가 있으면
                             UserIdList.clear()
                             stateInfo.text = "이미 사용중인 ID입니다. 다른 ID를 입력해주세요."
@@ -119,11 +120,12 @@ class ExtraUserInfoActivity :AppCompatActivity(){
         user?.let {
             val userDTO = UserDTO(
                 extraID,
-                it?.email.toString(),
-                it?.displayName.toString()
+                it.email.toString(),
+                it.displayName.toString(),
+                FirebaseInstanceId.getInstance().token.toString()
             )
             //databaseReference = firebaseDatabase.reference
-            databaseReference.child(it!!.uid).setValue(userDTO)
+            databaseReference.child(it.uid).setValue(userDTO)
             startActivity(
                 Intent(applicationContext, NavigationbarActivity::class.java )
             ) // 메인화면으로 이동

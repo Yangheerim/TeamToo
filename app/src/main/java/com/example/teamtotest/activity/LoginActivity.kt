@@ -36,7 +36,7 @@ class LoginActivity : AppCompatActivity() {
 
         // 파이어베이스 DB 객체 선언
         firebaseDatabase = FirebaseDatabase.getInstance()
-        databaseReference = firebaseDatabase.getReference()
+        databaseReference = firebaseDatabase.reference
 
         init()
     }
@@ -62,7 +62,7 @@ class LoginActivity : AppCompatActivity() {
 
         auth_btn_google.setOnClickListener(View.OnClickListener {
             val signInIntent = mSignInClient.signInIntent
-            startActivityForResult(signInIntent, RC_SIGN_IN)
+            startActivityForResult(signInIntent, RC_SIGN_IN)    //어떤 구글 아이디로 로그인할지 정하는 화면으로 넘어감
         })
 
         mListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
@@ -91,7 +91,7 @@ class LoginActivity : AppCompatActivity() {
                     Toast.makeText(this, "구글 로그인 실패", Toast.LENGTH_SHORT).show()
                 }
             }
-        Log.e("TAG", "error")
+//        Log.e("TAG", "error")
     }
 
     private fun signOut() {
