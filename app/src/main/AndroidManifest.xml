@@ -23,6 +23,7 @@
         <activity android:name=".activity.ScheduleListActivity" />
         <activity android:name=".activity.TodoActivity" />
         <activity android:name=".activity.AddMemberActivity" />
+        <activity android:name=".activity.UpdateScheduleActivity"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

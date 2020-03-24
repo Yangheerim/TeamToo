@@ -13,7 +13,7 @@ import java.nio.charset.Charset
 
 class Push (val PID: String, private val message: String) {
     val TAG : String = "Push Class"
-    private lateinit var firebaseAuth: FirebaseAuth
+    private var firebaseAuth = FirebaseAuth.getInstance()
     private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
     private lateinit var databaseReference: DatabaseReference
     private var uidList: MembersDTO? = null
@@ -22,9 +22,7 @@ class Push (val PID: String, private val message: String) {
 
     init {
         findUidList()
-//        delMyself()
         findFcmTokenList()
-//        sendPostToFCM()
     }
 
     //프로젝트에 해당하는 멤버 uid 찾아주는 메소드
@@ -34,6 +32,7 @@ class Push (val PID: String, private val message: String) {
             override fun onDataChange(snapshot: DataSnapshot) {
                 projectName = snapshot.child("projectName").value.toString()
                 uidList = snapshot.child("members").getValue(MembersDTO::class.java)!!
+                delMyself()
             }
             override fun onCancelled(p0: DatabaseError) {
                 Log.w(TAG, p0.message)
@@ -43,9 +42,11 @@ class Push (val PID: String, private val message: String) {
 
     //자기 자신의 uid를 제외한 나머지 uidList
     private fun delMyself(){
-        for(uid in uidList?.UID_list!!){
-            if(firebaseAuth.currentUser.toString() == uid){
-                uidList!!.UID_list!!.remove(uid)
+        val iterator = uidList?.UID_list?.iterator()
+
+        while(iterator!!.hasNext()){
+            if(firebaseAuth.currentUser!!.uid == iterator.next()){
+                iterator.remove()
             }
         }
     }
