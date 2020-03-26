@@ -116,7 +116,6 @@ class Frag2 : Fragment() {
                             val projectInfo = HashMap<String, String>()
 
                             projectInfo["PID"] = snapshot.key.toString()
-                            Log.e("PID:Frag2", snapshot.key.toString())
                             projectInfo["projectName"] = snapshot.child("projectName").value!!.toString()
 
                             val membersDTO =
@@ -140,7 +139,6 @@ class Frag2 : Fragment() {
                                 val messageDTO = messageSnapshot.getValue(MessageDTO::class.java)  // 데이터를 가져와서
                                 if(!messageDTO!!.read!!.contains(myUID)) { // 내 uid가 없으면 count!
                                     readCnt++
-                                    Log.e("isRead count test --->", readCnt.toString())
                                 }
                             }
                             projectInfo["noReadMessageCount"] = readCnt.toString()

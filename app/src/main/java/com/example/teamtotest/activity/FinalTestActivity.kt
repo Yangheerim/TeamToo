@@ -221,7 +221,6 @@ class FinalTestActivity : AppCompatActivity() {
                     if(snapshot.key=="result") {
                         for(resultSnapshot in snapshot.children) {
                             if (resultSnapshot.key == myUID) {
-                                myAdapter.itemCount?.let {
                                     for (j in 1..myAdapter.itemCount) {
                                         final_test_recycler_view[j - 1].item_final_test_isComplete.text =
                                             " 완료"
@@ -232,7 +231,6 @@ class FinalTestActivity : AppCompatActivity() {
                                         final_test_send_result_button.visibility = View.INVISIBLE
                                         final_test_show_result_button.visibility = View.VISIBLE
                                     }
-                                }
                             }
                         }
                     }
