@@ -98,6 +98,9 @@ class ChatActivity : AppCompatActivity() {
                 R.id.drawer_finaltest -> {
                     // 코드 추가 해야함
                     chat_drawer.closeDrawer(GravityCompat.END)
+                    intent=Intent(this,FinalTestActivity::class.java)
+                    intent.putExtra("PID", PID)
+                    startActivity(intent)
                 }
                 R.id.drawer_exit -> {
                     chat_drawer.closeDrawer(GravityCompat.END)

@@ -1,40 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".activity.AddScheduleActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/add_schedule_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@android:color/white"
         android:elevation="3dp"
-        app:title="스케줄" />
+        app:title="새 스케줄" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingRight="30dp"
+        android:paddingLeft="30dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:text="스케줄 제목" />
+            <!--            <TextView-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="match_parent"-->
+            <!--                android:layout_weight="1"-->
+            <!--                android:gravity="center"-->
+            <!--                android:text="제목"-->
+            <!--                android:textColor="@color/black"-->
+            <!--                android:textSize="16dp"-->
+            <!--                />-->
 
             <EditText
                 android:id="@+id/schedule_et_name"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:background="@drawable/button3"
+                android:hint="제목"
                 android:privateImeOptions="defaultInputmode=korean" />
         </LinearLayout>
 
@@ -47,7 +57,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
+                android:layout_weight="2"
+                android:textColor="@color/black"
+                android:textSize="16dp"
+                android:paddingLeft="10dp"
                 android:text="시작" />
 
             <TextView
@@ -55,6 +68,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textColor="@color/black"
+                android:textSize="16dp"
+                android:background="?attr/selectableItemBackground"
                 android:gravity="right" />
 
             <TextView
@@ -62,19 +78,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textColor="@color/black"
+                android:textSize="16dp"
+                android:background="?attr/selectableItemBackground"
                 android:gravity="center" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginBottom="40dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
+                android:layout_weight="2"
+                android:textColor="@color/black"
+                android:textSize="16dp"
+                android:paddingLeft="10dp"
                 android:text="종료" />
 
             <TextView
@@ -82,6 +104,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textColor="@color/black"
+                android:textSize="16dp"
+                android:background="?attr/selectableItemBackground"
                 android:gravity="right" />
 
             <TextView
@@ -89,81 +114,129 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textColor="@color/black"
+                android:textSize="16dp"
+                android:background="?attr/selectableItemBackground"
                 android:gravity="center" />
 
         </LinearLayout>
-
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gray"/>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_height="50dp"
             android:orientation="horizontal">
-
-            <TextView
+            <ImageView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="장소" />
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_notification"/>
+
+            <Spinner
+                android:layout_marginLeft="40dp"
+                android:paddingLeft="10dp"
+                android:id="@+id/schedule_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:spinnerMode="dialog" />
+
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gray"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_location" />
+            <!--            <TextView-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="match_parent"-->
+            <!--                android:layout_marginLeft="10dp"-->
+            <!--                android:layout_weight="1"-->
+            <!--                android:textColor="@color/black"-->
+            <!--                android:gravity="left|center"-->
+            <!--                android:textSize="16dp"-->
+            <!--                android:text="장소" />-->
 
             <EditText
                 android:id="@+id/schedule_et_place"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="3" />
+                android:layout_height="match_parent"
+                android:paddingLeft="5dp"
+                android:layout_marginLeft="40dp"
+                android:hint="위치"
+                android:textSize="15dp"
+                android:background="@null"
+                android:layout_weight="5" />
         </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gray"/>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
+            android:layout_height="50dp"
             android:orientation="horizontal">
-
-            <TextView
+            <ImageView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="4"
-                android:text="알림 설정" />
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_memo"/>
+            <!--                <TextView-->
+            <!--                    android:layout_width="match_parent"-->
+            <!--                    android:layout_height="match_parent"-->
+            <!--                    android:textColor="@color/black"-->
+            <!--                    android:gravity="left|center"-->
+            <!--                    android:layout_marginLeft="10dp"-->
+            <!--                    android:textSize="16dp"-->
+            <!--                    android:text="메모" />-->
 
-            <Spinner
-                android:id="@+id/schedule_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:spinnerMode="dialog"
-                />
-
+            <EditText
+                android:id="@+id/schedule_et_note"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="40dp"
+                android:layout_gravity="center"
+                android:padding="5dp"
+                android:background="@null"
+                android:inputType="textMultiLine"
+                android:hint="메모"
+                android:textSize="15dp"
+                android:scrollbars="vertical" />
         </LinearLayout>
-
-        <LinearLayout
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:orientation="horizontal">
+            android:layout_height="1dp"
+            android:background="@color/gray"/>
 
-            <TextView
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/schedule_btn_create"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="메모" />
-
-        </LinearLayout>
-
-        <EditText
-            android:id="@+id/schedule_et_note"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:background="@drawable/et_border"
-            android:gravity="top|start"
-            android:inputType="textMultiLine"
-            android:lines="6"
-            android:scrollbars="vertical" />
-
-        <Button
-            android:id="@+id/schedule_btn_create"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:text="등록하기" />
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="right"
+                android:layout_marginBottom="30dp"
+                android:background="@drawable/button1"
+                android:text="등록하기"
+                android:textColor="@color/white"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+        </RelativeLayout>
     </LinearLayout>
 </LinearLayout>

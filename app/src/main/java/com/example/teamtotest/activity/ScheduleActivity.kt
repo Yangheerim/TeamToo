@@ -30,7 +30,7 @@ class ScheduleActivity : AppCompatActivity() {
         setSupportActionBar(schedule_toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        //PID에 해당하는 프로젝트 할일 가져오기
+        //PID에 해당하는 스케줄 가져오기
         PID = intent.getStringExtra("PID")
         firebaseDatabase = FirebaseDatabase.getInstance()
         databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("scheduleList")

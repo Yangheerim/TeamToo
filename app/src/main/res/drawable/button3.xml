@@ -10,5 +10,5 @@
         android:left="10dp"
         android:right="10dp"/>
     <solid
-        android:color="@color/colorAccent"/>
+        android:color="#EAEAEA"/>
 </shape>

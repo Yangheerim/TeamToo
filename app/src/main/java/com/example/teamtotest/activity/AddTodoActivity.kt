@@ -75,9 +75,9 @@ class AddTodoActivity : AppCompatActivity() {
         }
 
         //과제 수행자 지정
-        todo_btn_members.setOnClickListener {
-
-        }
+//        todo_btn_members.setOnClickListener {
+//
+//        }
 
         //알림 설정
         todo_spinner.adapter = spinnerAdapter
