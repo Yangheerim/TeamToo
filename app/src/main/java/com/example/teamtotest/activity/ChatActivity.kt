@@ -80,20 +80,23 @@ class ChatActivity : AppCompatActivity() {
                     intent.putExtra("howManyMembers", howManyMembers)
                     startActivity(intent)
                 }
-//                R.id.drawer_file -> setFrag(1)
+                R.id.drawer_file -> {
+                    chat_drawer.closeDrawer(GravityCompat.END)
+                    intent = Intent(this, FileActivity::class.java)
+                    intent.putExtra("PID", PID)
+                    startActivity(intent)
+                }
                 R.id.drawer_schedule -> {
                     chat_drawer.closeDrawer(GravityCompat.END)
                     intent = Intent(this, ScheduleActivity::class.java)
                     intent.putExtra("PID", PID)
                     startActivity(intent)
-
                 }
                 R.id.drawer_todo -> {
                     chat_drawer.closeDrawer(GravityCompat.END)
                     intent=Intent(this,TodoActivity::class.java)
                     intent.putExtra("PID", PID)
                     startActivity(intent)
-
                 }
                 R.id.drawer_finaltest -> {
                     // 코드 추가 해야함

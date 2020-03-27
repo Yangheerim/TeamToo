@@ -99,8 +99,8 @@ class FinalTestActivity : AppCompatActivity() {
     }
 
     override fun onStop() {
-//        databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("finalTest").child("result")
-////        databaseReference.removeEventListener(listener)
+        databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("finalTest").child("result")
+        databaseReference.removeEventListener(listener)
         super.onStop()
     }
 
