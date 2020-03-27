@@ -18,12 +18,15 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_file.*
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.set
 
 
 class FileActivity : AppCompatActivity(){
+
+
     private var firebaseDatabase: FirebaseDatabase? = null
     private var databaseReference: DatabaseReference? = null
 
@@ -135,10 +138,12 @@ class FileActivity : AppCompatActivity(){
         val uid : String = firebaseAuth.currentUser!!.uid
         val userName : String = firebaseAuth.currentUser!!.displayName!!
 
-        val date : String = "2020-03-27"
+        val date_format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val date = date_format.format(System.currentTimeMillis())
 
         val fileDTO : FileDTO = FileDTO(fileName, date, uid, userName)
-        databaseReference = databaseReference!!.child("ProjectList").child(PID.toString()).child("file").push()
+
+        databaseReference = firebaseDatabase!!.reference.child("ProjectList").child(PID.toString()).child("file").push()
         databaseReference!!.setValue(fileDTO)
 
     }
@@ -146,6 +151,8 @@ class FileActivity : AppCompatActivity(){
     private fun setListener_FileInfoFromDB(){
         listener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
+                fileInfoList.clear()
+
                 for (snapshot in dataSnapshot.children) {
                     val fileInfo : HashMap<String, String> = HashMap<String, String>()
                     val fileDTO: FileDTO = snapshot.getValue(FileDTO::class.java)!!
@@ -153,20 +160,20 @@ class FileActivity : AppCompatActivity(){
                     fileInfo["date"] = fileDTO.date
                     fileInfo["uid"] = fileDTO.uid
                     fileInfo["userName"] = fileDTO.userName
+                    fileInfoList.add(fileInfo)
                     myAdapter.notifyDataSetChanged()
                 }
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.w("FileActivity", "loadPost:onCancelled",
-                    databaseError.toException()!!
+                    databaseError.toException()
                 )
             }
         }
 
         databaseReference = firebaseDatabase!!.getReference("ProjectList").child(PID.toString()).child("file")
         databaseReference!!.addValueEventListener(listener)
-
 
     }
 
