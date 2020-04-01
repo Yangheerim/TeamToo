@@ -25,6 +25,7 @@ class AddMemberActivity : AppCompatActivity() {
     private lateinit var myAdapter: MemberListAdapter2
 
 
+    private var a=1
     private lateinit var firebaseDatabase: FirebaseDatabase
     private lateinit var databaseReference: DatabaseReference
 
