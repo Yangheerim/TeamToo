@@ -198,6 +198,8 @@ class ChatActivity : AppCompatActivity() {
                                     databaseReference!!.removeEventListener(members_listener)
                                     finish()
                                     break
+
+
                                 } else { // 아니라면 memberList에서 내 정보만 삭제
                                     membersDTO.UID_list!!.remove(myUID)
                                     firebaseDatabase!!.getReference("ProjectList").child(PID.toString())

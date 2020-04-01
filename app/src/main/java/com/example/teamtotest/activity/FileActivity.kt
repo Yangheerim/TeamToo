@@ -4,12 +4,14 @@ import android.app.Activity
 import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.OpenableColumns
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.example.teamtotest.R
 import com.example.teamtotest.adapter.FileAdapter
@@ -21,6 +23,7 @@ import kotlinx.android.synthetic.main.activity_file.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 import kotlin.collections.set
 
 
@@ -30,7 +33,7 @@ class FileActivity : AppCompatActivity(){
     private var firebaseDatabase: FirebaseDatabase? = null
     private var databaseReference: DatabaseReference? = null
 
-    private val fileInfoList: ArrayList<HashMap<String, String>> = ArrayList<HashMap<String, String>>()
+    private val fileInfoList: ArrayList<HashMap<String, Objects>> = arrayListOf()
 
     private lateinit var listener: ValueEventListener
 
@@ -63,7 +66,7 @@ class FileActivity : AppCompatActivity(){
     private fun recyclerviewInit() {
         file_recycler_view.setHasFixedSize(true)
 
-        myAdapter = FileAdapter(fileInfoList)
+        myAdapter = FileAdapter(fileInfoList, applicationContext,PID)
         file_recycler_view.adapter = myAdapter
     }
 
@@ -157,17 +160,19 @@ class FileActivity : AppCompatActivity(){
 
     private fun setListener_FileInfoFromDB(){
         listener = object : ValueEventListener {
+            @RequiresApi(Build.VERSION_CODES.KITKAT)
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 fileInfoList.clear()
 
                 for (snapshot in dataSnapshot.children) {
-                    val fileInfo : HashMap<String, String> = HashMap<String, String>()
+                    val fileId = snapshot.key
                     val fileDTO: FileDTO = snapshot.getValue(FileDTO::class.java)!!
-                    fileInfo["fileName"] = fileDTO.fileName
-                    fileInfo["date"] = fileDTO.date
-                    fileInfo["uid"] = fileDTO.uid
-                    fileInfo["userName"] = fileDTO.userName
-                    fileInfoList.add(fileInfo)
+
+                    val hashMap = HashMap<String, Objects>()
+                    hashMap["key"] = fileId as Objects
+                    hashMap["DTO"] = fileDTO as Objects
+
+                    fileInfoList.add(hashMap)
                     myAdapter.notifyDataSetChanged()
                 }
             }
