@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.activity_add_member.*
 import java.util.*
 
 class AddMemberActivity : AppCompatActivity() {
-
+ //희림아 안되니?
     private var memberNameList = ArrayList<String>()    // 팀원들의 이름을 저장
     private var memberUIDList = ArrayList<String>()    // 팀원들의 UID를 저장
     private var UserUIDList = ArrayList<String>()      // user UID 임시저장
