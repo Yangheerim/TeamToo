@@ -18,7 +18,8 @@
         <activity android:name=".activity.ChatActivity" />
         <activity android:name=".activity.AddProjectActivity" />
         <activity android:name=".activity.ExtraUserInfoActivity" />
-        <activity android:name=".activity.LoginActivity" />
+        <activity android:name=".activity.LoginActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".activity.NavigationbarActivity" />
         <activity android:name=".activity.AddScheduleActivity" />
         <activity android:name=".activity.AddTodoActivity" />

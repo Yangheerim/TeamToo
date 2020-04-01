@@ -75,7 +75,9 @@
                     android:layout_height="match_parent"
                     android:text="OK"
                     android:layout_weight="1"
-                    android:background="@drawable/button1"/>
+
+                    android:background="@drawable/button1"></com.skydoves.elasticviews.ElasticButton>
+
             </LinearLayout>
 
         </LinearLayout>

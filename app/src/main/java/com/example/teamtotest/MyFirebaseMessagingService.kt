@@ -3,14 +3,12 @@ package com.example.teamtotest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import com.example.teamtotest.activity.ChatActivity
 import com.example.teamtotest.activity.NavigationbarActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -42,7 +40,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     //push알림 보내주는 메소드
     private fun sendNotification(remoteMessage: RemoteMessage) {
-        val intent = Intent(this, ChatActivity::class.java).apply {
+        val intent = Intent(this, NavigationbarActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
         Log.e(TAG,"sendNotification")
@@ -63,7 +61,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     private fun createNotificationChannel() {
-        Log.e(TAG,"createNotificationChannel")
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -81,12 +78,12 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     override fun onStart(intent: Intent?, startId: Int) {
-        Log.e(TAG, "onStart")
+        Log.d(TAG, "onStart")
         super.onStart(intent, startId)
     }
 
     override fun onDestroy() {
-        Log.e(TAG,"onDestroy")
+        Log.d(TAG,"onDestroy")
         super.onDestroy()
     }
 }
