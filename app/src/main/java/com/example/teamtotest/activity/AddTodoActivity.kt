@@ -9,9 +9,11 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.teamtotest.PerformerDialog
 import com.example.teamtotest.R
 import com.example.teamtotest.dto.TodoDTO
-import com.google.firebase.database.*
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_add_todo.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -34,11 +36,14 @@ class AddTodoActivity : AppCompatActivity() {
     private lateinit var databaseReference: DatabaseReference
     private var PID: String? = null
 
+    private lateinit var performerUIDList : ArrayList<String>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_todo)
 
         firebaseDatabase = FirebaseDatabase.getInstance()
+        PID = intent.getStringExtra("PID")
 
         deadline_date.text = format1.format(deadline.time)
         deadline_time.text = format2.format(deadline.time)
@@ -75,9 +80,11 @@ class AddTodoActivity : AppCompatActivity() {
         }
 
         //과제 수행자 지정
-//        todo_btn_members.setOnClickListener {
-//
-//        }
+        todo_btn_select_performer.setOnClickListener {
+            var performerDialog : PerformerDialog = PerformerDialog(this)
+            performerDialog.PID = PID
+            performerDialog.callDialog()
+        }
 
         //알림 설정
         todo_spinner.adapter = spinnerAdapter
@@ -102,10 +109,11 @@ class AddTodoActivity : AppCompatActivity() {
                     todo_et_name.text.toString(),
                     todo_et_note.text.toString(),
                     deadline.time.time,
+                    performerUIDList,
                     alarmPosition
                 )
                 //DB에 업로드
-                PID = intent.getStringExtra("PID")
+
                 databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("todoList")
                 databaseReference.push().setValue(todoDTO)
 
@@ -149,4 +157,12 @@ class AddTodoActivity : AppCompatActivity() {
         deadline_date.text = format1.format(deadline.time)
         deadline_time.text = format2.format(deadline.time)
     }
+
+    public fun setPerformer(performerUIDList_ : ArrayList<String>){
+        performerUIDList = performerUIDList_
+        Toast.makeText(this, "과제 수행자 지정 완료 ${performerUIDList[0]}...", Toast.LENGTH_SHORT).show()
+        add_todo_performer_num.text = performerUIDList.size.toString()
+    }
+
+
 }

@@ -92,14 +92,20 @@ class FileActivity : AppCompatActivity(){
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.upload) { //파일 선택
-            val intent = Intent()
-            intent.type = "*/*"
-            intent.action = Intent.ACTION_GET_CONTENT
-            startActivityForResult(Intent.createChooser(intent, "파일을 선택하세요."), 0)
-            return true
+        return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
+            R.id.upload -> {
+                val intent = Intent()
+                intent.type = "*/*"
+                intent.action = Intent.ACTION_GET_CONTENT
+                startActivityForResult(Intent.createChooser(intent, "파일을 선택하세요."), 0)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
     }
 
 
@@ -175,6 +181,11 @@ class FileActivity : AppCompatActivity(){
         databaseReference = firebaseDatabase!!.getReference("ProjectList").child(PID.toString()).child("file")
         databaseReference!!.addValueEventListener(listener)
 
+    }
+
+    override fun onStop() {
+        databaseReference?.removeEventListener(listener)
+        super.onStop()
     }
 
 

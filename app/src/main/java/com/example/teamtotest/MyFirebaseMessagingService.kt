@@ -2,6 +2,7 @@ package com.example.teamtotest
 
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
@@ -15,32 +16,40 @@ import com.google.firebase.messaging.RemoteMessage
 class MyFirebaseMessagingService : FirebaseMessagingService() {
     private val TAG = "FirebaseService"
 
+    override fun onCreate() {
+        Log.e(TAG,"oncreate")
+        super.onCreate()
+    }
+    //새로운 토큰일 때
     override fun onNewToken(token: String) {
         Log.e(TAG, "new Token: $token")
     }
 
+    //메시지 왔을 때
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        Log.d(TAG, "From: " + remoteMessage.from)
+        Log.e(TAG,"message")
 
         if(remoteMessage.notification != null) {
-            Log.d(TAG, "Notification Message Body: ${remoteMessage.notification?.body}")
-            sendNotification(remoteMessage.notification?.title, remoteMessage.notification?.body)
+            Log.e(TAG,"message")
+            sendNotification(remoteMessage)
         }
     }
 
-    private fun sendNotification(title: String?, body: String?) {
-        val intent = Intent(this, NavigationbarActivity::class.java).apply {
+    //push알림 보내주는 메소드
+    private fun sendNotification(remoteMessage: RemoteMessage) {
+        val intent = Intent(this, ChatActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-            putExtra("Notification", body)
+            Log.e("PID", remoteMessage.data.toString())
         }
+        Log.e(TAG, "hi")
 
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
         val notificationSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
         val notificationBuilder = NotificationCompat.Builder(this,"Notification")
             .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentTitle(title)
-            .setContentText(body)
+            .setContentTitle(remoteMessage.notification?.title)
+            .setContentText(remoteMessage.notification?.body)
             .setAutoCancel(true)
             .setSound(notificationSound)
             .setContentIntent(pendingIntent)

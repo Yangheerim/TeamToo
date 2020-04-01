@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginBottom="20dp"
+        android:textSize="15dp"
+        android:textColor="@color/black"
+        android:text="과제 수행자 선택"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/dialog_performer_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_select_performer" />
+
+    <Button
+        android:id="@+id/dialog_performer_complete_button"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_margin="20dp"
+        android:layout_gravity="right"
+        android:background="@drawable/button1"
+        android:text="선택 완료"
+        android:textColor="@color/white"/>
+
+</LinearLayout>

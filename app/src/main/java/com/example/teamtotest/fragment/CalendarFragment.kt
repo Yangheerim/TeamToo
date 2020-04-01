@@ -1,6 +1,7 @@
 package com.example.teamtotest.fragment
 
 import android.os.Bundle
+import android.renderscript.Sampler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -26,6 +27,7 @@ class CalendarFragment : Fragment() {
     private var pidList = arrayListOf<String>()
     private var scheduleList = arrayListOf<ScheduleDTO>()
     private lateinit var scheduleDTO: ScheduleDTO
+    private lateinit var dbScheduleEventListener:ValueEventListener
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.fragment_calendar, container, false)
@@ -68,7 +70,7 @@ class CalendarFragment : Fragment() {
     private fun findProjectList(uid : String){
         databaseReference = firebaseDatabase.getReference("ProjectList")
 
-        val dbScheduleEventListener = object : ValueEventListener {
+        dbScheduleEventListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 pidList.clear()
                     for (data in dataSnapshot.children) {   //PID마다 훑기
@@ -91,7 +93,7 @@ class CalendarFragment : Fragment() {
     private fun findScheduleList(){
         databaseReference = firebaseDatabase.getReference("ProjectList")
 
-        val dbScheduleEventListener = object : ValueEventListener {
+        dbScheduleEventListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 scheduleList.clear()
                 for (data in dataSnapshot.children){
@@ -110,5 +112,11 @@ class CalendarFragment : Fragment() {
             }
         }
         databaseReference.addValueEventListener(dbScheduleEventListener)
+    }
+
+    override fun onStop() {
+        databaseReference = firebaseDatabase.getReference("ProjectList")
+        databaseReference.removeEventListener(dbScheduleEventListener)
+        super.onStop()
     }
 }

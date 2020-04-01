@@ -11,12 +11,14 @@ import kotlinx.android.synthetic.main.bottom_navigation_layout.*
 class NavigationbarActivity : AppCompatActivity() {
 
     lateinit var fragment2 : Frag2
+    lateinit var fragment3 : CalendarFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.bottom_navigation_layout)
 
         fragment2= Frag2()
+        fragment3= CalendarFragment()
 
         bottomNavigationView.setOnNavigationItemSelectedListener {
             when (it.itemId) {
@@ -45,7 +47,7 @@ class NavigationbarActivity : AppCompatActivity() {
             }
 
             2 -> {
-                ft.replace(R.id.Main_Frame, CalendarFragment())
+                ft.replace(R.id.Main_Frame, fragment3)
                 ft.commit()
             }
 

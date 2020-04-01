@@ -1,5 +1,7 @@
 package com.example.teamtotest
 
+import android.content.Context
+import android.content.Intent
 import android.util.Log
 import com.example.teamtotest.dto.MembersDTO
 import com.google.firebase.auth.FirebaseAuth
@@ -77,15 +79,18 @@ class Push (val PID: String, private val message: String) {
                 //FMC 메시지 생성 start
                 val root = JSONObject()
                 val notification = JSONObject()
+                val data = JSONObject()
                 val tokenArray = arrayListOf<String>()
 
                 notification.put("title",projectName)
                 notification.put("body", message)
+                data.put("pid", PID)
                 root.put("notification", notification)
                 for (token in tokenList){
                     tokenArray.add(token)
                 }
                 root.put("registration_ids", JSONArray(tokenArray))
+                root.put("data",data)
                 //FMC 메시지 생성 end
 
                 val FCM_MESSAGE_URL = "https://fcm.googleapis.com/fcm/send"

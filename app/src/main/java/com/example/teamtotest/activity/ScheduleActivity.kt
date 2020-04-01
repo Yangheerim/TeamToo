@@ -1,6 +1,7 @@
 package com.example.teamtotest.activity
 
 import android.content.Intent
+import android.net.sip.SipSession
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -21,6 +22,7 @@ class ScheduleActivity : AppCompatActivity() {
     private lateinit var firebaseDatabase: FirebaseDatabase
     private lateinit var databaseReference: DatabaseReference
     private var PID: String? = null
+    private lateinit var dbScheduleEventListener:ValueEventListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +37,7 @@ class ScheduleActivity : AppCompatActivity() {
         firebaseDatabase = FirebaseDatabase.getInstance()
         databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("scheduleList")
 
-        val dbScheduleEventListener = object : ValueEventListener {
+        dbScheduleEventListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 scheduleList.clear()
                 for (data in dataSnapshot.children){
@@ -88,4 +90,9 @@ class ScheduleActivity : AppCompatActivity() {
         }
     }
 
+    override fun onStop() {
+        databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("scheduleList")
+        databaseReference.removeEventListener(dbScheduleEventListener)
+        super.onStop()
+    }
 }
