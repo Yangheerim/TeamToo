@@ -8,13 +8,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.teamtotest.R
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.item_file.view.*
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 class FileAdapter(private var get_fileInfoList : ArrayList<HashMap<String,String>>)//MyAdapter의 constructor
     : RecyclerView.Adapter<FileAdapter.MyViewHolder>() {
 
-
-    private var fileInfoList: ArrayList<HashMap<String, String>> = get_fileInfoList
+    private var fileInfoList: List<HashMap<String, String>> = get_fileInfoList
     private var firebaseAuth = FirebaseAuth.getInstance()
 
     inner class MyViewHolder(v: View) :
@@ -23,7 +25,9 @@ class FileAdapter(private var get_fileInfoList : ArrayList<HashMap<String,String
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder { // create a new view
-
+        get_fileInfoList?.let{
+            fileInfoList = get_fileInfoList.reversed()
+        }
 
         val v = LayoutInflater.from(parent.context)
             .inflate(

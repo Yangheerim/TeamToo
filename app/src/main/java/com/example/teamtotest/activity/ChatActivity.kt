@@ -9,6 +9,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import com.example.teamtotest.MyFirebaseMessagingService
 import com.example.teamtotest.Push
 import com.example.teamtotest.R
 import com.example.teamtotest.adapter.ChatListAdapter
@@ -124,6 +125,8 @@ class ChatActivity : AppCompatActivity() {
                 addMessageInfoToDB()
                 Push(PID.toString(), message.text.toString())
                 message.setText("")
+                val intent = Intent(this, MyFirebaseMessagingService::class.java)
+                startService(intent)
             }
         }
     }

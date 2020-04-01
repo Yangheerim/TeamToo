@@ -62,6 +62,7 @@ class FileActivity : AppCompatActivity(){
 
     private fun recyclerviewInit() {
         file_recycler_view.setHasFixedSize(true)
+
         myAdapter = FileAdapter(fileInfoList)
         file_recycler_view.adapter = myAdapter
     }
@@ -177,7 +178,6 @@ class FileActivity : AppCompatActivity(){
                 )
             }
         }
-
         databaseReference = firebaseDatabase!!.getReference("ProjectList").child(PID.toString()).child("file")
         databaseReference!!.addValueEventListener(listener)
 
