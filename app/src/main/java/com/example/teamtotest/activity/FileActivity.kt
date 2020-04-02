@@ -21,7 +21,6 @@ import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_file.*
 import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.collections.set
@@ -33,7 +32,7 @@ class FileActivity : AppCompatActivity(){
     private var firebaseDatabase: FirebaseDatabase? = null
     private var databaseReference: DatabaseReference? = null
 
-    private val fileInfoList: ArrayList<HashMap<String, Objects>> = arrayListOf()
+    private val fileInfoList: ArrayList<HashMap<String, FileDTO>> = arrayListOf()
 
     private lateinit var listener: ValueEventListener
 
@@ -66,7 +65,7 @@ class FileActivity : AppCompatActivity(){
     private fun recyclerviewInit() {
         file_recycler_view.setHasFixedSize(true)
 
-        myAdapter = FileAdapter(fileInfoList, applicationContext,PID)
+        myAdapter = FileAdapter(fileInfoList, this, PID)
         file_recycler_view.adapter = myAdapter
     }
 
@@ -158,7 +157,7 @@ class FileActivity : AppCompatActivity(){
 
     }
 
-    private fun setListener_FileInfoFromDB(){
+    fun setListener_FileInfoFromDB(){
         listener = object : ValueEventListener {
             @RequiresApi(Build.VERSION_CODES.KITKAT)
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -168,15 +167,14 @@ class FileActivity : AppCompatActivity(){
                     val fileId = snapshot.key
                     val fileDTO: FileDTO = snapshot.getValue(FileDTO::class.java)!!
 
-                    val hashMap = HashMap<String, Objects>()
-                    hashMap["key"] = fileId as Objects
-                    hashMap["DTO"] = fileDTO as Objects
+                    val hashMap = HashMap<String, FileDTO>()
+                    hashMap[fileId.toString()] = fileDTO
 
                     fileInfoList.add(hashMap)
-                    myAdapter.notifyDataSetChanged()
                 }
+                myAdapter.notifyDataSetChanged()
+                Log.e("myAdapter",myAdapter.toString())
             }
-
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.w("FileActivity", "loadPost:onCancelled",
                     databaseError.toException()
