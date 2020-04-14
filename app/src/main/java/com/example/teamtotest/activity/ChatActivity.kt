@@ -26,6 +26,7 @@ class ChatActivity : AppCompatActivity() {
     private var firebaseDatabase: FirebaseDatabase? = null
     private var databaseReference: DatabaseReference? = null
     private var myAdapter: ChatListAdapter? = null
+    val tmp = 3
 
 //    private var drawerFrag = DrawerFragment()
 //    private lateinit var drawerLayout: DrawerLayout
@@ -35,7 +36,6 @@ class ChatActivity : AppCompatActivity() {
     private var projectName : String? = null
     private var howManyMembers : String? = null
     //private var userName: String? = null
-
 
 
     private var ChatMessageList: ArrayList<HashMap<String, String>> = ArrayList<HashMap<String, String>>()
