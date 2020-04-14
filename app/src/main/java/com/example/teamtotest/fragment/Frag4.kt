@@ -22,5 +22,5 @@ class Frag4 : Fragment (){
         //val view = inflater.inflate(R.layout.bottombar_fragment1, null)
         return inflater.inflate(R.layout.bottombar_fragment4, null)
     }
-
+  var adn = 3
 }
