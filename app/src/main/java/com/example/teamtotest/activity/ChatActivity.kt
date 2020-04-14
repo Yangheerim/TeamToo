@@ -9,7 +9,6 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import com.example.teamtotest.MyFirebaseMessagingService
 import com.example.teamtotest.Push
 import com.example.teamtotest.R
 import com.example.teamtotest.adapter.ChatListAdapter
@@ -38,6 +37,7 @@ class ChatActivity : AppCompatActivity() {
     //private var userName: String? = null
 
 
+
     private var ChatMessageList: ArrayList<HashMap<String, String>> = ArrayList<HashMap<String, String>>()
     private var ChatMessageData: HashMap<String, String> = HashMap<String, String>()
 
@@ -48,7 +48,6 @@ class ChatActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
-
         setSupportActionBar(chat_toolbar)   // xml에서 만든 toolbar를 이 activity의 툴바로 설정
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // 뒤로가기 버튼 만들기
 
@@ -125,8 +124,6 @@ class ChatActivity : AppCompatActivity() {
                 addMessageInfoToDB()
                 Push(PID.toString(), message.text.toString())
                 message.setText("")
-                val intent = Intent(this, MyFirebaseMessagingService::class.java)
-                startService(intent)
             }
         }
     }
@@ -198,8 +195,6 @@ class ChatActivity : AppCompatActivity() {
                                     databaseReference!!.removeEventListener(members_listener)
                                     finish()
                                     break
-
-
                                 } else { // 아니라면 memberList에서 내 정보만 삭제
                                     membersDTO.UID_list!!.remove(myUID)
                                     firebaseDatabase!!.getReference("ProjectList").child(PID.toString())
@@ -253,13 +248,13 @@ class ChatActivity : AppCompatActivity() {
                 firebaseAuth!!.currentUser!!.uid,
                 isReadList
             )  // 유저 이름과 메세지로 message data 만들기
-
-        val date_format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        val date = date_format.format(System.currentTimeMillis())
+//        val date_format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val current = Date()
+        val utc = Date(current.time - Calendar.getInstance().timeZone.getOffset(current.time))
 
         databaseReference = firebaseDatabase!!.getReference()
         databaseReference =
-            databaseReference!!.child("ProjectList").child(PID.toString()).child("messageList").child(date)
+            databaseReference!!.child("ProjectList").child(PID.toString()).child("messageList").child(utc.toString())
         databaseReference!!.setValue(messageDTO)
     }
 
@@ -302,7 +297,13 @@ class ChatActivity : AppCompatActivity() {
                 for (snapshot in dataSnapshot.children) {
                     ChatMessageData = HashMap()
 
-                    ChatMessageData["date"] = snapshot.key!!.substring(11, 16)
+                    val utc = Date(snapshot.key)
+                    val date = Date(utc.time + Calendar.getInstance().timeZone.getOffset(utc.time))
+                    Log.e("dateTest", date.toString())
+                    val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                    val date_formatted = dateFormat.format(date)
+
+                    ChatMessageData["date"] = date_formatted.substring(11, 16)
 
                     val messageDTO = snapshot.getValue(MessageDTO::class.java)
                     ChatMessageData["who"] = messageDTO!!.who

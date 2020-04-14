@@ -20,8 +20,7 @@ import java.util.*
 
 class Frag2 : Fragment() {
 
-    private var ProjectInfoList: ArrayList<HashMap<String, String>> =
-        ArrayList<HashMap<String, String>>()
+    private var ProjectInfoList: ArrayList<HashMap<String, String>> = ArrayList<HashMap<String, String>>()
     var myProjectPIDlist: ArrayList<String> = ArrayList<String>()
 
     private lateinit var firebaseAuth: FirebaseAuth
@@ -31,13 +30,19 @@ class Frag2 : Fragment() {
 
     lateinit var mAdapter: ProjectListAdapter
 
+    val testString : String = "AAA"
+
+
     override fun onStart() {
-        super.onStart()
+//        Log.d("here is onStart(Frag2)", testString)
         findMyProjectFromFirebaseDB()
         setListener_DataFromMyProjects()
+        super.onStart()
     }
 
     override fun onStop() {
+//        Log.d("here is onStop(Frag2)", testString)
+        databaseReference = firebaseDatabase.getReference("ProjectList")
         databaseReference.removeEventListener(listener)
         super.onStop()
     }
@@ -99,11 +104,11 @@ class Frag2 : Fragment() {
                 Log.w("ExtraUserInfoActivity", "loadPost:onCancelled", databaseError.toException())
             }
         })
-
     }
 
     private fun setListener_DataFromMyProjects() {
         // private HashMap<String, String> ProjectInfo;
+
         listener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // 각각 프로젝트별로, 멤버중에 나 자신이 있는지 확인.
@@ -114,8 +119,8 @@ class Frag2 : Fragment() {
                     for (i in myProjectPIDlist.indices) {
                         if (myProjectPIDlist.get(i) == snapshot.key) { // 내 프로젝트면 ~
                             val projectInfo = HashMap<String, String>()
-
                             projectInfo["PID"] = snapshot.key.toString()
+//                            Log.e("PID:Frag2", snapshot.key.toString())
                             projectInfo["projectName"] = snapshot.child("projectName").value!!.toString()
 
                             val membersDTO =
@@ -123,41 +128,52 @@ class Frag2 : Fragment() {
                             projectInfo["howManyMembers"] = membersDTO!!.UID_list!!.size.toString()
 
                             val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-                            var date : Date?= null
+                            var date : String?= null
                             var latestmessageDTO : MessageDTO?=null
 
                             for(messageSnapshot : DataSnapshot in snapshot.child("messageList").children){  // 최신메세지 찾기 / 안읽은 메세지 카운트
 //                                Log.d("Date", messageSnapshot.key)
 //                                Toast.makeText(requireActivity(), messageSnapshot.key, Toast.LENGTH_SHORT).show()
-                                var tmp = dateFormat.parse(messageSnapshot.key)
+                                var tmp = messageSnapshot.key.toString()
 //                                Log.e("TAG", tmp.toString())
                                 if(date==null || date < tmp){
                                     date = tmp
 //                                    Log.e("It is latest!", date.toString())
                                 }
-
                                 val messageDTO = messageSnapshot.getValue(MessageDTO::class.java)  // 데이터를 가져와서
                                 if(!messageDTO!!.read!!.contains(myUID)) { // 내 uid가 없으면 count!
                                     readCnt++
+                                    Log.e("isRead count test --->", readCnt.toString())
                                 }
                             }
                             projectInfo["noReadMessageCount"] = readCnt.toString()
-                            readCnt=0
+                            readCnt=0 // 안읽은 메세지 개수 알려주고 다시 초기화~
 
                             for(messageSnapshot : DataSnapshot in snapshot.child("messageList").children){
-                                if(date== dateFormat.parse(messageSnapshot.key)){
+                                if(date== messageSnapshot.key.toString()){
                                     latestmessageDTO = messageSnapshot.getValue(MessageDTO::class.java)!!
                                 }
                             }
                             if(latestmessageDTO!=null){
                                 projectInfo["lastMessage"] = latestmessageDTO!!.message
-                                projectInfo["lastMessageSentTime"] = date.toString().substring(11, 16)
+
+                                val utc : Date = Date(date)
+                                val date_original = Date(utc.time + Calendar.getInstance().timeZone.getOffset(utc.time))
+                                var cal : Calendar = Calendar.getInstance()
+                                cal.time = date_original
+                                if(cal.get(Calendar.DATE)==Calendar.getInstance().get(Calendar.DATE)) { // 오늘 보낸 메세지면 시간을 나타내주고
+                                    val date_formatted = dateFormat.format(date_original)
+                                    projectInfo["lastMessageSentTime"] =
+                                        date_formatted.toString().substring(11, 16)
+                                }else{ // 오늘 보낸 메세지가 아니면 -월-일 이라고 표현.
+                                    projectInfo["lastMessageSentTime"] = ""+(cal.get(Calendar.MONTH)+1)+"월 "+(cal.get(Calendar.DATE))+"일"
+                                }
                             }else{
                                 projectInfo["lastMessage"] = ""
                                 projectInfo["lastMessageSentTime"] = ""
                             }
-
                             ProjectInfoList.add(projectInfo)   // 데이터들을 담아서 list에 넣을 데이터를 담을 infolist에다가 넣는다!
+
                         }
                     }
                 }
@@ -168,6 +184,7 @@ class Frag2 : Fragment() {
                 Log.w("ExtraUserInfoActivity", "loadPost:onCancelled", databaseError.toException())
             }
         }
+
         databaseReference = firebaseDatabase.getReference("ProjectList")
         databaseReference.addValueEventListener(listener)       // Projectlist 경로에 있는 데이터가 뭔가가 바뀌면 알려주는 listener 설정!
     }
