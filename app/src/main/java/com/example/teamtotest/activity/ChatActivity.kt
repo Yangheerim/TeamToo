@@ -27,7 +27,7 @@ class ChatActivity : AppCompatActivity() {
     private var databaseReference: DatabaseReference? = null
     private var myAdapter: ChatListAdapter? = null
     val tmp = 3
-
+    val tmp2 = 5
 //    private var drawerFrag = DrawerFragment()
 //    private lateinit var drawerLayout: DrawerLayout
 //    private lateinit var drawerToggle : ActionBarDrawerToggle
