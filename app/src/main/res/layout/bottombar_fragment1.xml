@@ -2,55 +2,68 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <!-- TODO: Update blank fragment layout -->
 
     <LinearLayout
         android:layout_width="match_parent"
         android:orientation="vertical"
+        android:background="#F6F6F6"
         android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/button5">
+            </LinearLayout>
         <LinearLayout
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="20dp"
             android:layout_width="match_parent"
             android:orientation="vertical"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:background="@drawable/border_layout">
+            android:background="@drawable/button5">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="20dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/black"
+                android:textSize="10dp"
                 android:text="할일리스트"></TextView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/dashboard_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_todo_dashboard" />
         </LinearLayout>
+
         <LinearLayout
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:layout_marginTop="30dp"
+            android:layout_margin="20dp"
             android:layout_width="match_parent"
             android:orientation="vertical"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:background="@drawable/border_layout">
+            android:background="@drawable/button5">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:text="스케줄"></TextView>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_margin="30dp"
-            android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@drawable/border_layout">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/black"
+                android:textSize="10dp"
                 android:text="신규 파일"></TextView>
         </LinearLayout>
 
