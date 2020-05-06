@@ -19,7 +19,6 @@ class TodoActivity : AppCompatActivity() {
     private lateinit var firebaseDatabase: FirebaseDatabase
     private lateinit var databaseReference: DatabaseReference
     private var PID: String? = null
-    private lateinit var dbTodoEventListener:ValueEventListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +33,7 @@ class TodoActivity : AppCompatActivity() {
         firebaseDatabase = FirebaseDatabase.getInstance()
         databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("todoList")
 
-        dbTodoEventListener = object : ValueEventListener {
+        val dbTodoEventListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 todoList.clear()
                 for (data in dataSnapshot.children){
@@ -82,11 +81,5 @@ class TodoActivity : AppCompatActivity() {
             tv_todo.visibility = View.INVISIBLE
             rv_todo.visibility = View.VISIBLE
         }
-    }
-
-    override fun onStop() {
-        databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("todoList")
-        databaseReference.removeEventListener(dbTodoEventListener)
-        super.onStop()
     }
 }

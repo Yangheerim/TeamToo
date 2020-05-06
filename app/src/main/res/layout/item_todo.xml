@@ -1,31 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="50dp"
+    android:orientation="horizontal"
+    android:background="@drawable/button5"
+    android:layout_marginTop="8dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_margin="8dp">
+    <TextView
+        android:id="@+id/todo_tv_d-day"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        android:text="D-day"/>
 
-        <TextView
-            android:id="@+id/todo_tv_d-day"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="16sp"/>
-
-        <TextView
-            android:id="@+id/todo_tv_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="4"
-            android:padding="1dp"
-            android:textSize="16sp" />
-
-    </LinearLayout>
+    <TextView
+        android:id="@+id/todo_tv_name"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="4"
+        android:gravity="left|center"
+        android:paddingLeft="15dp"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        android:text="할일명"/>
+    <TextView
+        android:layout_margin="10dp"
+        android:id="@+id/todo_performers"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:textSize="12dp"
+        android:textColor="@color/black"
+        android:background="@drawable/user_circle_form"
+        android:text=""/>
+    <TextView
+        android:id="@+id/todo_performer_extra"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textSize="12dp"
+        android:textColor="@color/black"/>
 
 
 </LinearLayout>
