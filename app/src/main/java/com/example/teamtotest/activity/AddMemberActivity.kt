@@ -9,10 +9,14 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.teamtotest.R
 import com.example.teamtotest.adapter.MemberListAdapter2
 import com.example.teamtotest.dto.MembersDTO
+import com.example.teamtotest.dto.MessageDTO
 import com.example.teamtotest.dto.UserDTO
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_add_member.*
+import kotlinx.android.synthetic.main.activity_chat.*
 import java.util.*
+import java.util.Collections.list
+import kotlin.collections.ArrayList
 
 class AddMemberActivity : AppCompatActivity() {
     private var memberNameList = ArrayList<String>()    // 팀원들의 이름을 저장
@@ -93,10 +97,32 @@ class AddMemberActivity : AppCompatActivity() {
             else -> {
                 val membersDTO = MembersDTO(memberUIDList)
                 databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("members")
-                databaseReference.setValue(membersDTO)  // 덮어쓰기 가능,,,?
+                databaseReference.setValue(membersDTO)
+                addMessageNotificationToDB()
 
                 finish()   // 현재 액티비티(팀원추가) 종료
             }
+        }
+    }
+
+    private fun addMessageNotificationToDB() {
+        val new_member_count :Int = memberUIDList.size - theNumberOfOriginMembers
+        for (i in (theNumberOfOriginMembers-1)..(theNumberOfOriginMembers+new_member_count-1)) {
+            val messageDTO =
+                MessageDTO(
+                    memberNameList[i].toString()+"님이 입장하셨습니다.",
+                    "",
+                    "",
+                    ArrayList<String>()
+                )
+            val current = Date()
+            val utc = Date(current.time - Calendar.getInstance().timeZone.getOffset(current.time))
+
+            databaseReference = firebaseDatabase!!.getReference()
+            databaseReference =
+                databaseReference!!.child("ProjectList").child(PID.toString()).child("messageList")
+                    .child(utc.toString())
+            databaseReference!!.setValue(messageDTO)
         }
     }
 
@@ -128,10 +154,10 @@ class AddMemberActivity : AppCompatActivity() {
     }
 
     private fun isTheUserAlreadyAdded(): Boolean {
-        Log.d("지금 확인중인 user UID->", UserUIDList[index])
-        Log.d("index ->", index.toString() + "")
+//        Log.d("지금 확인중인 user UID->", UserUIDList[index])
+//        Log.d("index ->", index.toString() + "")
         for (i in memberUIDList.indices) {
-            Log.d("이미 등록된 팀원->", memberUIDList[i])
+//            Log.d("이미 등록된 팀원->", memberUIDList[i])
             if (memberUIDList[i] == UserUIDList[index]) {
                 return true
             }
@@ -193,8 +219,8 @@ class AddMemberActivity : AppCompatActivity() {
                 for (i in UserIdList.indices) {
                     //Log.d("저장된userlist ---> ", UserIdList.get(i));
                     if (UserIdList[i] == inputID) { // 입력한 id를 가진 user를 찾으면
-                        Log.e("FIND THIS ID!! ---> ", inputID)
-                        Log.e("index ---> ", index.toString() + "")
+//                        Log.e("FIND THIS ID!! ---> ", inputID)
+//                        Log.e("index ---> ", index.toString() + "")
                         add_member_userInfo.text = "" + UserNameList[i] + " / " + UserIdList[i]
                         add_member_add_members_text.visibility = View.VISIBLE  // 추가기능 활성화
                         index =i // user의 UID와 name이 담긴 index 저장해두기. --> 나중에 DB에 데이터 넣을때랑, 동그라미이름으로 보여줄 때 사용

@@ -268,7 +268,7 @@ class ChatActivity : AppCompatActivity() {
                     val messageDTO = snapshot.getValue(MessageDTO::class.java)  // 데이터를 가져와서
                     if (!messageDTO!!.read!!.contains(myUID)) { // 내 uid가 없으면! 추가해준당
                         messageDTO!!.read!!.add(myUID)
-                        Log.d("Add complete!! ----> ", myUID)
+//                        Log.d("Add complete!! ----> ", myUID)
                         databaseReference =
                             firebaseDatabase!!.getReference("ProjectList").child(PID.toString())
                                 .child("messageList").child(snapshot.key.toString())
@@ -299,7 +299,7 @@ class ChatActivity : AppCompatActivity() {
 
                     val utc = Date(snapshot.key)
                     val date = Date(utc.time + Calendar.getInstance().timeZone.getOffset(utc.time))
-                    Log.e("dateTest", date.toString())
+//                    Log.e("dateTest", date.toString())
                     val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
                     val date_formatted = dateFormat.format(date)
 
