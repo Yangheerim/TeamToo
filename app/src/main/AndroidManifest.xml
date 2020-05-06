@@ -12,14 +12,16 @@
         android:roundIcon="@mipmap/ic_launcher_tt_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
+        <activity android:name=".activity.AnnounceActivity"></activity>
+        <activity android:name=".activity.MyInfoActivity" />
         <activity android:name=".activity.FileActivity" />
         <activity android:name=".activity.FinalTestActivity" />
         <activity android:name=".activity.ChatActivity" />
         <activity android:name=".activity.AddProjectActivity" />
         <activity android:name=".activity.ExtraUserInfoActivity" />
-        <activity android:name=".activity.LoginActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.LoginActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".activity.NavigationbarActivity" />
         <activity android:name=".activity.AddScheduleActivity" />
         <activity android:name=".activity.AddTodoActivity" />
