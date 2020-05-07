@@ -26,17 +26,10 @@ class ChatActivity : AppCompatActivity() {
     private var firebaseDatabase: FirebaseDatabase? = null
     private var databaseReference: DatabaseReference? = null
     private var myAdapter: ChatListAdapter? = null
-    val tmp = 3
-    val tmp2 = 5
-//    private var drawerFrag = DrawerFragment()
-//    private lateinit var drawerLayout: DrawerLayout
-//    private lateinit var drawerToggle : ActionBarDrawerToggle
 
     private var PID : String? = null
     private var projectName : String? = null
     private var howManyMembers : String? = null
-    //private var userName: String? = null
-
 
     private var ChatMessageList: ArrayList<HashMap<String, String>> = ArrayList<HashMap<String, String>>()
     private var ChatMessageData: HashMap<String, String> = HashMap<String, String>()
