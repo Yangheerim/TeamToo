@@ -195,16 +195,6 @@ class ChatActivity : AppCompatActivity() {
                                 }
                             }
                             if (snapshot.key == "messageList") {
-//                        for(messageSnapshot in snapshot.children){  // 내가 보낸 메세지들의 보낸사람 이름을 알수없음으로
-//                            val messageDTOtoRemove: MessageDTO? = messageSnapshot.getValue(MessageDTO::class.java)
-//                            if(messageDTOtoRemove!!.userUID == myUID){
-//                                databaseReference!!.child("messageList").child(messageSnapshot.key.toString()).removeValue().addOnSuccessListener {
-//                                    Toast.makeText(this@ChatActivity, "messageList에서 삭제완료!", Toast.LENGTH_SHORT).show()
-//                                }.addOnFailureListener{
-//                                    Toast.makeText(this@ChatActivity, "messageList에서 삭제실패..", Toast.LENGTH_SHORT).show()
-//                                }
-//                            }
-//                        }
                                 for (messageSnapshot in snapshot.children) {// 읽은 사람 목록에서 나 삭제
                                     val messageDTOtoRemove: MessageDTO? =
                                         messageSnapshot.getValue(MessageDTO::class.java)
@@ -222,6 +212,24 @@ class ChatActivity : AppCompatActivity() {
                         Log.w("ExtraUserInfoActivity", "loadPost:onCancelled", databaseError.toException())
                     }
                 })
+
+                // 퇴장 메세지 저장
+                val messageDTO =
+                    MessageDTO(
+                        firebaseAuth!!.currentUser!!.displayName+"님이 퇴장하셨습니다.",
+                        "",
+                        "",
+                        ArrayList<String>()
+                    )
+                val current = Date()
+                val utc = Date(current.time - Calendar.getInstance().timeZone.getOffset(current.time))
+
+                databaseReference = firebaseDatabase!!.getReference()
+                databaseReference =
+                    databaseReference!!.child("ProjectList").child(PID.toString()).child("messageList").child(utc.toString())
+                databaseReference!!.setValue(messageDTO)
+
+
                 onStop()
                 finish()
             })
