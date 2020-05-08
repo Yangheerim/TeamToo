@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.INVISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.teamtotest.R
@@ -14,6 +15,7 @@ import com.example.teamtotest.dto.MembersDTO
 import com.example.teamtotest.dto.MessageDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import kotlinx.android.synthetic.main.bottombar_fragment2.*
 import kotlinx.android.synthetic.main.bottombar_fragment2.view.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -34,14 +36,13 @@ class Frag2 : Fragment() {
 
 
     override fun onStart() {
-//        Log.d("here is onStart(Frag2)", testString)
+        frag2_loadingCircle.visibility = View.VISIBLE
         findMyProjectFromFirebaseDB()
         setListener_DataFromMyProjects()
         super.onStart()
     }
 
     override fun onStop() {
-//        Log.d("here is onStop(Frag2)", testString)
         databaseReference = firebaseDatabase.getReference("ProjectList")
         databaseReference.removeEventListener(listener)
         super.onStop()
@@ -178,6 +179,7 @@ class Frag2 : Fragment() {
                     }
                 }
                 mAdapter.notifyDataSetChanged()
+                frag2_loadingCircle.visibility = View.INVISIBLE
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
