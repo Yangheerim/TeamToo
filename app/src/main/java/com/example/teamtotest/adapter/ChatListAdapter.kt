@@ -10,6 +10,7 @@ import com.example.teamtotest.R
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.item_chat_list1.view.*
 import kotlinx.android.synthetic.main.item_chat_list2.view.*
+import kotlinx.android.synthetic.main.item_chat_notification.view.*
 import java.util.*
 
 class ChatListAdapter(var ChatMessage : ArrayList<HashMap<String,String>>)//MyAdapter의 constructor
@@ -27,6 +28,9 @@ class ChatListAdapter(var ChatMessage : ArrayList<HashMap<String,String>>)//MyAd
     }
 
     override fun getItemViewType(position: Int): Int {
+        if(ChatMessageList!![position]["who"]=="")
+            return 3;
+
         val userUID = ChatMessageList!![position]["userUID"]
         return if (firebaseAuth.currentUser!!.uid == userUID) { //** 이거 UID로 비교하는걸로 바꿔야함
             2
@@ -43,6 +47,8 @@ class ChatListAdapter(var ChatMessage : ArrayList<HashMap<String,String>>)//MyAd
             layoutId = R.layout.item_chat_list1
         } else if (viewType == 2) {  // 나일때
             layoutId = R.layout.item_chat_list2
+        } else if (viewType == 3) {  // 나일때
+            layoutId = R.layout.item_chat_notification
         } else {
             Log.d("View type 오류 : ", viewType.toString() + "")
         }
@@ -77,7 +83,9 @@ class ChatListAdapter(var ChatMessage : ArrayList<HashMap<String,String>>)//MyAd
                 holder.itemView.chat_list_format2_isRead.text = ChatMessageList!!.get(position)["isRead"]
                 holder.itemView.chat_list_format2_isRead.visibility = View.VISIBLE
             }
-        } else {
+        } else if (viewType == 3) {  // 나일때
+            holder.itemView.item_notify.text = ChatMessageList!!.get(position)["message"]
+        }else {
             Log.d("View type 오류 : ", viewType.toString() + "")
         }
     }

@@ -31,12 +31,15 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        login_firstScreen.visibility = View.VISIBLE
+
         // 파이어베이스 인증 객체 선언
         firebaseAuth = FirebaseAuth.getInstance()
 
         // 파이어베이스 DB 객체 선언
         firebaseDatabase = FirebaseDatabase.getInstance()
         databaseReference = firebaseDatabase.reference
+
 
         init()
     }
@@ -51,6 +54,8 @@ class LoginActivity : AppCompatActivity() {
         //signOut() //-> 이렇게 할 경우, 앱을 종료할 때마다 자동 로그아웃---> 아니야 !!! 메인에서 해야해,,,,
         super.onStop()
     }
+
+
 
     private fun init() {
         // Google Sign In Client를 초기화
@@ -68,11 +73,9 @@ class LoginActivity : AppCompatActivity() {
         mListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
             // **중요** 이미 로그인 되어있는 상태라면, 바로 메인 화면으로 전환~
             if (firebaseAuth.currentUser != null) {
-//                Toast.makeText(this, "Welcome", Toast.LENGTH_SHORT).show()
-//                startActivity(Intent(this, NavigationbarActivity::class.java))
-//                finish()
+
                 isFirstLogin()
-//                finish()
+
             }
         }
     }
@@ -131,6 +134,7 @@ class LoginActivity : AppCompatActivity() {
                         )    // 메인화면으로 이동
                         finish()
                     } else {
+                        login_firstScreen.visibility = View.INVISIBLE
                         Toast.makeText(this@LoginActivity, "최초로그인입니다.", Toast.LENGTH_SHORT).show()
                         startActivity(
                             Intent(

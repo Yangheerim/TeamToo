@@ -26,17 +26,10 @@ class ChatActivity : AppCompatActivity() {
     private var firebaseDatabase: FirebaseDatabase? = null
     private var databaseReference: DatabaseReference? = null
     private var myAdapter: ChatListAdapter? = null
-    val tmp = 3
-    val tmp2 = 5
-//    private var drawerFrag = DrawerFragment()
-//    private lateinit var drawerLayout: DrawerLayout
-//    private lateinit var drawerToggle : ActionBarDrawerToggle
 
     private var PID : String? = null
     private var projectName : String? = null
     private var howManyMembers : String? = null
-    //private var userName: String? = null
-
 
     private var ChatMessageList: ArrayList<HashMap<String, String>> = ArrayList<HashMap<String, String>>()
     private var ChatMessageData: HashMap<String, String> = HashMap<String, String>()
@@ -202,16 +195,6 @@ class ChatActivity : AppCompatActivity() {
                                 }
                             }
                             if (snapshot.key == "messageList") {
-//                        for(messageSnapshot in snapshot.children){  // 내가 보낸 메세지들의 보낸사람 이름을 알수없음으로
-//                            val messageDTOtoRemove: MessageDTO? = messageSnapshot.getValue(MessageDTO::class.java)
-//                            if(messageDTOtoRemove!!.userUID == myUID){
-//                                databaseReference!!.child("messageList").child(messageSnapshot.key.toString()).removeValue().addOnSuccessListener {
-//                                    Toast.makeText(this@ChatActivity, "messageList에서 삭제완료!", Toast.LENGTH_SHORT).show()
-//                                }.addOnFailureListener{
-//                                    Toast.makeText(this@ChatActivity, "messageList에서 삭제실패..", Toast.LENGTH_SHORT).show()
-//                                }
-//                            }
-//                        }
                                 for (messageSnapshot in snapshot.children) {// 읽은 사람 목록에서 나 삭제
                                     val messageDTOtoRemove: MessageDTO? =
                                         messageSnapshot.getValue(MessageDTO::class.java)
@@ -229,6 +212,24 @@ class ChatActivity : AppCompatActivity() {
                         Log.w("ExtraUserInfoActivity", "loadPost:onCancelled", databaseError.toException())
                     }
                 })
+
+                // 퇴장 메세지 저장
+                val messageDTO =
+                    MessageDTO(
+                        firebaseAuth!!.currentUser!!.displayName+"님이 퇴장하셨습니다.",
+                        "",
+                        "",
+                        ArrayList<String>()
+                    )
+                val current = Date()
+                val utc = Date(current.time - Calendar.getInstance().timeZone.getOffset(current.time))
+
+                databaseReference = firebaseDatabase!!.getReference()
+                databaseReference =
+                    databaseReference!!.child("ProjectList").child(PID.toString()).child("messageList").child(utc.toString())
+                databaseReference!!.setValue(messageDTO)
+
+
                 onStop()
                 finish()
             })
@@ -268,7 +269,7 @@ class ChatActivity : AppCompatActivity() {
                     val messageDTO = snapshot.getValue(MessageDTO::class.java)  // 데이터를 가져와서
                     if (!messageDTO!!.read!!.contains(myUID)) { // 내 uid가 없으면! 추가해준당
                         messageDTO!!.read!!.add(myUID)
-                        Log.d("Add complete!! ----> ", myUID)
+//                        Log.d("Add complete!! ----> ", myUID)
                         databaseReference =
                             firebaseDatabase!!.getReference("ProjectList").child(PID.toString())
                                 .child("messageList").child(snapshot.key.toString())
@@ -299,7 +300,7 @@ class ChatActivity : AppCompatActivity() {
 
                     val utc = Date(snapshot.key)
                     val date = Date(utc.time + Calendar.getInstance().timeZone.getOffset(utc.time))
-                    Log.e("dateTest", date.toString())
+//                    Log.e("dateTest", date.toString())
                     val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
                     val date_formatted = dateFormat.format(date)
 
