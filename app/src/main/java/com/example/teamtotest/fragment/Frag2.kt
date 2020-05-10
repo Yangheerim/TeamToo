@@ -121,51 +121,53 @@ class Frag2 : Fragment() {
                         if (myProjectPIDlist.get(i) == snapshot.key) { // 내 프로젝트면 ~
                             val projectInfo = HashMap<String, String>()
                             projectInfo["PID"] = snapshot.key.toString()
-//                            Log.e("PID:Frag2", snapshot.key.toString())
                             projectInfo["projectName"] = snapshot.child("projectName").value!!.toString()
 
-                            val membersDTO =
-                                snapshot.child("members").getValue(MembersDTO::class.java)
+                            val membersDTO = snapshot.child("members").getValue(MembersDTO::class.java)
                             projectInfo["howManyMembers"] = membersDTO!!.UID_list!!.size.toString()
 
-                            val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+
+                            val dateFormat = SimpleDateFormat("yyyyMMddHHmmss")
+//                            val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
                             var date : String?= null
                             var latestmessageDTO : MessageDTO?=null
+                            var date_formatted :String ?= null
+                            var latest_date_original :Date ?= null
 
                             for(messageSnapshot : DataSnapshot in snapshot.child("messageList").children){  // 최신메세지 찾기 / 안읽은 메세지 카운트
-//                                Log.d("Date", messageSnapshot.key)
-//                                Toast.makeText(requireActivity(), messageSnapshot.key, Toast.LENGTH_SHORT).show()
-                                var tmp = messageSnapshot.key.toString()
-//                                Log.e("TAG", tmp.toString())
-                                if(date==null || date < tmp){
-                                    date = tmp
-//                                    Log.e("It is latest!", date.toString())
+                                val utc = Date(messageSnapshot.key)
+                                val date_original = Date(utc.time + Calendar.getInstance().timeZone.getOffset(utc.time))
+                                date_formatted = dateFormat.format(date_original)
+
+//                                var tmp = messageSnapshot.key.toString()
+                                if(date==null || date < date_formatted){
+
+                                    date = date_formatted
+                                    latest_date_original = date_original
+                                    latestmessageDTO = messageSnapshot.getValue(MessageDTO::class.java)!!
                                 }
                                 val messageDTO = messageSnapshot.getValue(MessageDTO::class.java)  // 데이터를 가져와서
                                 if(!messageDTO!!.read!!.contains(myUID)) { // 내 uid가 없으면 count!
                                     readCnt++
-                                    Log.e("isRead count test --->", readCnt.toString())
                                 }
                             }
                             projectInfo["noReadMessageCount"] = readCnt.toString()
                             readCnt=0 // 안읽은 메세지 개수 알려주고 다시 초기화~
 
-                            for(messageSnapshot : DataSnapshot in snapshot.child("messageList").children){
-                                if(date== messageSnapshot.key.toString()){
-                                    latestmessageDTO = messageSnapshot.getValue(MessageDTO::class.java)!!
-                                }
-                            }
+//                            for(messageSnapshot : DataSnapshot in snapshot.child("messageList").children){
+//                                if(date == messageSnapshot.key.toString()){
+//                                    latestmessageDTO = messageSnapshot.getValue(MessageDTO::class.java)!!
+//                                }
+//                            }
                             if(latestmessageDTO!=null){
                                 projectInfo["lastMessage"] = latestmessageDTO!!.message
 
-                                val utc : Date = Date(date)
-                                val date_original = Date(utc.time + Calendar.getInstance().timeZone.getOffset(utc.time))
                                 var cal : Calendar = Calendar.getInstance()
-                                cal.time = date_original
+                                cal.time = latest_date_original
+
                                 if(cal.get(Calendar.DATE)==Calendar.getInstance().get(Calendar.DATE)) { // 오늘 보낸 메세지면 시간을 나타내주고
-                                    val date_formatted = dateFormat.format(date_original)
-                                    projectInfo["lastMessageSentTime"] =
-                                        date_formatted.toString().substring(11, 16)
+                                    val date_formatted = dateFormat.format(latest_date_original)
+                                    projectInfo["lastMessageSentTime"] = date_formatted.substring(8, 10)+":"+ date_formatted.substring(10, 12)
                                 }else{ // 오늘 보낸 메세지가 아니면 -월-일 이라고 표현.
                                     projectInfo["lastMessageSentTime"] = ""+(cal.get(Calendar.MONTH)+1)+"월 "+(cal.get(Calendar.DATE))+"일"
                                 }

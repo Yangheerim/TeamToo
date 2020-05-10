@@ -11,11 +11,12 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.item_chat_list1.view.*
 import kotlinx.android.synthetic.main.item_chat_list2.view.*
 import kotlinx.android.synthetic.main.item_chat_notification.view.*
+import java.text.SimpleDateFormat
 import java.util.*
 
-class ChatListAdapter(var ChatMessage : ArrayList<HashMap<String,String>>)//MyAdapter의 constructor
-    : RecyclerView.Adapter<ChatListAdapter.MyViewHolder>() {
 
+class ChatListAdapter(var ChatMessage : ArrayList<HashMap<String,String>>) //MyAdapter의 constructor
+    : RecyclerView.Adapter<ChatListAdapter.MyViewHolder>() {
 
     private var ChatMessageList: ArrayList<java.util.HashMap<String, String>>?=null
     private var firebaseAuth = FirebaseAuth.getInstance()
@@ -25,6 +26,7 @@ class ChatListAdapter(var ChatMessage : ArrayList<HashMap<String,String>>)//MyAd
 
     init {
         this.ChatMessageList = ChatMessage
+
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -64,7 +66,8 @@ class ChatListAdapter(var ChatMessage : ArrayList<HashMap<String,String>>)//MyAd
         val viewType = getItemViewType(position)
 
         if (viewType == 1) {    // 남일때
-            holder.itemView.message_sent_time1.text = ChatMessageList!!.get(position)["date"]
+            val tmpDate :String = ChatMessageList!![position]["date"]!!
+            holder.itemView.message_sent_time1.text = tmpDate.substring(8, 10)+":"+ tmpDate.substring(10, 12)
             holder.itemView.member_name1.text = ChatMessageList!!.get(position)["who"]
             holder.itemView.message1.text = ChatMessageList!!.get(position)["message"]
             if(ChatMessageList!!.get(position)["isRead"]=="0") {
@@ -74,7 +77,8 @@ class ChatListAdapter(var ChatMessage : ArrayList<HashMap<String,String>>)//MyAd
                 holder.itemView.chat_list_format_isRead.visibility = View.VISIBLE
             }
         } else if (viewType == 2) {  // 나일때
-            holder.itemView.message_sent_time2.text = ChatMessageList!!.get(position)["date"]
+            val tmpDate :String = ChatMessageList!![position]["date"]!!
+            holder.itemView.message_sent_time2.text = tmpDate.substring(8, 10)+":"+ tmpDate.substring(10, 12)
             holder.itemView.member_name2.text = ChatMessageList!!.get(position)["who"]
             holder.itemView.message2.text = ChatMessageList!!.get(position)["message"]
             if(ChatMessageList!!.get(position)["isRead"]=="0") {
@@ -83,7 +87,7 @@ class ChatListAdapter(var ChatMessage : ArrayList<HashMap<String,String>>)//MyAd
                 holder.itemView.chat_list_format2_isRead.text = ChatMessageList!!.get(position)["isRead"]
                 holder.itemView.chat_list_format2_isRead.visibility = View.VISIBLE
             }
-        } else if (viewType == 3) {  // 나일때
+        } else if (viewType == 3) { // 들어왔을때, 나갔을때 알림메세지
             holder.itemView.item_notify.text = ChatMessageList!!.get(position)["message"]
         }else {
             Log.d("View type 오류 : ", viewType.toString() + "")
