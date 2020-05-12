@@ -34,6 +34,7 @@ class ChatActivity : AppCompatActivity() {
     private var ChatMessageList: ArrayList<HashMap<String, String>> = ArrayList<HashMap<String, String>>()
     private var ChatMessageData: HashMap<String, String> = HashMap<String, String>()
 
+    val dateFormat = SimpleDateFormat("yyyyMMddHHmmss")
 
     private lateinit var dbMessageeventListener : ValueEventListener
     private lateinit var members_listener: ValueEventListener
@@ -252,9 +253,14 @@ class ChatActivity : AppCompatActivity() {
 //        val date_format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         val current = Date()
         val utc = Date(current.time - Calendar.getInstance().timeZone.getOffset(current.time))
+
+        val date_formatted = dateFormat.format(utc)
+
         databaseReference = firebaseDatabase!!.getReference()
         databaseReference =
-            databaseReference!!.child("ProjectList").child(PID.toString()).child("messageList").child(utc.toString())
+            databaseReference!!.child("ProjectList").child(PID.toString()).child("messageList").child(date_formatted)
+        Log.e("Time Testing--->", date_formatted)
+
         databaseReference!!.setValue(messageDTO)
     }
 
@@ -296,11 +302,8 @@ class ChatActivity : AppCompatActivity() {
                 // list를 보여주기 위해 db에서 데이터를 받아 adapter에 데이터 전달
                 for (snapshot in dataSnapshot.children) {
                     ChatMessageData = HashMap()
-
-                    val utc = Date(snapshot.key)
+                    var utc : Date = dateFormat.parse(snapshot.key)
                     val date = Date(utc.time + Calendar.getInstance().timeZone.getOffset(utc.time))
-//                    val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-                    val dateFormat = SimpleDateFormat("yyyyMMddHHmmss")
                     val date_formatted = dateFormat.format(date)
                     ChatMessageData["date"] = date_formatted
 
@@ -312,7 +315,7 @@ class ChatActivity : AppCompatActivity() {
                     ChatMessageList.add(ChatMessageData)
                     chatList_recycler_view.scrollToPosition(ChatMessageList.size-1); // 메세지리스트의 가장 밑으로 스크롤바 위치조정! 꺄
                 }
-                mergeSort(ChatMessageList!!)
+//                mergeSort(ChatMessageList!!)
                 myAdapter!!.notifyDataSetChanged()
             }
 
@@ -350,47 +353,48 @@ class ChatActivity : AppCompatActivity() {
         return tmpDate.toLong()
     }
 
-    fun mergeSort(arr: ArrayList<java.util.HashMap<String, String>>) {
-        sort(arr, 0, arr.size)
-//        Log.e("Size---->", (arr.size-1).toString())
-        ChatMessageList = arr
-    }
-
-    private fun sort(arr: ArrayList<java.util.HashMap<String, String>>, low: Int, high: Int) {
-        if (high - low < 2) {
-            return
-        }
-        val mid = (low + high) / 2
-        sort(arr, 0, mid)
-        sort(arr, mid, high)
-        merge(arr, low, mid, high)
-//        Log.e("Sorting---->", arr.toString())
-    }
-
-    private fun merge(arr: ArrayList<HashMap<String, String>>, low: Int, mid: Int, high: Int) {
-        val temp = ArrayList<HashMap<String, String>>()
-//        Log.e("merging---->", (high - low).toString())
-        var t = 0
-        var l = low
-        var h = mid
-        while (l < mid && h < high) {
-            if (detectDate(arr[l]) < detectDate(arr[h])) {
-                temp.add(arr[l++])
-            } else {
-                temp.add(arr[h++])
-            }
-        }
-        while (l < mid) {
-            temp.add(arr[l++])
-        }
-        while (h < high) {
-            temp.add(arr[h++])
-        }
-        for (i in low until high) {
-            arr[i] = temp[i - low]
-        }
-
-    }
+//     소팅 안하고, DB에 오름차순으로 올라가도록 세팅. 혹시모르니 코드는 안지우고 주석처리 해둠.  -----------------------------------------------
+//    fun mergeSort(arr: ArrayList<java.util.HashMap<String, String>>) {
+//        sort(arr, 0, arr.size)
+////        Log.e("Size---->", (arr.size-1).toString())
+//        ChatMessageList = arr
+//    }
+//
+//    private fun sort(arr: ArrayList<java.util.HashMap<String, String>>, low: Int, high: Int) {
+//        if (high - low < 2) {
+//            return
+//        }
+//        val mid = (low + high) / 2
+//        sort(arr, 0, mid)
+//        sort(arr, mid, high)
+//        merge(arr, low, mid, high)
+////        Log.e("Sorting---->", arr.toString())
+//    }
+//
+//    private fun merge(arr: ArrayList<HashMap<String, String>>, low: Int, mid: Int, high: Int) {
+//        val temp = ArrayList<HashMap<String, String>>()
+////        Log.e("merging---->", (high - low).toString())
+//        var t = 0
+//        var l = low
+//        var h = mid
+//        while (l < mid && h < high) {
+//            if (detectDate(arr[l]) < detectDate(arr[h])) {
+//                temp.add(arr[l++])
+//            } else {
+//                temp.add(arr[h++])
+//            }
+//        }
+//        while (l < mid) {
+//            temp.add(arr[l++])
+//        }
+//        while (h < high) {
+//            temp.add(arr[h++])
+//        }
+//        for (i in low until high) {
+//            arr[i] = temp[i - low]
+//        }
+//
+//    }
 
 }
 
