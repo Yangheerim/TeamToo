@@ -135,7 +135,8 @@ class Frag2 : Fragment() {
                             var latest_date_original :Date ?= null
 
                             for(messageSnapshot : DataSnapshot in snapshot.child("messageList").children){  // 최신메세지 찾기 / 안읽은 메세지 카운트
-                                val utc = Date(messageSnapshot.key)
+
+                                val utc = dateFormat.parse(messageSnapshot.key)
                                 val date_original = Date(utc.time + Calendar.getInstance().timeZone.getOffset(utc.time))
                                 date_formatted = dateFormat.format(date_original)
 
