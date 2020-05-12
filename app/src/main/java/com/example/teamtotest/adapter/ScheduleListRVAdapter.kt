@@ -24,7 +24,7 @@ class ScheduleListRVAdapter(var scheduleList: ArrayList<ScheduleDTO>?) :
 
     override fun onBindViewHolder(holder: ViewHolderHelper, position: Int) {
         holder.itemView.schedule_tv_list.text = scheduleList!![position].name
-        holder.itemView.imageView.setColorFilter(scheduleList!![position].color)
+        holder.itemView.schedule_color.setColorFilter(scheduleList!![position].color)
     }
 
 }

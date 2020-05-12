@@ -6,9 +6,9 @@
     android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/announce_toolbar"
+        android:id="@+id/version_info_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
-        app:title="공지사항"/>
+        app:title="버전정보"/>
 
 </LinearLayout>

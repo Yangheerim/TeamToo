@@ -73,9 +73,11 @@ class LoginActivity : AppCompatActivity() {
         mListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
             // **중요** 이미 로그인 되어있는 상태라면, 바로 메인 화면으로 전환~
             if (firebaseAuth.currentUser != null) {
-
                 isFirstLogin()
-
+                Log.d("First?---->", firebaseAuth.currentUser.toString())
+            }else{
+                login_firstScreen.visibility = View.GONE
+                Log.d("First?---->", firebaseAuth.currentUser.toString())
             }
         }
     }
@@ -134,7 +136,6 @@ class LoginActivity : AppCompatActivity() {
                         )    // 메인화면으로 이동
                         finish()
                     } else {
-                        login_firstScreen.visibility = View.INVISIBLE
                         Toast.makeText(this@LoginActivity, "최초로그인입니다.", Toast.LENGTH_SHORT).show()
                         startActivity(
                             Intent(
@@ -152,19 +153,5 @@ class LoginActivity : AppCompatActivity() {
             }
         )
     }
-
-
-    private fun handleSignInResult(result: GoogleSignInResult) {
-
-        if (result.isSuccess) {
-            val acct = result.signInAccount
-
-            Log.i(TAG, "email:" + acct!!.email!!)
-            Log.i(TAG, "id:" + acct.id!!)
-            Log.i(TAG, "profile:" + acct.photoUrl!!)
-            Log.i(TAG, "DispName > " + acct.displayName!!)
-        }
-    }
-
 
 }

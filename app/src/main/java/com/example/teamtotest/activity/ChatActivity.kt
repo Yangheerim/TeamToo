@@ -252,7 +252,6 @@ class ChatActivity : AppCompatActivity() {
 //        val date_format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         val current = Date()
         val utc = Date(current.time - Calendar.getInstance().timeZone.getOffset(current.time))
-
         databaseReference = firebaseDatabase!!.getReference()
         databaseReference =
             databaseReference!!.child("ProjectList").child(PID.toString()).child("messageList").child(utc.toString())
@@ -300,24 +299,21 @@ class ChatActivity : AppCompatActivity() {
 
                     val utc = Date(snapshot.key)
                     val date = Date(utc.time + Calendar.getInstance().timeZone.getOffset(utc.time))
-//                    Log.e("dateTest", date.toString())
-                    val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+//                    val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                    val dateFormat = SimpleDateFormat("yyyyMMddHHmmss")
                     val date_formatted = dateFormat.format(date)
-
-                    ChatMessageData["date"] = date_formatted.substring(11, 16)
+                    ChatMessageData["date"] = date_formatted
 
                     val messageDTO = snapshot.getValue(MessageDTO::class.java)
                     ChatMessageData["who"] = messageDTO!!.who
                     ChatMessageData["message"] = messageDTO.message
                     ChatMessageData["userUID"] = messageDTO.userUID
                     ChatMessageData["isRead"] = (Integer.parseInt(howManyMembers!!) - messageDTO.read!!.size).toString()
-//                    Log.d("messageReadLog", Integer.parseInt(howManyMembers!!).toString())
-//                    Log.d("messageReadLog", messageDTO.read!!.size.toString())
-//                    Log.d("messageReadLog", (Integer.parseInt(howManyMembers!!) - messageDTO.read!!.size).toString())
                     ChatMessageList.add(ChatMessageData)
-                    myAdapter!!.notifyDataSetChanged()
                     chatList_recycler_view.scrollToPosition(ChatMessageList.size-1); // 메세지리스트의 가장 밑으로 스크롤바 위치조정! 꺄
                 }
+                mergeSort(ChatMessageList!!)
+                myAdapter!!.notifyDataSetChanged()
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -347,6 +343,53 @@ class ChatActivity : AppCompatActivity() {
         }
         databaseReference = firebaseDatabase!!.getReference("ProjectList").child(PID.toString()).child("members")
         databaseReference!!.addValueEventListener(members_listener)       // Projectlist 경로에 있는 데이터가 뭔가가 바뀌면 알려주는 listener 설정!
+    }
+
+    fun detectDate(messageData : HashMap<String,String>): Long {
+        val tmpDate : String = messageData["date"]!!
+        return tmpDate.toLong()
+    }
+
+    fun mergeSort(arr: ArrayList<java.util.HashMap<String, String>>) {
+        sort(arr, 0, arr.size)
+//        Log.e("Size---->", (arr.size-1).toString())
+        ChatMessageList = arr
+    }
+
+    private fun sort(arr: ArrayList<java.util.HashMap<String, String>>, low: Int, high: Int) {
+        if (high - low < 2) {
+            return
+        }
+        val mid = (low + high) / 2
+        sort(arr, 0, mid)
+        sort(arr, mid, high)
+        merge(arr, low, mid, high)
+//        Log.e("Sorting---->", arr.toString())
+    }
+
+    private fun merge(arr: ArrayList<HashMap<String, String>>, low: Int, mid: Int, high: Int) {
+        val temp = ArrayList<HashMap<String, String>>()
+//        Log.e("merging---->", (high - low).toString())
+        var t = 0
+        var l = low
+        var h = mid
+        while (l < mid && h < high) {
+            if (detectDate(arr[l]) < detectDate(arr[h])) {
+                temp.add(arr[l++])
+            } else {
+                temp.add(arr[h++])
+            }
+        }
+        while (l < mid) {
+            temp.add(arr[l++])
+        }
+        while (h < high) {
+            temp.add(arr[h++])
+        }
+        for (i in low until high) {
+            arr[i] = temp[i - low]
+        }
+
     }
 
 }
