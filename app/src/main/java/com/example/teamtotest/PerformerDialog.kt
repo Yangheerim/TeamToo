@@ -1,17 +1,18 @@
 package com.example.teamtotest
 
+import android.app.Activity
 import android.app.Dialog
 import android.util.Log
 import com.example.teamtotest.activity.AddTodoActivity
+import com.example.teamtotest.activity.ModifyTodoActivity
 import com.example.teamtotest.adapter.PerformerListAdapter
 import com.example.teamtotest.dto.MembersDTO
 import com.example.teamtotest.dto.UserDTO
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.dialog_add_todolist_performer.*
 
-class PerformerDialog(activity : AddTodoActivity){
-    //    private var activity : AddTodoActivity = activity
-    private var activity : AddTodoActivity = activity
+class PerformerDialog(activity : Activity){
+    private var activity : Activity = activity
     private lateinit var myAdapter : PerformerListAdapter
 
     private var memberNameList : ArrayList<String> =  ArrayList<String>()
@@ -36,7 +37,14 @@ class PerformerDialog(activity : AddTodoActivity){
         dialog.show()
         dialog.dialog_performer_complete_button.setOnClickListener{
             getPerformerUID()
-            activity.setPerformer(performerUIDList)
+            if(activity is AddTodoActivity){
+                val addTodoActivity = activity as AddTodoActivity
+                addTodoActivity.setPerformer(performerUIDList)
+            }else if (activity is ModifyTodoActivity){
+                val modifyTodoActivity = activity as ModifyTodoActivity
+                modifyTodoActivity.setPerformer(performerUIDList)
+            }
+
             dialog.dismiss()
         }
 

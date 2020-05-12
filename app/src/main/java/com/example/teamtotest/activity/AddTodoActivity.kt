@@ -104,7 +104,8 @@ class AddTodoActivity : AppCompatActivity() {
         todo_btn_create.setOnClickListener {
             if (todo_et_name.text.toString() == "") {
                 Toast.makeText(this.applicationContext, "할일명을 입력해주세요.", Toast.LENGTH_SHORT).show()
-            } else {
+            }
+            else {
                 val todoDTO = TodoDTO(
                     todo_et_name.text.toString(),
                     todo_et_note.text.toString(),

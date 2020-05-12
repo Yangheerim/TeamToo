@@ -46,48 +46,50 @@ class TodoRVAdapter(private val context: Context, private var todoDTO: ArrayList
             val diff = deadCal.get(Calendar.DAY_OF_YEAR) - today.get(Calendar.DAY_OF_YEAR)
             if (diff == 0) {
                 holder.itemView.todo_tv_d_day.text = "D - day"
-            } else if (diff < 0 ){
+            } else if (diff < 0) {
                 holder.itemView.todo_tv_d_day.text = "D + ${diff.absoluteValue}"
-            }
-            else {
+            } else {
                 holder.itemView.todo_tv_d_day.text = "D - $diff"
             }
         }
         holder.itemView.todo_tv_name.text = todoDTO[position].name
         Log.d("TodoRVAdapter", todoDTO[position].performers.size.toString())
         // 할일 지정자 나타내주기
-        if(todoDTO[position].performers.size>1){
+        if (todoDTO[position].performers.size > 1) {
             databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     for (snapshot in dataSnapshot.children) {
                         if (snapshot.key == todoDTO[position].performers[0]) {
                             Log.d("Key --->", snapshot.key)
                             // member로 등록되어있는 user의 UID를 가진 정보를 찾으면 다른 info를 DTO로 가져와서 일단 이름만 저장! -> 이름 동그라미로 리스트 보여줘야하니깐!
-                            val userDTO : UserDTO = snapshot.getValue(UserDTO::class.java)!!
+                            val userDTO: UserDTO = snapshot.getValue(UserDTO::class.java)!!
 
                             holder.itemView.todo_performers.text = userDTO.name
-                            holder.itemView.todo_performer_extra.text = "+ "+ (todoDTO[position].performers.size-1).toString()
+                            holder.itemView.todo_performer_extra.text =
+                                "+ " + (todoDTO[position].performers.size - 1).toString()
                         }
                     }
                 }
+
                 override fun onCancelled(dataSnapshot: DatabaseError) {
                     Log.w("ExtraUserInfoActivity", "loadPost:onCancelled")
                 }
             })
-        }else {
+        } else {
             databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     for (snapshot in dataSnapshot.children) {
                         if (snapshot.key == todoDTO[position].performers[0]) {
                             Log.d("Key --->", snapshot.key)
                             // member로 등록되어있는 user의 UID를 가진 정보를 찾으면 다른 info를 DTO로 가져와서 일단 이름만 저장! -> 이름 동그라미로 리스트 보여줘야하니깐!
-                            val userDTO : UserDTO = snapshot.getValue(UserDTO::class.java)!!
+                            val userDTO: UserDTO = snapshot.getValue(UserDTO::class.java)!!
 
                             holder.itemView.todo_performers.text = userDTO.name
                             holder.itemView.todo_performer_extra.visibility = View.GONE
                         }
                     }
                 }
+
                 override fun onCancelled(dataSnapshot: DatabaseError) {
                     Log.w("ExtraUserInfoActivity", "loadPost:onCancelled")
                 }
@@ -97,21 +99,23 @@ class TodoRVAdapter(private val context: Context, private var todoDTO: ArrayList
         // 할일 수정화면으로 전환
         holder.itemView.setOnClickListener {
             val intent = Intent(context, ModifyTodoActivity::class.java)
-            intent.putExtra("PID",PID)
+            intent.putExtra("PID", PID)
 
             databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("todoList")
-            databaseReference.addListenerForSingleValueEvent(object : ValueEventListener{
+            databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    for(snapshot in dataSnapshot.children){
-                        if(snapshot.child("name").value == todoDTO[position].name){
+                    for (snapshot in dataSnapshot.children) {
+                        if (snapshot.child("name").value == todoDTO[position].name) {
                             intent.putExtra("todoID", snapshot.key.toString())
+                            context.startActivity(intent)
                         }
                     }
                 }
+
                 override fun onCancelled(p0: DatabaseError) {
                     Log.w("ExtraUserInfoActivity", "loadPost:onCancelled")
                 }
             })
-            context.startActivity(intent) }
+        }
     }
 }

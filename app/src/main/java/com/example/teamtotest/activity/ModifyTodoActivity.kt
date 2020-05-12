@@ -48,9 +48,6 @@ class ModifyTodoActivity : AppCompatActivity() {
         PID = intent.getStringExtra("PID")
         todoID = intent.getStringExtra("todoID")
 
-        deadline_date.text = format1.format(deadline.time)
-        deadline_time.text = format2.format(deadline.time)
-
         //상단바
         setSupportActionBar(add_todo_toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -59,11 +56,10 @@ class ModifyTodoActivity : AppCompatActivity() {
         databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("todoList").child(todoID.toString())
         databaseReference.addListenerForSingleValueEvent(object : ValueEventListener{
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                todoDTO = dataSnapshot.value as TodoDTO?
-                Log.e("TodoDTO", todoDTO.toString())
+                todoDTO = dataSnapshot.getValue(TodoDTO::class.java)
+                todoDTO?.let { setOrigin(it) }
             }
             override fun onCancelled(p0: DatabaseError) {
-                TODO("Not yet implemented")
             }
         })
 
@@ -95,11 +91,11 @@ class ModifyTodoActivity : AppCompatActivity() {
         }
 
         //과제 수행자 지정
-//        todo_btn_select_performer.setOnClickListener {
-//            var performerDialog : PerformerDialog = PerformerDialog(this)
-//            performerDialog.PID = PID
-//            performerDialog.callDialog()
-//        }
+        todo_btn_select_performer.setOnClickListener {
+            var performerDialog : PerformerDialog = PerformerDialog(this)
+            performerDialog.PID = PID
+            performerDialog.callDialog()
+        }
 
         //알림 설정
         todo_spinner.adapter = spinnerAdapter
@@ -119,7 +115,8 @@ class ModifyTodoActivity : AppCompatActivity() {
         todo_btn_create.setOnClickListener {
             if (todo_et_name.text.toString() == "") {
                 Toast.makeText(this.applicationContext, "할일명을 입력해주세요.", Toast.LENGTH_SHORT).show()
-            } else {
+            }
+            else {
                 val todoDTO = TodoDTO(
                     todo_et_name.text.toString(),
                     todo_et_note.text.toString(),
@@ -171,6 +168,23 @@ class ModifyTodoActivity : AppCompatActivity() {
     private fun setText() {
         deadline_date.text = format1.format(deadline.time)
         deadline_time.text = format2.format(deadline.time)
+    }
+
+    private fun setOrigin(dto: TodoDTO){
+        Log.e("todoDTO",dto.toString())
+
+        todoDTO = dto
+        todo_et_name.setText(todoDTO!!.name)
+        todo_et_note.setText(todoDTO!!.note)
+
+        deadline.time = Date(todoDTO!!.deadLine)
+        deadline_date.text = format1.format(Date(todoDTO!!.deadLine))
+        deadline_time.text = format2.format(Date(todoDTO!!.deadLine))
+
+        Log.e("todoDTO",Date(todoDTO!!.deadLine).toString())
+
+        setPerformer(todoDTO!!.performers)
+        todo_btn_create.setText("수정하기")
     }
 
     public fun setPerformer(performerUIDList_ : ArrayList<String>){
