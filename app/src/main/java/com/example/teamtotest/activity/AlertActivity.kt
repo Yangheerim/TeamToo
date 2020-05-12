@@ -4,15 +4,15 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import com.example.teamtotest.R
-import kotlinx.android.synthetic.main.activity_announce.*
+import kotlinx.android.synthetic.main.activity_alert.*
 
-class AnnounceActivity : AppCompatActivity() {
+class AlertActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_announce)
+        setContentView(R.layout.activity_alert)
 
-        setSupportActionBar(announce_toolbar)
+        setSupportActionBar(alert_toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // 뒤로가기 버튼 만들기
     }
 
