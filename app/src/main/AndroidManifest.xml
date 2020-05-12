@@ -12,7 +12,11 @@
         android:roundIcon="@mipmap/ic_launcher_tt_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.AnnounceActivity"></activity>
+        <activity android:name=".activity.HelpActivity"></activity>
+        <activity android:name=".activity.AlertActivity" />
+        <activity android:name=".activity.TimetableActivity" />
+        <activity android:name=".activity.VersionInfoActivity" />
+        <activity android:name=".activity.AnnounceActivity" />
         <activity android:name=".activity.MyInfoActivity" />
         <activity android:name=".activity.FileActivity" />
         <activity android:name=".activity.FinalTestActivity" />
