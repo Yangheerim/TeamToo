@@ -1,5 +1,6 @@
 package com.example.teamtotest.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,6 +41,7 @@ class PerformerListAdapter(private val MemberNameList: ArrayList<String>)
             }else{
                 holder.itemView.item_performer_checked.visibility = View.INVISIBLE
                 holder.itemView.setBackgroundResource(R.drawable.button3)
+                performerPositionList.remove(position)
             }
         }
     }
