@@ -56,7 +56,7 @@ class TodoActivity : AppCompatActivity() {
         }
 
         //어댑터 설정
-        todoRVAdapter = TodoRVAdapter(this, todoList)
+        todoRVAdapter = TodoRVAdapter(this, todoList, PID)
         rv_todo.adapter = todoRVAdapter
         rv_todo.layoutManager = LinearLayoutManager(this)
     }

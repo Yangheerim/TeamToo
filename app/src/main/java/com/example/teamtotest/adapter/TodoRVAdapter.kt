@@ -1,12 +1,17 @@
 package com.example.teamtotest.adapter
 
 import android.content.Context
+import android.content.Intent
+import android.print.PrinterId
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teamtotest.R
+import com.example.teamtotest.activity.ModifyTodoActivity
+import com.example.teamtotest.activity.ScheduleListActivity
 import com.example.teamtotest.dto.TodoDTO
 import com.example.teamtotest.dto.UserDTO
 import com.google.firebase.database.DataSnapshot
@@ -17,11 +22,11 @@ import kotlinx.android.synthetic.main.item_todo.view.*
 import java.util.*
 import kotlin.math.absoluteValue
 
-class TodoRVAdapter(private val context: Context, private var todoDTO: ArrayList<TodoDTO>) :
+class TodoRVAdapter(private val context: Context, private var todoDTO: ArrayList<TodoDTO>, private var PID: String?) :
     RecyclerView.Adapter<ViewHolderHelper>() {
     private val today = Calendar.getInstance()
-    var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
-    var databaseReference = firebaseDatabase.getReference("UserList")
+    private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
+    private var databaseReference = firebaseDatabase.getReference("UserList")
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderHelper {
         val view =
@@ -50,6 +55,7 @@ class TodoRVAdapter(private val context: Context, private var todoDTO: ArrayList
         }
         holder.itemView.todo_tv_name.text = todoDTO[position].name
         Log.d("TodoRVAdapter", todoDTO[position].performers.size.toString())
+        // 할일 지정자 나타내주기
         if(todoDTO[position].performers.size>1){
             databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -68,7 +74,7 @@ class TodoRVAdapter(private val context: Context, private var todoDTO: ArrayList
                     Log.w("ExtraUserInfoActivity", "loadPost:onCancelled")
                 }
             })
-        }else{
+        }else {
             databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     for (snapshot in dataSnapshot.children) {
@@ -87,5 +93,25 @@ class TodoRVAdapter(private val context: Context, private var todoDTO: ArrayList
                 }
             })
         }
+
+        // 할일 수정화면으로 전환
+        holder.itemView.setOnClickListener {
+            val intent = Intent(context, ModifyTodoActivity::class.java)
+            intent.putExtra("PID",PID)
+
+            databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("todoList")
+            databaseReference.addListenerForSingleValueEvent(object : ValueEventListener{
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    for(snapshot in dataSnapshot.children){
+                        if(snapshot.child("name").value == todoDTO[position].name){
+                            intent.putExtra("todoID", snapshot.key.toString())
+                        }
+                    }
+                }
+                override fun onCancelled(p0: DatabaseError) {
+                    Log.w("ExtraUserInfoActivity", "loadPost:onCancelled")
+                }
+            })
+            context.startActivity(intent) }
     }
 }

@@ -21,7 +21,7 @@ class PerformerDialog(activity : AddTodoActivity){
     private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
     private var databaseReference: DatabaseReference = firebaseDatabase.reference
 
-    public var PID :String? =null
+    var PID :String? =null
 
     fun callDialog(){
         var dialog : Dialog = Dialog(activity)
