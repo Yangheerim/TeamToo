@@ -50,42 +50,6 @@ class TodoRVAdapterMain(private val context: Context, private var todoDTO: Array
             }
         }
         holder.itemView.todo_tv_name.text = todoDTO[position].name
-        Log.d("TodoRVAdapter", todoDTO[position].performers.size.toString())
-        if(todoDTO[position].performers.size>1){
-            databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    for (snapshot in dataSnapshot.children) {
-                        if (snapshot.key == todoDTO[position].performers[0]) {
-                            Log.d("Key --->", snapshot.key)
-                            // member로 등록되어있는 user의 UID를 가진 정보를 찾으면 다른 info를 DTO로 가져와서 일단 이름만 저장! -> 이름 동그라미로 리스트 보여줘야하니깐!
-                            val userDTO : UserDTO = snapshot.getValue(UserDTO::class.java)!!
 
-                            holder.itemView.todo_performers.text = userDTO.name
-//                            holder.itemView.todo_performer_extra.text = "+ "+ (todoDTO[position].performers.size-1).toString()
-                        }
-                    }
-                }
-                override fun onCancelled(dataSnapshot: DatabaseError) {
-                    Log.w("ExtraUserInfoActivity", "loadPost:onCancelled")
-                }
-            })
-        }else{
-            databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    for (snapshot in dataSnapshot.children) {
-                        if (snapshot.key == todoDTO[position].performers[0]) {
-                            Log.d("Key --->", snapshot.key)
-                            // member로 등록되어있는 user의 UID를 가진 정보를 찾으면 다른 info를 DTO로 가져와서 일단 이름만 저장! -> 이름 동그라미로 리스트 보여줘야하니깐!
-                            val userDTO : UserDTO = snapshot.getValue(UserDTO::class.java)!!
-
-                            holder.itemView.todo_performers.text = userDTO.name
-                        }
-                    }
-                }
-                override fun onCancelled(dataSnapshot: DatabaseError) {
-                    Log.w("ExtraUserInfoActivity", "loadPost:onCancelled")
-                }
-            })
-        }
     }
 }
