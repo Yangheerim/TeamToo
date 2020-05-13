@@ -95,7 +95,6 @@ class Frag1 : Fragment (){
                     for (i in 0 until membersPerProject!!.UID_list!!.size) {
                         if (membersPerProject!!.UID_list!![i].equals(myUID)) {
                             myProjectPIDlist.add(snapshot.key.toString())
-                            Log.d("Find my PID ! ---> ", snapshot.key!!)
                         }
                     }
                 }
