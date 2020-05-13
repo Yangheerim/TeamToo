@@ -7,10 +7,11 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teamtotest.R
+import com.example.teamtotest.dto.UserDTO
 import kotlinx.android.synthetic.main.item_select_performer.view.*
 
 //class FinalTestMemberListAdapter(private val MemberNameList: ArrayList<String>, context : Context)
-class PerformerListAdapter(private val MemberNameList: ArrayList<String>)
+class PerformerListAdapter(private val memberList: ArrayList<UserDTO>, private val prePerformerUIDList: ArrayList<String>, private val uidList : ArrayList<String>)
     : RecyclerView.Adapter<PerformerListAdapter.MyViewHolder>() {
 
     private var performerPositionList : ArrayList<Int> =  ArrayList<Int>()
@@ -30,15 +31,23 @@ class PerformerListAdapter(private val MemberNameList: ArrayList<String>)
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        holder.itemView.item_performer_memberName.text = MemberNameList[position]
+        holder.itemView.item_performer_memberName.text = memberList[position].name
         holder.itemView.item_performer_checked.visibility = View.INVISIBLE
         holder.itemView.setBackgroundResource(R.drawable.button3)
+        Log.e("uid",prePerformerUIDList.toString())
+
+        if (uidList[position] in prePerformerUIDList){    // 이미 수행자인 사람 표시해주기
+            holder.itemView.item_performer_checked.visibility = View.VISIBLE
+            holder.itemView.setBackgroundResource(R.drawable.button4)
+            performerPositionList.add(position)
+        }
+
         holder.itemView.setOnClickListener{
-            if(holder.itemView.item_performer_checked.visibility == View.INVISIBLE){
+            if(holder.itemView.item_performer_checked.visibility == View.INVISIBLE){    // 체크 안되어 있을 때
                 holder.itemView.item_performer_checked.visibility = View.VISIBLE
                 holder.itemView.setBackgroundResource(R.drawable.button4)
                 performerPositionList.add(position)
-            }else{
+            }else{  // 체크 되어있을 때
                 holder.itemView.item_performer_checked.visibility = View.INVISIBLE
                 holder.itemView.setBackgroundResource(R.drawable.button3)
                 performerPositionList.remove(position)
@@ -47,10 +56,11 @@ class PerformerListAdapter(private val MemberNameList: ArrayList<String>)
     }
 
     override fun getItemCount(): Int {
-        return MemberNameList.size
+        return memberList.size
     }
 
     public fun getPerformerPositionList() : ArrayList<Int>{
+        Log.e("getPerformer", performerPositionList.toString())
         return performerPositionList
     }
 

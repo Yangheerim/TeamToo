@@ -94,6 +94,7 @@ class ModifyTodoActivity : AppCompatActivity() {
         todo_btn_select_performer.setOnClickListener {
             var performerDialog : PerformerDialog = PerformerDialog(this)
             performerDialog.PID = PID
+            performerDialog.prePerformerUIDList = performerUIDList
             performerDialog.callDialog()
         }
 

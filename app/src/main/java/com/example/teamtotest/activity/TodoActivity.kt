@@ -28,6 +28,33 @@ class TodoActivity : AppCompatActivity() {
         setSupportActionBar(todo_toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+    }
+
+    //상단바
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    fun changeView(todoList: ArrayList<TodoDTO>){
+        if(todoList.isEmpty()){
+            tv_todo.visibility = View.VISIBLE
+            rv_todo.visibility = View.INVISIBLE
+        }
+        else{
+            tv_todo.visibility = View.INVISIBLE
+            rv_todo.visibility = View.VISIBLE
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
         //PID에 해당하는 프로젝트 할일 가져오기
         PID = intent.getStringExtra("PID")
         firebaseDatabase = FirebaseDatabase.getInstance()
@@ -59,27 +86,5 @@ class TodoActivity : AppCompatActivity() {
         todoRVAdapter = TodoRVAdapter(this, todoList, PID)
         rv_todo.adapter = todoRVAdapter
         rv_todo.layoutManager = LinearLayoutManager(this)
-    }
-
-    //상단바
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                onBackPressed()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    fun changeView(todoList: ArrayList<TodoDTO>){
-        if(todoList.isEmpty()){
-            tv_todo.visibility = View.VISIBLE
-            rv_todo.visibility = View.INVISIBLE
-        }
-        else{
-            tv_todo.visibility = View.INVISIBLE
-            rv_todo.visibility = View.VISIBLE
-        }
     }
 }
