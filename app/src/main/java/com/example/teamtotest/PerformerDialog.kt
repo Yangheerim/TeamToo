@@ -15,7 +15,7 @@ class PerformerDialog(activity : Activity){
     private var activity : Activity = activity
     private lateinit var myAdapter : PerformerListAdapter
 
-    private var memberNameList : ArrayList<String> =  ArrayList<String>()
+    private var memberList : ArrayList<UserDTO> =  ArrayList<UserDTO>()
     private var memberUIDList : ArrayList<String> =  ArrayList<String>()
     private var performerUIDList : ArrayList<String> =  ArrayList<String>()
 
@@ -23,6 +23,8 @@ class PerformerDialog(activity : Activity){
     private var databaseReference: DatabaseReference = firebaseDatabase.reference
 
     var PID :String? =null
+    var prePerformerUIDList: ArrayList<String> = arrayListOf()
+    var uidList: ArrayList<String> = arrayListOf()
 
     fun callDialog(){
         var dialog : Dialog = Dialog(activity)
@@ -30,7 +32,7 @@ class PerformerDialog(activity : Activity){
 
         // 멤버 정보를 가져와서 리스트 만들어줌
         findMembersUIDFromDB()
-        myAdapter= PerformerListAdapter(memberNameList)
+        myAdapter= PerformerListAdapter(memberList, prePerformerUIDList, uidList)
         dialog.dialog_performer_recyclerview.adapter = myAdapter
         dialog.dialog_performer_recyclerview.setHasFixedSize(true)
 
@@ -73,8 +75,9 @@ class PerformerDialog(activity : Activity){
     }
 
     private fun findUserInfoOfMembersFromDB(){
-        for (i in memberUIDList.indices){   // initialize
-            memberNameList.add(" ")
+        for (i in memberUIDList.indices){
+            memberList.add(UserDTO())
+            uidList.add(" ")
         }
 
         databaseReference = firebaseDatabase.getReference("UserList")
@@ -85,7 +88,8 @@ class PerformerDialog(activity : Activity){
                         if (snapshot.key == memberUIDList[i]) {
                             // member로 등록되어있는 user의 UID를 가진 정보를 찾으면 다른 info를 DTO로 가져와서 일단 이름만 저장! -> 이름 동그라미로 리스트 보여줘야하니깐!
                             val userDTO : UserDTO = snapshot.getValue(UserDTO::class.java)!!
-                            memberNameList.set(i, userDTO.name)
+                            memberList.set(i, userDTO)
+                            uidList.set(i, snapshot.key.toString())
                         }
                     }
                 }
