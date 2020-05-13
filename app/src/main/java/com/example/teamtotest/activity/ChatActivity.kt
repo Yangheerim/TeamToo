@@ -224,10 +224,11 @@ class ChatActivity : AppCompatActivity() {
                     )
                 val current = Date()
                 val utc = Date(current.time - Calendar.getInstance().timeZone.getOffset(current.time))
+                val date_formatted = dateFormat.format(utc)
 
                 databaseReference = firebaseDatabase!!.getReference()
                 databaseReference =
-                    databaseReference!!.child("ProjectList").child(PID.toString()).child("messageList").child(utc.toString())
+                    databaseReference!!.child("ProjectList").child(PID.toString()).child("messageList").child(date_formatted)
                 databaseReference!!.setValue(messageDTO)
 
 
