@@ -19,9 +19,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class ModifyTodoActivity : AppCompatActivity() {
-    private var deadline = Calendar.getInstance().apply {
-        set(Calendar.MINUTE, 0)
-    }
+    private var deadline = Calendar.getInstance()
     private val format1 = SimpleDateFormat("yyyy / MM / dd", Locale.KOREA)
     private val format2 = SimpleDateFormat("a  h : mm", Locale.KOREA)
     private val spinnerAdapter by lazy {

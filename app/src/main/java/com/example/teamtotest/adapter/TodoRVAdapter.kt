@@ -134,7 +134,6 @@ class TodoRVAdapter(private val context: Context, private var todoDTO: ArrayList
                             for (snapshot in dataSnapshot.children) {
                                 if (snapshot.child("name").value == todoDTO[position].name) {
                                     snapshot.ref.removeValue()
-                                    notifyDataSetChanged()
                                 }
                             }
                         }
