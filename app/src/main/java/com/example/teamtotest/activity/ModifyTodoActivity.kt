@@ -38,7 +38,7 @@ class ModifyTodoActivity : AppCompatActivity() {
     private var todoID: String? = null
     private var todoDTO:TodoDTO? = null
 
-    private lateinit var performerUIDList : ArrayList<String>
+    private var performerUIDList : ArrayList<String> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -117,6 +117,9 @@ class ModifyTodoActivity : AppCompatActivity() {
             if (todo_et_name.text.toString() == "") {
                 Toast.makeText(this.applicationContext, "할일명을 입력해주세요.", Toast.LENGTH_SHORT).show()
             }
+            if (performerUIDList.isEmpty()){
+                Toast.makeText(this.applicationContext, "과제수행자를 지정해주세요.", Toast.LENGTH_SHORT).show()
+            }
             else {
                 val todoDTO = TodoDTO(
                     todo_et_name.text.toString(),
@@ -182,15 +185,12 @@ class ModifyTodoActivity : AppCompatActivity() {
         deadline_date.text = format1.format(Date(todoDTO!!.deadLine))
         deadline_time.text = format2.format(Date(todoDTO!!.deadLine))
 
-        Log.e("todoDTO",Date(todoDTO!!.deadLine).toString())
-
         setPerformer(todoDTO!!.performers)
         todo_btn_create.setText("수정하기")
     }
 
     public fun setPerformer(performerUIDList_ : ArrayList<String>){
         performerUIDList = performerUIDList_
-        Toast.makeText(this, "과제 수행자 지정 완료 ${performerUIDList[0]}...", Toast.LENGTH_SHORT).show()
         add_todo_performer_num.text = performerUIDList.size.toString()
     }
 }

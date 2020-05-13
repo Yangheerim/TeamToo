@@ -36,7 +36,7 @@ class AddTodoActivity : AppCompatActivity() {
     private lateinit var databaseReference: DatabaseReference
     private var PID: String? = null
 
-    private lateinit var performerUIDList : ArrayList<String>
+    private var performerUIDList : ArrayList<String> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -105,6 +105,9 @@ class AddTodoActivity : AppCompatActivity() {
             if (todo_et_name.text.toString() == "") {
                 Toast.makeText(this.applicationContext, "할일명을 입력해주세요.", Toast.LENGTH_SHORT).show()
             }
+            if (performerUIDList.isEmpty()){
+                Toast.makeText(this.applicationContext, "과제수행자를 지정해주세요.", Toast.LENGTH_SHORT).show()
+            }
             else {
                 val todoDTO = TodoDTO(
                     todo_et_name.text.toString(),
@@ -161,7 +164,6 @@ class AddTodoActivity : AppCompatActivity() {
 
     public fun setPerformer(performerUIDList_ : ArrayList<String>){
         performerUIDList = performerUIDList_
-        Toast.makeText(this, "과제 수행자 지정 완료 ${performerUIDList[0]}...", Toast.LENGTH_SHORT).show()
         add_todo_performer_num.text = performerUIDList.size.toString()
     }
 
