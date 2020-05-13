@@ -25,7 +25,7 @@ import kotlinx.android.synthetic.main.item_todo.view.*
 import java.util.*
 import kotlin.math.absoluteValue
 
-class TodoRVAdapter(private val context: Context, private var todoDTO: ArrayList<TodoDTO>, private var PID: String?) :
+class TodoRVAdapter(private val context: Context, private var todoDTO: ArrayList<TodoDTO>, private val PID: String?) :
     RecyclerView.Adapter<ViewHolderHelper>() {
     private val today = Calendar.getInstance()
     private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
