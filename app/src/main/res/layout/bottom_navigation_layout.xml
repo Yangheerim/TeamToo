@@ -42,7 +42,6 @@
         android:layout_height="wrap_content"
         app:itemBackground="@android:color/white"
         app:itemIconTint="@drawable/item_color"
-        app:itemTextColor="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:labelVisibilityMode="unlabeled"
         app:menu="@menu/menu_bottombar"
