@@ -1,12 +1,15 @@
 package com.example.teamtotest.adapter
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.print.PrinterId
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teamtotest.R
@@ -53,7 +56,7 @@ class TodoRVAdapter(private val context: Context, private var todoDTO: ArrayList
             }
         }
         holder.itemView.todo_tv_name.text = todoDTO[position].name
-        Log.d("TodoRVAdapter", todoDTO[position].performers.size.toString())
+
         // 할일 지정자 나타내주기
         if (todoDTO[position].performers.size > 1) {
             databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -116,6 +119,33 @@ class TodoRVAdapter(private val context: Context, private var todoDTO: ArrayList
                     Log.w("ExtraUserInfoActivity", "loadPost:onCancelled")
                 }
             })
+        }
+
+        // 할일 삭제하기
+        holder.itemView.setOnLongClickListener {
+            val builder = AlertDialog.Builder(context)
+            builder.setMessage("삭제하시겠습니까?")
+            builder.setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, which ->  })
+            builder.setPositiveButton("예",
+                DialogInterface.OnClickListener { dialog, which ->
+                    databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("todoList")
+                    databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            for (snapshot in dataSnapshot.children) {
+                                if (snapshot.child("name").value == todoDTO[position].name) {
+                                    snapshot.ref.removeValue()
+                                    notifyDataSetChanged()
+                                }
+                            }
+                        }
+                        override fun onCancelled(p0: DatabaseError) {
+                            Log.w("ExtraUserInfoActivity", "loadPost:onCancelled")
+                        }
+                    })
+
+                })
+            builder.show()
+            return@setOnLongClickListener true
         }
     }
 }

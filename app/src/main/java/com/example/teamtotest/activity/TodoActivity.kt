@@ -44,10 +44,10 @@ class TodoActivity : AppCompatActivity() {
     fun changeView(todoList: ArrayList<TodoDTO>){
         if(todoList.isEmpty()){
             tv_todo.visibility = View.VISIBLE
-            rv_todo.visibility = View.INVISIBLE
+            rv_todo.visibility = View.GONE
         }
         else{
-            tv_todo.visibility = View.INVISIBLE
+            tv_todo.visibility = View.GONE
             rv_todo.visibility = View.VISIBLE
         }
     }
