@@ -46,6 +46,22 @@ class Frag1 : Fragment (){
         return view
     }
 
+    private fun sortByDate(){
+        //Bubble sort
+        for(i in 0 until todoList.size-1){
+//            Log.d("index--->", i.toString())
+//            Log.d("todoList.size--->", todoList.size.toString())
+            for(j  in 0 until todoList.size-1-i) {
+                if (todoList[j].deadLine > todoList[j + 1].deadLine) {
+                    val temp = todoList[j]
+                    todoList[j] = todoList[j + 1]
+                    todoList[j + 1] = temp
+                }
+            }
+//            Log.d("Sorting--->", todoList.toString())
+        }
+    }
+
 
     private fun setTodoListListener(){
         val myUID = firebaseAuth.currentUser!!.uid
@@ -67,6 +83,7 @@ class Frag1 : Fragment (){
                         }
                     }
                 }
+                sortByDate()
                 todoRVAdapter.notifyDataSetChanged()
             }
 

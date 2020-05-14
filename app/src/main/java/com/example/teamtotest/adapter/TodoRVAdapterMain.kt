@@ -24,6 +24,9 @@ class TodoRVAdapterMain(private val context: Context, private var todoDTO: Array
     var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
     var databaseReference = firebaseDatabase.getReference("UserList")
 
+
+
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderHelper {
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.item_todo_dashboard, parent, false)
