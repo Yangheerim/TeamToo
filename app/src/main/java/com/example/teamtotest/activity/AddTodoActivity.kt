@@ -14,9 +14,11 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.teamtotest.PerformerDialog
 import com.example.teamtotest.R
+import com.example.teamtotest.PerformerDialog
+import com.example.teamtotest.dto.MessageDTO
 import com.example.teamtotest.dto.TodoDTO
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_add_todo.*
@@ -128,12 +130,16 @@ class AddTodoActivity : AppCompatActivity() {
                 databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("todoList")
                 databaseReference.push().setValue(todoDTO)
 
+
                 val mAlarmIntent = Intent("com.example.teamtotest.ALARM_START")
                 val mPendingIntent = PendingIntent.getBroadcast(this, 0, mAlarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                 mAlarmManager= getSystemService(Context.ALARM_SERVICE) as AlarmManager
                 mAlarmManager.set(AlarmManager.RTC_WAKEUP, deadline.timeInMillis, mPendingIntent)
 
                 Log.e("add",mAlarmManager.toString())
+
+                addMessageNotificationToDB(todoDTO)
+
                 finish()
             }
         }
@@ -175,10 +181,35 @@ class AddTodoActivity : AppCompatActivity() {
         deadline_time.text = format2.format(deadline.time)
     }
 
+    // 할일 수행자 지정 시 dialog-> activity로 데이터를 넘겨주기 위한 메서드
     public fun setPerformer(performerUIDList_ : ArrayList<String>){
         performerUIDList = performerUIDList_
         add_todo_performer_num.text = performerUIDList.size.toString()
     }
 
+    // 할일 추가 시 채팅창에 알림 메세지 저장
+    private fun addMessageNotificationToDB(todoDTO:TodoDTO) {
+        val firebaseAuth : FirebaseAuth = FirebaseAuth.getInstance()
+        val messageDTO =
+            MessageDTO(
+                "새로운 할일이 추가되었습니다.",
+                firebaseAuth.currentUser!!.displayName.toString(),
+                firebaseAuth.currentUser!!.uid.toString(),
+                todoData = todoDTO
+            )
+        val current = Date()
+        val utc = Date(current.time - Calendar.getInstance().timeZone.getOffset(current.time))
+        val dateFormat = SimpleDateFormat("yyyyMMddHHmmss")
+        val date_formatted = dateFormat.format(utc)
+
+
+        databaseReference = firebaseDatabase!!.getReference()
+        databaseReference = databaseReference!!.child("ProjectList").child(PID.toString()).child("messageList")
+                .child(date_formatted)
+        databaseReference!!.setValue(messageDTO)
+
+    }
+
 
 }
+
