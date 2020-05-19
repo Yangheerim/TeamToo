@@ -110,10 +110,10 @@ class ChatListAdapter(var ChatMessage : ArrayList<HashMap<String,String>>) //MyA
             holder.itemView.noti1_performer.text = ChatMessageList!!.get(position)["performer"]
 
             if(ChatMessageList!!.get(position)["isRead"]=="0") {
-                holder.itemView.noti2_isRead.visibility = View.INVISIBLE
+                holder.itemView.noti1_isRead.visibility = View.INVISIBLE
             }else{
-                holder.itemView.noti2_isRead.text = ChatMessageList!!.get(position)["isRead"]
-                holder.itemView.noti2_isRead.visibility = View.VISIBLE
+                holder.itemView.noti1_isRead.text = ChatMessageList!!.get(position)["isRead"]
+                holder.itemView.noti1_isRead.visibility = View.VISIBLE
             }
         } else if (viewType == 5) {  // todo
             val tmpDate :String = ChatMessageList!![position]["date"]!!
