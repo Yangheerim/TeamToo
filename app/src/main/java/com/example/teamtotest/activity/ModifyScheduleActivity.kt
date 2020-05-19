@@ -146,7 +146,10 @@ class ModifyScheduleActivity : AppCompatActivity() {
                 databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("scheduleList").child(scheduleID.toString())
                 databaseReference.setValue(scheduleDTO)
 
-                startActivity(Intent(this, ScheduleActivity::class.java).putExtra("PID",PID))
+                val intent = Intent(this, ScheduleActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                intent.putExtra("PID",PID)
+                startActivity(intent)
             }
         }
     }

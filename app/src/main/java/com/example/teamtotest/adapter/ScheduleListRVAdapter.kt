@@ -1,5 +1,6 @@
 package com.example.teamtotest.adapter
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
@@ -47,6 +48,7 @@ class ScheduleListRVAdapter(var scheduleList: ArrayList<ScheduleDTO>?,val contex
                     for (snapshot in dataSnapshot.children) {
                         if (snapshot.child("name").value == scheduleList!![position].name) {
                             intent.putExtra("scheduleID", snapshot.key.toString())
+
                             context.startActivity(intent)
                         }
                     }
