@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="120dp"
+    tools:context=".MainActivity"
+    android:orientation="horizontal"
+    android:background="#EAEAEA"
+    android:gravity="center"
+    >
+        <!--        <View-->
+        <!--            android:layout_width="0dp"-->
+        <!--            android:layout_height="match_parent"-->
+        <!--            android:layout_weight="1"/>-->
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="right|center"
+            android:orientation="vertical"
+            android:layout_weight="4">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                        <TextView
+                            android:id="@+id/noti2_isRead"
+                            android:layout_marginRight="5dp"
+                            android:textColor="@color/colorAccent"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:text="1"/>
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:background="@drawable/chat_list">
+
+                                <TextView
+                                    android:id="@+id/noti2_message"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingLeft="10dp"
+                                    android:paddingTop="5dp"
+                                    android:paddingRight="10dp"
+                                    android:paddingBottom="5dp"
+                                    android:text="OOO님이 새로운 할일을 추가했습니다."
+                                    android:textColor="@color/darkGray"
+                                    android:textSize="10dp" />
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0.5dp"
+                                    android:background="@color/gray"/>
+                                <TextView
+                                    android:id="@+id/noti2_todoName"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingLeft="10dp"
+                                    android:paddingTop="5dp"
+                                    android:paddingRight="10dp"
+                                    android:paddingBottom="4dp"
+                                    android:text="채팅방 보완하기"
+                                    android:textColor="@color/black"
+                                    android:textSize="15dp" />
+                                <TextView
+                                    android:id="@+id/noti2_deadline"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingLeft="10dp"
+                                    android:paddingTop="1dp"
+                                    android:paddingRight="10dp"
+                                    android:paddingBottom="1dp"
+                                    android:text="2020/05/20 19:25 까지"
+                                    android:textColor="@color/colorAccent"
+                                    android:textSize="10dp" />
+                                <TextView
+                                    android:id="@+id/noti2_performer"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingLeft="10dp"
+                                    android:paddingTop="1dp"
+                                    android:paddingRight="10dp"
+                                    android:paddingBottom="10dp"
+                                    android:text="양희림, 장하영"
+                                    android:textColor="@color/colorAccent"
+                                    android:textSize="10dp" />
+                        </LinearLayout>
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/noti2_message_sent_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="11dp"
+                    android:layout_marginLeft="10dp"
+                    android:text="3:28 pm"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/noti2_member_name"
+            android:layout_gravity="top"
+            android:layout_margin="10dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/chat_circle_form"
+            android:textColor="@color/white"
+            android:text="양희림"
+            android:textSize="10dp"
+            android:gravity="center"/>
+
+</LinearLayout>

@@ -10,6 +10,8 @@ import com.example.teamtotest.R
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.item_chat_list1.view.*
 import kotlinx.android.synthetic.main.item_chat_list2.view.*
+import kotlinx.android.synthetic.main.item_chat_noti1.view.*
+import kotlinx.android.synthetic.main.item_chat_noti2.view.*
 import kotlinx.android.synthetic.main.item_chat_notification.view.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -30,10 +32,14 @@ class ChatListAdapter(var ChatMessage : ArrayList<HashMap<String,String>>) //MyA
     }
 
     override fun getItemViewType(position: Int): Int {
+        val userUID = ChatMessageList!![position]["userUID"]
+
         if(ChatMessageList!![position]["who"]=="")
             return 3;
-
-        val userUID = ChatMessageList!![position]["userUID"]
+        if(ChatMessageList!![position]["todoName"]!=null && firebaseAuth.currentUser!!.uid != userUID)
+            return 4;
+        if(ChatMessageList!![position]["todoName"]!=null && firebaseAuth.currentUser!!.uid == userUID)
+            return 5;
         return if (firebaseAuth.currentUser!!.uid == userUID) { //** 이거 UID로 비교하는걸로 바꿔야함
             2
         } else {
@@ -49,8 +55,12 @@ class ChatListAdapter(var ChatMessage : ArrayList<HashMap<String,String>>) //MyA
             layoutId = R.layout.item_chat_list1
         } else if (viewType == 2) {  // 나일때
             layoutId = R.layout.item_chat_list2
-        } else if (viewType == 3) {  // 나일때
+        } else if (viewType == 3) {
             layoutId = R.layout.item_chat_notification
+        } else if (viewType == 4) {  // 남일때
+            layoutId = R.layout.item_chat_noti1
+        } else if (viewType == 5) {
+            layoutId = R.layout.item_chat_noti2
         } else {
             Log.d("View type 오류 : ", viewType.toString() + "")
         }
@@ -89,6 +99,38 @@ class ChatListAdapter(var ChatMessage : ArrayList<HashMap<String,String>>) //MyA
             }
         } else if (viewType == 3) { // 들어왔을때, 나갔을때 알림메세지
             holder.itemView.item_notify.text = ChatMessageList!!.get(position)["message"]
+        }else if (viewType == 4) {  // todo
+            val tmpDate :String = ChatMessageList!![position]["date"]!!
+            holder.itemView.noti1_message.text = ChatMessageList!!.get(position)["who"].toString()+"님이 할일을 추가했습니다."
+            holder.itemView.noti1_message_sent_time.text = tmpDate.substring(8, 10)+":"+ tmpDate.substring(10, 12)
+            holder.itemView.noti1_member_name.text = ChatMessageList!!.get(position)["who"]
+
+            holder.itemView.noti1_todoName.text = ChatMessageList!!.get(position)["todoName"]
+            holder.itemView.noti1_deadline.text = ChatMessageList!!.get(position)["deadline"]
+            holder.itemView.noti1_performer.text = ChatMessageList!!.get(position)["performer"]
+
+            if(ChatMessageList!!.get(position)["isRead"]=="0") {
+                holder.itemView.noti2_isRead.visibility = View.INVISIBLE
+            }else{
+                holder.itemView.noti2_isRead.text = ChatMessageList!!.get(position)["isRead"]
+                holder.itemView.noti2_isRead.visibility = View.VISIBLE
+            }
+        } else if (viewType == 5) {  // todo
+            val tmpDate :String = ChatMessageList!![position]["date"]!!
+            holder.itemView.noti2_message.text = ChatMessageList!!.get(position)["who"].toString()+"님이 할일을 추가했습니다."
+            holder.itemView.noti2_message_sent_time.text = tmpDate.substring(8, 10)+":"+ tmpDate.substring(10, 12)
+            holder.itemView.noti2_member_name.text = ChatMessageList!!.get(position)["who"]
+
+            holder.itemView.noti2_todoName.text = ChatMessageList!!.get(position)["todoName"]
+            holder.itemView.noti2_deadline.text = ChatMessageList!!.get(position)["deadline"]
+            holder.itemView.noti2_performer.text = ChatMessageList!!.get(position)["performer"]
+
+            if(ChatMessageList!!.get(position)["isRead"]=="0") {
+                holder.itemView.noti2_isRead.visibility = View.INVISIBLE
+            }else{
+                holder.itemView.noti2_isRead.text = ChatMessageList!!.get(position)["isRead"]
+                holder.itemView.noti2_isRead.visibility = View.VISIBLE
+            }
         }else {
             Log.d("View type 오류 : ", viewType.toString() + "")
         }
