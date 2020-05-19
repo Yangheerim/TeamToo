@@ -46,6 +46,8 @@ class ScheduleListRVAdapter(var scheduleList: ArrayList<ScheduleDTO>?,val contex
                             for (snapshot in dataSnapshot.children) {
                                 if (snapshot.child("name").value == scheduleList!![position].name) {
                                     snapshot.ref.removeValue()
+                                    scheduleList!!.removeAt(position)
+                                    notifyDataSetChanged()
                                 }
                             }
                         }
