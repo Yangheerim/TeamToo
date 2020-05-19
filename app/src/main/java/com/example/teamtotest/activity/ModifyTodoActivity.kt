@@ -173,8 +173,6 @@ class ModifyTodoActivity : AppCompatActivity() {
     }
 
     private fun setOrigin(dto: TodoDTO){
-        Log.e("todoDTO",dto.toString())
-
         todoDTO = dto
         todo_et_name.setText(todoDTO!!.name)
         todo_et_note.setText(todoDTO!!.note)
@@ -184,10 +182,12 @@ class ModifyTodoActivity : AppCompatActivity() {
         deadline_time.text = format2.format(Date(todoDTO!!.deadLine))
 
         setPerformer(todoDTO!!.performers)
-        todo_btn_create.setText("수정하기")
+        todo_spinner.setSelection(todoDTO!!.alarm)
+
+        todo_btn_create.text = "수정하기"
     }
 
-    public fun setPerformer(performerUIDList_ : ArrayList<String>){
+    fun setPerformer(performerUIDList_ : ArrayList<String>){
         performerUIDList = performerUIDList_
         add_todo_performer_num.text = performerUIDList.size.toString()
     }

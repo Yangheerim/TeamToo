@@ -3,11 +3,14 @@ package com.example.teamtotest.adapter
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teamtotest.R
+import com.example.teamtotest.activity.ModifyScheduleActivity
+import com.example.teamtotest.activity.ModifyTodoActivity
 import com.example.teamtotest.dto.ScheduleDTO
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.item_schedule_list.view.*
@@ -32,6 +35,28 @@ class ScheduleListRVAdapter(var scheduleList: ArrayList<ScheduleDTO>?,val contex
     override fun onBindViewHolder(holder: ViewHolderHelper, position: Int) {
         holder.itemView.schedule_tv_list.text = scheduleList!![position].name
         holder.itemView.schedule_color.setColorFilter(scheduleList!![position].color)
+
+        // 스케줄 수정화면으로 전환
+        holder.itemView.setOnClickListener {
+            val intent = Intent(context, ModifyScheduleActivity::class.java)
+            intent.putExtra("PID", PID)
+
+            databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("scheduleList")
+            databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    for (snapshot in dataSnapshot.children) {
+                        if (snapshot.child("name").value == scheduleList!![position].name) {
+                            intent.putExtra("scheduleID", snapshot.key.toString())
+                            context.startActivity(intent)
+                        }
+                    }
+                }
+
+                override fun onCancelled(p0: DatabaseError) {
+                    Log.w("ExtraUserInfoActivity", "loadPost:onCancelled")
+                }
+            })
+        }
 
         // 스케줄 삭제하기
         holder.itemView.setOnLongClickListener {
