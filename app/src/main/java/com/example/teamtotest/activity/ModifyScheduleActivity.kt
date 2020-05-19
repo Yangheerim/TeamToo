@@ -2,6 +2,7 @@ package com.example.teamtotest.activity
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -135,7 +136,8 @@ class ModifyScheduleActivity : AppCompatActivity() {
                     end.timeInMillis,
                     schedule_et_place.text.toString(),
                     alarmPosition,
-                    schedule_et_note.text.toString()
+                    schedule_et_note.text.toString(),
+                    scheduleDTO!!.color
                 )
                 //DB에 업로드
                 firebaseDatabase = FirebaseDatabase.getInstance()
@@ -144,7 +146,7 @@ class ModifyScheduleActivity : AppCompatActivity() {
                 databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("scheduleList").child(scheduleID.toString())
                 databaseReference.setValue(scheduleDTO)
 
-                finish()
+                startActivity(Intent(this, ScheduleActivity::class.java).putExtra("PID",PID))
             }
         }
     }
