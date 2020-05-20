@@ -92,7 +92,7 @@ class FileActivity : AppCompatActivity(){
             result = uri.getLastPathSegment();
         }
         return result
-    }
+    } //파일이름 가져오기
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
@@ -135,6 +135,8 @@ class FileActivity : AppCompatActivity(){
             storageRef.child(filename!!).putFile(filePath) //성공시
                 .addOnSuccessListener { Toast.makeText(applicationContext, "업로드 완료!", Toast.LENGTH_SHORT).show() } //실패시
                 .addOnFailureListener { Toast.makeText(applicationContext, "업로드 실패!", Toast.LENGTH_SHORT).show() } //진행중
+
+
 
         } else {
             Toast.makeText(applicationContext, "파일을 먼저 선택하세요.", Toast.LENGTH_SHORT).show()
@@ -185,6 +187,7 @@ class FileActivity : AppCompatActivity(){
         databaseReference!!.addValueEventListener(listener)
 
     }
+
 
     override fun onStop() {
         databaseReference?.removeEventListener(listener)
