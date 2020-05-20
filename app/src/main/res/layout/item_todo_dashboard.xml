@@ -1,44 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_d_todo_container"
     android:layout_width="match_parent"
-    android:layout_height="30dp"
+    android:layout_height="25dp"
     android:orientation="horizontal"
-    android:background="@drawable/button4"
+    android:background="@drawable/button5"
     android:layout_marginTop="8dp"
     android:layout_marginLeft="8dp"
     android:layout_marginRight="8dp">
 
     <TextView
-        android:id="@+id/todo_tv_d-day"
+        android:id="@+id/d_todo_tv_d-day"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:gravity="center"
         android:textSize="12dp"
+        android:textStyle="bold"
         android:textColor="@color/black"
         android:text="D-day"/>
 
     <TextView
-        android:id="@+id/todo_tv_name"
+        android:id="@+id/d_todo_tv_name"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="4"
         android:gravity="left|center"
-        android:paddingLeft="15dp"
+        android:paddingLeft="20dp"
         android:textSize="12dp"
         android:textColor="@color/black"
         android:text="할일명"/>
-    <TextView
-        android:layout_margin="10dp"
-        android:id="@+id/todo_performers"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:gravity="center"
-        android:layout_gravity="center"
-        android:textSize="8dp"
-        android:textColor="@color/white"
-        android:background="@drawable/chat_circle_form"
-        android:text=""/>
 
 
 </LinearLayout>

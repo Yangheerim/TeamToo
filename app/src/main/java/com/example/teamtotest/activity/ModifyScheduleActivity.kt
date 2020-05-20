@@ -1,8 +1,8 @@
 package com.example.teamtotest.activity
 
-import android.R
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -10,57 +10,61 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.teamtotest.R
 import com.example.teamtotest.dto.ScheduleDTO
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.example.teamtotest.dto.TodoDTO
+import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_add_schedule.*
+import kotlinx.android.synthetic.main.activity_add_todo.*
+import kotlinx.android.synthetic.main.activity_schedule.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class UpdateScheduleActivity: AppCompatActivity() {
-    private var start = Calendar.getInstance().apply { set(Calendar.MINUTE, 0) }
-    private var end = Calendar.getInstance().apply {
-        add(Calendar.HOUR, 1)
-        set(Calendar.MINUTE, 0)
-    }
+class ModifyScheduleActivity : AppCompatActivity() {
+    private var start = Calendar.getInstance()
+    private var end = Calendar.getInstance()
     private val format1 = SimpleDateFormat("yyyy / MM / dd", Locale.KOREA)
     private val format2 = SimpleDateFormat("a  h : mm", Locale.KOREA)
     private val spinnerAdapter by lazy {
-        ArrayAdapter(this, R.layout.simple_spinner_dropdown_item, resources.getStringArray(com.example.teamtotest.R.array.spinner))
+        ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, resources.getStringArray(R.array.spinner))
     }
     private var alarmPosition = 0
     private lateinit var firebaseDatabase: FirebaseDatabase
     private lateinit var databaseReference: DatabaseReference
     private var PID: String? = null
+    private var scheduleID: String? = null
+    private var scheduleDTO: ScheduleDTO? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(com.example.teamtotest.R.layout.activity_add_schedule)
+        setContentView(R.layout.activity_add_schedule)
 
-        val origin: ScheduleDTO? = intent.getParcelableExtra("schedule")
-        setOrigin(origin)
+        firebaseDatabase = FirebaseDatabase.getInstance()
+        PID = intent.getStringExtra("PID")
+        scheduleID = intent.getStringExtra("scheduleID")
 
-        //시작,종료 textview 설정
-        setText(true)
-        setText(false)
+        // DB에서 todoDTO 가져오기
+        databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("scheduleList").child(scheduleID.toString())
+        databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                scheduleDTO = dataSnapshot.getValue(ScheduleDTO::class.java)
+                scheduleDTO?.let { setOrigin(it) }
+            }
+            override fun onCancelled(p0: DatabaseError) {
+            }
+        })
 
         //알림 설정
         schedule_spinner.adapter = spinnerAdapter
         schedule_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                if (origin != null) {
-                    schedule_spinner.setPromptId(origin.alarm)
-                }
-                else{
-                    schedule_spinner.prompt = "없음"
-                }
+                schedule_spinner.prompt = "없음"
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 //아이템이 클릭 되면 맨 위부터 position 0번부터 순서대로 동작하게 됩니다.
                 alarmPosition = position
             }
-
         }
 
         //상단바
@@ -71,7 +75,7 @@ class UpdateScheduleActivity: AppCompatActivity() {
         start_date.setOnClickListener {
             val picker = DatePickerDialog(
                 this,
-                R.style.Theme_Holo_Light_Dialog_NoActionBar,
+                android.R.style.Theme_Holo_Light_Dialog_NoActionBar,
                 dateListener_start,
                 start.get(Calendar.YEAR),
                 start.get(Calendar.MONTH),
@@ -84,7 +88,7 @@ class UpdateScheduleActivity: AppCompatActivity() {
         start_time.setOnClickListener {
             val picker = TimePickerDialog(
                 this,
-                R.style.Theme_Holo_Light_Dialog_NoActionBar,
+                android.R.style.Theme_Holo_Light_Dialog_NoActionBar,
                 timeListener_start,
                 start.get(Calendar.HOUR_OF_DAY),
                 start.get(Calendar.MINUTE),
@@ -97,7 +101,7 @@ class UpdateScheduleActivity: AppCompatActivity() {
         end_date.setOnClickListener {
             val picker = DatePickerDialog(
                 this,
-                R.style.Theme_Holo_Light_Dialog_NoActionBar,
+                android.R.style.Theme_Holo_Light_Dialog_NoActionBar,
                 dateListener_end,
                 end.get(Calendar.YEAR),
                 end.get(Calendar.MONTH),
@@ -110,7 +114,7 @@ class UpdateScheduleActivity: AppCompatActivity() {
         end_time.setOnClickListener {
             val picker = TimePickerDialog(
                 this,
-                R.style.Theme_Holo_Light_Dialog_NoActionBar,
+                android.R.style.Theme_Holo_Light_Dialog_NoActionBar,
                 timeListener_end,
                 end.get(Calendar.HOUR_OF_DAY),
                 end.get(Calendar.MINUTE),
@@ -120,7 +124,7 @@ class UpdateScheduleActivity: AppCompatActivity() {
             picker.show()
         }
 
-        //수정하기 눌렀을 때
+        //등록하기 눌렀을 때
         schedule_btn_create.setOnClickListener {
             if (schedule_et_name.text.toString() == "") {
                 Toast.makeText(this.applicationContext, "스케줄 제목을 입력해주세요.", Toast.LENGTH_SHORT)
@@ -132,16 +136,20 @@ class UpdateScheduleActivity: AppCompatActivity() {
                     end.timeInMillis,
                     schedule_et_place.text.toString(),
                     alarmPosition,
-                    schedule_et_note.text.toString()
+                    schedule_et_note.text.toString(),
+                    scheduleDTO!!.color
                 )
                 //DB에 업로드
                 firebaseDatabase = FirebaseDatabase.getInstance()
 
                 PID = intent.getStringExtra("PID")
-                databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("scheduleList").child(intent.getStringExtra("sid"))
+                databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("scheduleList").child(scheduleID.toString())
                 databaseReference.setValue(scheduleDTO)
 
-                finish()
+                val intent = Intent(this, ScheduleActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                intent.putExtra("PID",PID)
+                startActivity(intent)
             }
         }
     }
@@ -233,12 +241,20 @@ class UpdateScheduleActivity: AppCompatActivity() {
         }
     }
 
-    private fun setOrigin(origin: ScheduleDTO?){
-        origin?.let {
-            schedule_et_name.setText(it.name)
-            schedule_et_place.setText(it.place)
-            schedule_et_note.setText(it.note)
-            schedule_btn_create.text = "수정하기"
-        }
+    private fun setOrigin(dto: ScheduleDTO){
+        scheduleDTO = dto
+        schedule_et_name.setText(scheduleDTO!!.name)
+        schedule_et_place.setText(scheduleDTO!!.place)
+        schedule_et_note.setText(scheduleDTO!!.note)
+
+        start.time = Date(scheduleDTO!!.startTime)
+        end.time = Date(scheduleDTO!!.endTime)
+
+        setText(true)
+        setText(false)
+
+        schedule_spinner.setSelection(scheduleDTO!!.alarm)
+
+        schedule_btn_create.text = "수정하기"
     }
 }

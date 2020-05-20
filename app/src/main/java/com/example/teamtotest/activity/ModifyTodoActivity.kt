@@ -1,58 +1,65 @@
 package com.example.teamtotest.activity
 
+import android.R
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.teamtotest.R
 import com.example.teamtotest.PerformerDialog
-import com.example.teamtotest.dto.MessageDTO
 import com.example.teamtotest.dto.TodoDTO
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_add_todo.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class AddTodoActivity : AppCompatActivity() {
-    private var deadline = Calendar.getInstance().apply {
-        set(Calendar.MINUTE, 0)
-    }
+class ModifyTodoActivity : AppCompatActivity() {
+    private var deadline = Calendar.getInstance()
     private val format1 = SimpleDateFormat("yyyy / MM / dd", Locale.KOREA)
     private val format2 = SimpleDateFormat("a  h : mm", Locale.KOREA)
     private val spinnerAdapter by lazy {
         ArrayAdapter(
             this,
             android.R.layout.simple_spinner_dropdown_item,
-            resources.getStringArray(R.array.spinner)
+            resources.getStringArray(com.example.teamtotest.R.array.spinner)
         )
     }
     private var alarmPosition = 0
     private lateinit var firebaseDatabase: FirebaseDatabase
     private lateinit var databaseReference: DatabaseReference
     private var PID: String? = null
+    private var todoID: String? = null
+    private var todoDTO:TodoDTO? = null
 
     private var performerUIDList : ArrayList<String> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_todo)
+        setContentView(com.example.teamtotest.R.layout.activity_add_todo)
 
         firebaseDatabase = FirebaseDatabase.getInstance()
         PID = intent.getStringExtra("PID")
-
-        deadline_date.text = format1.format(deadline.time)
-        deadline_time.text = format2.format(deadline.time)
+        todoID = intent.getStringExtra("todoID")
 
         //상단바
         setSupportActionBar(add_todo_toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        // DB에서 todoDTO 가져오기
+        databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("todoList").child(todoID.toString())
+        databaseReference.addListenerForSingleValueEvent(object : ValueEventListener{
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                todoDTO = dataSnapshot.getValue(TodoDTO::class.java)
+                todoDTO?.let { setOrigin(it) }
+            }
+            override fun onCancelled(p0: DatabaseError) {
+            }
+        })
 
         //마감기한 날짜 눌렀을 때
         deadline_date.setOnClickListener {
@@ -85,6 +92,7 @@ class AddTodoActivity : AppCompatActivity() {
         todo_btn_select_performer.setOnClickListener {
             var performerDialog : PerformerDialog = PerformerDialog(this)
             performerDialog.PID = PID
+            performerDialog.prePerformerUIDList = performerUIDList
             performerDialog.callDialog()
         }
 
@@ -120,9 +128,9 @@ class AddTodoActivity : AppCompatActivity() {
                 )
                 //DB에 업로드
 
-                databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("todoList")
-                databaseReference.push().setValue(todoDTO)
-                addMessageNotificationToDB(todoDTO)
+                databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("todoList").child(todoID.toString())
+                databaseReference.setValue(todoDTO)
+
                 finish()
             }
         }
@@ -164,35 +172,23 @@ class AddTodoActivity : AppCompatActivity() {
         deadline_time.text = format2.format(deadline.time)
     }
 
-    // 할일 수행자 지정 시 dialog-> activity로 데이터를 넘겨주기 위한 메서드
-    public fun setPerformer(performerUIDList_ : ArrayList<String>){
+    private fun setOrigin(dto: TodoDTO){
+        todoDTO = dto
+        todo_et_name.setText(todoDTO!!.name)
+        todo_et_note.setText(todoDTO!!.note)
+
+        deadline.time = Date(todoDTO!!.deadLine)
+        deadline_date.text = format1.format(Date(todoDTO!!.deadLine))
+        deadline_time.text = format2.format(Date(todoDTO!!.deadLine))
+
+        setPerformer(todoDTO!!.performers)
+        todo_spinner.setSelection(todoDTO!!.alarm)
+
+        todo_btn_create.text = "수정하기"
+    }
+
+    fun setPerformer(performerUIDList_ : ArrayList<String>){
         performerUIDList = performerUIDList_
         add_todo_performer_num.text = performerUIDList.size.toString()
     }
-
-    // 할일 추가 시 채팅창에 알림 메세지 저장
-    private fun addMessageNotificationToDB(todoDTO:TodoDTO) {
-        val firebaseAuth : FirebaseAuth = FirebaseAuth.getInstance()
-        val messageDTO =
-            MessageDTO(
-                "새로운 할일이 추가되었습니다.",
-                firebaseAuth.currentUser!!.displayName.toString(),
-                firebaseAuth.currentUser!!.uid.toString(),
-                todoData = todoDTO
-            )
-        val current = Date()
-        val utc = Date(current.time - Calendar.getInstance().timeZone.getOffset(current.time))
-        val dateFormat = SimpleDateFormat("yyyyMMddHHmmss")
-        val date_formatted = dateFormat.format(utc)
-
-
-        databaseReference = firebaseDatabase!!.getReference()
-        databaseReference = databaseReference!!.child("ProjectList").child(PID.toString()).child("messageList")
-                .child(date_formatted)
-        databaseReference!!.setValue(messageDTO)
-
-    }
-
-
 }
-

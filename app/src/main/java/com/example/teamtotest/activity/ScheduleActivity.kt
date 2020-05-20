@@ -31,6 +31,25 @@ class ScheduleActivity : AppCompatActivity() {
         //상단바
         setSupportActionBar(schedule_toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    private fun refreshCurrentMonth() {
+        tv_current_month.text = scheduleRecyclerViewAdapter.currentMonth
+    }
+
+    //상단바
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
 
         //PID에 해당하는 스케줄 가져오기
         PID = intent.getStringExtra("PID")
@@ -54,6 +73,7 @@ class ScheduleActivity : AppCompatActivity() {
         databaseReference.addValueEventListener(dbScheduleEventListener)
 
         scheduleRecyclerViewAdapter = RVAdapter(this)
+        scheduleRecyclerViewAdapter.setPID(PID)
         refreshCurrentMonth()
         rv_schedule.adapter = scheduleRecyclerViewAdapter   //adapter 설정
         rv_schedule.layoutManager = GridLayoutManager(this, BaseCalendar.DAYS_OF_WEEK)  //LayoutManager 설정
@@ -71,22 +91,6 @@ class ScheduleActivity : AppCompatActivity() {
         // + 버튼 눌렀을 때
         schedule_btn_add.setOnClickListener {
             startActivity(Intent(this, AddScheduleActivity::class.java).putExtra("PID",PID))
-        }
-
-    }
-
-    private fun refreshCurrentMonth() {
-        tv_current_month.text = scheduleRecyclerViewAdapter.currentMonth
-    }
-
-    //상단바
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                onBackPressed()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
         }
     }
 

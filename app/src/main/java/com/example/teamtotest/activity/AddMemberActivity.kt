@@ -14,6 +14,7 @@ import com.example.teamtotest.dto.UserDTO
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_add_member.*
 import kotlinx.android.synthetic.main.activity_chat.*
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Collections.list
 import kotlin.collections.ArrayList
@@ -117,11 +118,14 @@ class AddMemberActivity : AppCompatActivity() {
                 )
             val current = Date()
             val utc = Date(current.time - Calendar.getInstance().timeZone.getOffset(current.time))
+            val dateFormat = SimpleDateFormat("yyyyMMddHHmmss")
+            val date_formatted = dateFormat.format(utc)
+
 
             databaseReference = firebaseDatabase!!.getReference()
             databaseReference =
                 databaseReference!!.child("ProjectList").child(PID.toString()).child("messageList")
-                    .child(utc.toString())
+                    .child(date_formatted)
             databaseReference!!.setValue(messageDTO)
         }
     }

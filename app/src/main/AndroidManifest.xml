@@ -15,7 +15,9 @@
         android:roundIcon="@mipmap/ic_launcher_tt_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.HelpActivity"></activity>
+        <activity android:name=".activity.ModifyScheduleActivity"/>
+        <activity android:name=".activity.AlertDisplayActivity"></activity>
+        <activity android:name=".activity.HelpActivity" />
         <activity android:name=".activity.AlertActivity" />
         <activity android:name=".activity.TimetableActivity" />
         <activity android:name=".activity.VersionInfoActivity" />
@@ -26,7 +28,8 @@
         <activity android:name=".activity.ChatActivity" />
         <activity android:name=".activity.AddProjectActivity" />
         <activity android:name=".activity.ExtraUserInfoActivity" />
-        <activity android:name=".activity.LoginActivity"
+        <activity
+            android:name=".activity.LoginActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".activity.NavigationbarActivity" />
         <activity android:name=".activity.AddScheduleActivity" />
@@ -35,6 +38,7 @@
         <activity android:name=".activity.ScheduleListActivity" />
         <activity android:name=".activity.TodoActivity" />
         <activity android:name=".activity.AddMemberActivity" />
+        <activity android:name=".activity.ModifyTodoActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

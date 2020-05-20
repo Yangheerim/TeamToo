@@ -1,24 +1,34 @@
 package com.example.teamtotest.activity
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
+import android.database.Cursor
+import android.net.Uri
 import android.os.Bundle
+import android.provider.OpenableColumns
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import com.example.teamtotest.Push
 import com.example.teamtotest.R
 import com.example.teamtotest.adapter.ChatListAdapter
+import com.example.teamtotest.dto.FileDTO
 import com.example.teamtotest.dto.MembersDTO
 import com.example.teamtotest.dto.MessageDTO
+import com.example.teamtotest.dto.UserDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_chat.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class ChatActivity : AppCompatActivity() {
 
@@ -30,6 +40,8 @@ class ChatActivity : AppCompatActivity() {
     private var PID : String? = null
     private var projectName : String? = null
     private var howManyMembers : String? = null
+    private var userDTOList : HashMap<String, UserDTO> ?= null
+    private lateinit var filePath : Uri
 
     private var ChatMessageList: ArrayList<HashMap<String, String>> = ArrayList<HashMap<String, String>>()
     private var ChatMessageData: HashMap<String, String> = HashMap<String, String>()
@@ -62,6 +74,7 @@ class ChatActivity : AppCompatActivity() {
 
 
         nav_view.setNavigationItemSelectedListener{
+
             when (it.itemId) {
                 R.id.drawer_members -> {
                     chat_drawer.closeDrawer(GravityCompat.END)
@@ -71,13 +84,11 @@ class ChatActivity : AppCompatActivity() {
                     intent.putExtra("howManyMembers", howManyMembers)
                     startActivity(intent)
                 }
-//                R.id.drawer_file -> setFrag(1)
                 R.id.drawer_schedule -> {
                     chat_drawer.closeDrawer(GravityCompat.END)
                     intent = Intent(this, ScheduleActivity::class.java)
                     intent.putExtra("PID", PID)
                     startActivity(intent)
-
                 }
                 R.id.drawer_file -> {
                     chat_drawer.closeDrawer(GravityCompat.END)
@@ -91,7 +102,6 @@ class ChatActivity : AppCompatActivity() {
                     intent=Intent(this,TodoActivity::class.java)
                     intent.putExtra("PID", PID)
                     startActivity(intent)
-
                 }
                 R.id.drawer_finaltest -> {
                     // 코드 추가 해야함
@@ -106,7 +116,7 @@ class ChatActivity : AppCompatActivity() {
                 }
                 else -> println("NavigationBar ERROR!")
             }
-            true
+            false
         }
 
         firebaseAuth = FirebaseAuth.getInstance()
@@ -139,13 +149,21 @@ class ChatActivity : AppCompatActivity() {
                 chat_drawer.openDrawer(GravityCompat.END);
                 true
             }
-
+            R.id.toolbar_file -> {
+                val intent = Intent()
+                intent.type = "*/*"
+                intent.action = Intent.ACTION_GET_CONTENT
+                startActivityForResult(Intent.createChooser(intent, "파일을 선택하세요."), 0)
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
     override fun onStart() {
         super.onStart()
+        getUserInfos()
+        Thread.sleep(300)
         setListener_MessageData()
         setListener_theNumOfMembersFromMyProjects()
         readCheckToDB()
@@ -159,6 +177,70 @@ class ChatActivity : AppCompatActivity() {
         databaseReference = firebaseDatabase!!.getReference("ProjectList").child(PID.toString()).child("members")
         databaseReference!!.removeEventListener(members_listener)
         super.onStop()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        //request코드가 0이고 OK를 선택했고 data에 뭔가가 들어 있다면
+        if (requestCode == 0 && resultCode == Activity.RESULT_OK) {
+            Log.e("data", data.toString())
+            filePath = data!!.data!!
+            val fileName: String? = getFileName(filePath)
+            uploadFile(fileName)
+        }
+    }
+
+    private fun uploadFile(filename: String?)
+    { //업로드할 파일이 있으면 수행
+        if (filePath != null)
+        { //storage
+            val storage = FirebaseStorage.getInstance()
+
+            //storage 주소와 폴더 파일명을 지정해 준다.
+            val storageRef = storage.getReferenceFromUrl("gs://teamtogether-bdfc9.appspot.com")
+
+            storageRef.child(filename!!).putFile(filePath) //성공시
+                .addOnSuccessListener { Toast.makeText(applicationContext, "업로드 완료!", Toast.LENGTH_SHORT).show() } //실패시
+                .addOnFailureListener { Toast.makeText(applicationContext, "업로드 실패!", Toast.LENGTH_SHORT).show() } //진행중
+
+        } else {
+            Toast.makeText(applicationContext, "파일을 먼저 선택하세요.", Toast.LENGTH_SHORT).show()
+        }
+        uploadFileInfoToDB(filename!!)
+    }
+
+    private fun uploadFileInfoToDB(fileName : String){
+        var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+        val uid : String = firebaseAuth.currentUser!!.uid
+        val userName : String = firebaseAuth.currentUser!!.displayName!!
+
+        val date_format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val date = date_format.format(System.currentTimeMillis())
+
+        val fileDTO : FileDTO = FileDTO(fileName, date, uid, userName)
+
+        databaseReference = firebaseDatabase!!.reference.child("ProjectList").child(PID.toString()).child("file").push()
+        databaseReference!!.setValue(fileDTO)
+
+    }
+
+    private fun getFileName(uri: Uri) : String? {
+        var result : String? = null
+        if (uri.scheme!!.equals("content"))
+        {
+            var cursor : Cursor? = contentResolver.query(uri, null, null, null, null)
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                }
+            } finally {
+                cursor?.close()
+            }
+        }
+        if (result == null) {
+            result = uri.getLastPathSegment();
+        }
+        return result
     }
 
     private fun exitProject(){
@@ -224,10 +306,11 @@ class ChatActivity : AppCompatActivity() {
                     )
                 val current = Date()
                 val utc = Date(current.time - Calendar.getInstance().timeZone.getOffset(current.time))
+                val date_formatted = dateFormat.format(utc)
 
                 databaseReference = firebaseDatabase!!.getReference()
                 databaseReference =
-                    databaseReference!!.child("ProjectList").child(PID.toString()).child("messageList").child(utc.toString())
+                    databaseReference!!.child("ProjectList").child(PID.toString()).child("messageList").child(date_formatted)
                 databaseReference!!.setValue(messageDTO)
 
 
@@ -248,9 +331,9 @@ class ChatActivity : AppCompatActivity() {
                 message.text.toString(),
                 firebaseAuth!!.currentUser!!.displayName.toString(),
                 firebaseAuth!!.currentUser!!.uid,
-                isReadList
+                isReadList,
+                null
             )  // 유저 이름과 메세지로 message data 만들기
-//        val date_format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         val current = Date()
         val utc = Date(current.time - Calendar.getInstance().timeZone.getOffset(current.time))
 
@@ -273,11 +356,9 @@ class ChatActivity : AppCompatActivity() {
                 for (snapshot in dataSnapshot.children) {
                     val messageDTO = snapshot.getValue(MessageDTO::class.java)  // 데이터를 가져와서
                     if (!messageDTO!!.read!!.contains(myUID)) { // 내 uid가 없으면! 추가해준당
-                        messageDTO!!.read!!.add(myUID)
-//                        Log.d("Add complete!! ----> ", myUID)
+                        messageDTO.read!!.add(myUID)
                         databaseReference =
-                            firebaseDatabase!!.getReference("ProjectList").child(PID.toString())
-                                .child("messageList").child(snapshot.key.toString())
+                            firebaseDatabase!!.getReference("ProjectList").child(PID.toString()).child("messageList").child(snapshot.key.toString())
                         databaseReference!!.setValue(messageDTO)  // 덮어쓰기
                     }
                 }
@@ -290,9 +371,9 @@ class ChatActivity : AppCompatActivity() {
         })
     }
 
-
-
     private fun setListener_MessageData() {
+
+
 
         dbMessageeventListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -312,6 +393,20 @@ class ChatActivity : AppCompatActivity() {
                     ChatMessageData["message"] = messageDTO.message
                     ChatMessageData["userUID"] = messageDTO.userUID
                     ChatMessageData["isRead"] = (Integer.parseInt(howManyMembers!!) - messageDTO.read!!.size).toString()
+
+                    if(messageDTO.todoData != null){
+                        ChatMessageData["todoName"] = messageDTO!!.todoData!!.name.toString()
+                        var deadline = convertLongToTime(messageDTO!!.todoData!!.deadLine)
+                        ChatMessageData["deadline"] = "$deadline 까지"
+                        var performers : String = ""
+                        for(i in messageDTO!!.todoData!!.performers){
+                            val name = getNamefromUID(i)
+                            performers += "$name "
+                            Log.d("performers --->", performers)
+                        }
+                        ChatMessageData["performer"] = performers
+                    }
+
                     ChatMessageList.add(ChatMessageData)
                     chatList_recycler_view.scrollToPosition(ChatMessageList.size-1); // 메세지리스트의 가장 밑으로 스크롤바 위치조정! 꺄
                 }
@@ -328,6 +423,34 @@ class ChatActivity : AppCompatActivity() {
 
         databaseReference = firebaseDatabase!!.getReference("ProjectList").child(PID.toString()).child("messageList")
         databaseReference!!.addValueEventListener(dbMessageeventListener)       // Projectlist/PID/messageList 경로에 있는 데이터가 뭔가가 바뀌면 알려주는 listener 설정!
+    }
+
+    fun convertLongToTime(time: Long): String {
+        val date = Date(time)
+        val format = SimpleDateFormat("yyyy/MM/dd HH:mm")
+        return format.format(date)
+    }
+
+    private fun getUserInfos() {
+
+        userDTOList= HashMap<String, UserDTO>()
+        databaseReference = firebaseDatabase!!.getReference("UserList")
+        databaseReference!!.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for (snapshot in dataSnapshot.children) {
+                    val userDTO: UserDTO = snapshot.getValue(UserDTO::class.java)!!
+                    userDTOList!![snapshot.key.toString()]=userDTO
+                    Log.d("getUserInfo--->", userDTO.toString())
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("ExtraUserInfoActivity", "loadPost:onCancelled", databaseError.toException()!! )
+            }
+        })
+    }
+
+    private fun getNamefromUID(uid : String) :String{
+        return userDTOList!![uid]!!.name
     }
 
     private fun setListener_theNumOfMembersFromMyProjects() {

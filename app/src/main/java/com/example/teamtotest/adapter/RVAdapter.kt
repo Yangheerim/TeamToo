@@ -23,6 +23,7 @@ class RVAdapter(private val context: Context) : RecyclerView.Adapter<RVAdapter.V
     private val cal = Calendar.getInstance()
     var currentMonth: String = ""
     private var scheduleDTO = arrayListOf<ScheduleDTO>()
+    private var PID: String? = null
 
     init {
         baseCalendar.initBaseCalendar {
@@ -73,6 +74,7 @@ class RVAdapter(private val context: Context) : RecyclerView.Adapter<RVAdapter.V
             holder.itemView.view_over.setOnClickListener {
                 val intent = Intent(context, ScheduleListActivity::class.java)
                 intent.putExtra("schedule list", dayList)
+                intent.putExtra("PID",PID)
                 context.startActivity(intent)
             }
         }
@@ -165,4 +167,7 @@ class RVAdapter(private val context: Context) : RecyclerView.Adapter<RVAdapter.V
         }
     }
 
+    fun setPID(pid:String?){
+        PID = pid
+    }
 }

@@ -12,20 +12,16 @@ import kotlinx.android.synthetic.main.activity_schedule.*
 import kotlinx.android.synthetic.main.activity_schedule_list.*
 
 class ScheduleListActivity : AppCompatActivity() {
+    var scheduleList: ArrayList<ScheduleDTO>? = null
+    var PID: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_schedule_list)
 
-        val scheduleList: ArrayList<ScheduleDTO>? = intent.getParcelableArrayListExtra("schedule list")
-
         //상단바
         setSupportActionBar(add_schedule_toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        //어댑터, 레이아웃매니저 설정
-        rv_schedule_list.adapter = ScheduleListRVAdapter(scheduleList!!)
-        rv_schedule_list.layoutManager = LinearLayoutManager(this)
     }
 
     //상단바
@@ -37,5 +33,16 @@ class ScheduleListActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        scheduleList = intent.getParcelableArrayListExtra("schedule list")
+        PID = intent.getStringExtra("PID")
+
+        //어댑터, 레이아웃매니저 설정
+        rv_schedule_list.adapter = ScheduleListRVAdapter(scheduleList!!,this, PID)
+        rv_schedule_list.layoutManager = LinearLayoutManager(this)
     }
 }

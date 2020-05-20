@@ -8,13 +8,18 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/add_project_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?android:attr/actionBarSize">
-
+        android:layout_height="?android:attr/actionBarSize"
+        >
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:src="@drawable/logo" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="15dp"
+            android:src="@drawable/teamto_logo" />
+
     </androidx.appcompat.widget.Toolbar>
+
     <View
         android:background="@color/gray"
         android:layout_width="match_parent"
@@ -37,7 +42,6 @@
         android:layout_height="wrap_content"
         app:itemBackground="@android:color/white"
         app:itemIconTint="@drawable/item_color"
-        app:itemTextColor="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:labelVisibilityMode="unlabeled"
         app:menu="@menu/menu_bottombar"
