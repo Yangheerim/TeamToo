@@ -2,9 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/toolbar_file"
+        android:enabled="true"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_file_upload"
+        android:title="파일업로드"/>
+
+    <item
         android:id="@+id/toolbar_menu"
         android:enabled="true"
         app:showAsAction="always"
         android:icon="@drawable/ic_menu_black"
         android:title="홈"/>
+
 </menu>
