@@ -64,13 +64,14 @@
 
 
         <TextView
+            android:id="@+id/sound"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:paddingVertical="15dp"
             android:text="소리"
             android:layout_marginLeft="10dp"
             android:textColor="@color/black"
-            android:textSize="15dp" />
+            android:textSize="15dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -105,6 +106,7 @@
 
 
         <TextView
+            android:id="@+id/vibrate"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:paddingVertical="15dp"
@@ -124,7 +126,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginRight="10dp"
                 android:switchMinWidth="60dp"
-                android:trackTint="#FFC107"/>
+                android:trackTint="#FFC107" />
 
         </LinearLayout>
 
@@ -147,6 +149,7 @@
 
 
         <TextView
+            android:id="@+id/display"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:paddingVertical="15dp"
