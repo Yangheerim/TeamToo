@@ -20,7 +20,7 @@
         android:textColor="@color/black"
         android:text="데이터과학"/>
     <TextView
-        android:id="@+id/d_todo_tv_d-day"
+        android:id="@+id/d_todo_day"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="2"

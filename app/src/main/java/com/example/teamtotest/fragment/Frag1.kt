@@ -18,6 +18,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.bottombar_fragment1.*
 import kotlinx.android.synthetic.main.bottombar_fragment1.view.*
+import kotlinx.android.synthetic.main.item_todo_dashboard.view.*
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.math.absoluteValue
 
 class Frag1 : Fragment (){
 
@@ -81,6 +85,31 @@ class Frag1 : Fragment (){
         }
     }
 
+    private fun removeLastTodoList(){
+        val today = Calendar.getInstance()
+        var deadCal = Calendar.getInstance()
+
+        var newTodoData : ArrayList<TodoDTO> = ArrayList<TodoDTO>()
+
+        for (position in todoList.indices) {
+
+            deadCal.time = Date(todoList[position].deadLine)
+
+            val diff_day = deadCal.get(Calendar.DAY_OF_YEAR) - today.get(Calendar.DAY_OF_YEAR)
+            when {
+                diff_day >= 0 -> {
+                    newTodoData.add(todoList[position])
+                    Log.d("Not Remove Position-->", todoList[position].projectdata!!.projectName.toString())
+                }
+            }
+        }
+        todoList.clear()
+        for(i in newTodoData.indices){
+            todoList.add(newTodoData[i])
+        }
+
+    }
+
 
     private fun setTodoListListener(){
         val myUID = firebaseAuth.currentUser!!.uid
@@ -104,6 +133,7 @@ class Frag1 : Fragment (){
                         }
                     }
                 }
+                removeLastTodoList()
                 sortByDate()
                 todoRVAdapter.notifyDataSetChanged()
             }
@@ -169,7 +199,7 @@ class Frag1 : Fragment (){
                     }
                 }
                 progressbarAdapterMain.notifyDataSetChanged()
-                todoRVAdapter.notifyDataSetChanged()
+//                todoRVAdapter.notifyDataSetChanged()
             }
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.w("ExtraUserInfoActivity", "loadPost:onCancelled", databaseError.toException())

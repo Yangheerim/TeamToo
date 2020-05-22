@@ -1,6 +1,7 @@
 package com.example.teamtotest.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -31,27 +32,26 @@ class TodoRVAdapterMain(
     }
 
     override fun onBindViewHolder(holder: ViewHolderHelper, position: Int) {
+        Log.d("Todo Position -->", position.toString())
+        Log.d("Todo data -->", todoDTO[position].toString())
+
         val deadCal = Calendar.getInstance()
         deadCal.time = Date(todoDTO[position].deadLine)
 
         holder.itemView.d_todo_project_name.text = todoDTO[position].projectdata!!.projectName
+        holder.itemView.d_todo_tv_name.text = todoDTO[position].name
 
-        if (today.get(Calendar.YEAR) == deadCal.get(Calendar.YEAR)) { //같은 연도인 경우
-            val diff = deadCal.get(Calendar.DAY_OF_YEAR) - today.get(Calendar.DAY_OF_YEAR)
-            when {
-                diff == 0 -> {
-                    holder.itemView.d_todo_tv_d_day.text = "D-day"
-                }
-                diff < 0 -> {
-                    holder.itemView.d_todo_tv_d_day.text = "D+${diff.absoluteValue}"
-                }
-                else -> {
-                    holder.itemView.d_todo_tv_d_day.text = "D-$diff"
-                }
+        val diff = deadCal.get(Calendar.DAY_OF_YEAR) - today.get(Calendar.DAY_OF_YEAR)
+        when {
+            diff == 0 -> {
+                holder.itemView.d_todo_day.text = "D-day"
+            }
+            diff > 0 -> {
+                holder.itemView.d_todo_day.text = "D-${diff}"
             }
         }
 
-        holder.itemView.d_todo_tv_name.text = todoDTO[position].name
+
 
     }
 
