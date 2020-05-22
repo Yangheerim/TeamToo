@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout android:layout_width="match_parent"
-    android:layout_height="80dp"
+    android:layout_height="60dp"
     android:layout_marginTop="10dp"
     android:layout_marginLeft="10dp"
     android:layout_marginRight="10dp"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@drawable/back_white_btn">
+    android:background="@drawable/button5">
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="left|center"
-        android:paddingLeft="30dp"
+        android:layout_gravity="center"
+        android:paddingLeft="20dp"
         android:layout_weight="1"
         android:orientation="vertical">
         <TextView
@@ -23,11 +24,11 @@
         <TextView
             android:id="@+id/file_title"
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_marginTop="10dp"
+            android:layout_height="wrap_content"
             android:text="Proposal 발표.pdf"
+            android:maxLines="1"
             android:textColor="#000000"
-            android:textSize="18sp" />
+            android:textSize="16dp" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="wrap_content"
@@ -35,13 +36,14 @@
         android:gravity="center">
         <TextView
             android:id="@+id/file_userName"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_margin="16dp"
             android:text="양희림"
-            android:textColor="#ffffff"
+            android:textSize="12dp"
+            android:textColor="#000000"
             android:gravity="center"
-            android:background="@drawable/back_profile" />
+            android:background="@drawable/user_circle_form" />
     </LinearLayout>
 
 
