@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_d_todo_container"
     android:layout_width="match_parent"
     android:layout_height="25dp"
     android:orientation="horizontal"
@@ -9,7 +10,7 @@
     android:layout_marginRight="8dp">
 
     <TextView
-        android:id="@+id/todo_tv_d-day"
+        android:id="@+id/d_todo_tv_d-day"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
         android:layout_width="0dp"
@@ -22,7 +23,7 @@
         android:text="D-day"/>
 
     <TextView
-        android:id="@+id/todo_tv_name"
+        android:id="@+id/d_todo_tv_name"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="4"
