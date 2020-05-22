@@ -7,8 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.teamtotest.R
+import com.example.teamtotest.adapter.ProgressbarAdapterMain
 import com.example.teamtotest.adapter.TodoRVAdapterMain
 import com.example.teamtotest.dto.MembersDTO
+import com.example.teamtotest.dto.ProjectDTO
 import com.example.teamtotest.dto.TodoDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
@@ -18,7 +20,9 @@ class Frag1 : Fragment (){
 
     private var todoList: ArrayList<TodoDTO> = ArrayList<TodoDTO>()
     private lateinit var todoRVAdapter: TodoRVAdapterMain
+    private lateinit var progressbarAdapterMain: ProgressbarAdapterMain
     var myProjectPIDlist: ArrayList<String> = ArrayList<String>()
+    var myProjectDTOs : ArrayList<ProjectDTO?> = ArrayList<ProjectDTO?>()
 
     private lateinit var firebaseAuth : FirebaseAuth
     private lateinit var firebaseDatabase: FirebaseDatabase
@@ -35,11 +39,18 @@ class Frag1 : Fragment (){
         firebaseDatabase = FirebaseDatabase.getInstance()
         findMyProjectFromFirebaseDB() // 내 프로젝트 찾음
 
+        //
+        view.dashboard_progress_recycler_view.setHasFixedSize(true)
+        progressbarAdapterMain = ProgressbarAdapterMain(requireActivity(), myProjectDTOs)
+        view.dashboard_progress_recycler_view.adapter = progressbarAdapterMain
+        progressbarAdapterMain.notifyDataSetChanged()
+
 
         view.dashboard_recycler_view.setHasFixedSize(true)
         todoRVAdapter = TodoRVAdapterMain(requireActivity(), todoList)
         view.dashboard_recycler_view.adapter = todoRVAdapter
         todoRVAdapter.notifyDataSetChanged()
+
 
         setTodoListListener()
 
@@ -105,17 +116,17 @@ class Frag1 : Fragment (){
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // 각각 프로젝트별로, 멤버중에 나 자신이 있는지 확인.
                 for (snapshot in dataSnapshot.children) {
-                    //ProjectInfo.put("PID", snapshot.getKey());
                     val membersPerProject = snapshot.child("members")
                         .getValue(MembersDTO::class.java) // memberUID 정보를 가져옴.
-
+                    val projectDTO : ProjectDTO? = snapshot.getValue(ProjectDTO::class.java)
                     for (i in 0 until membersPerProject!!.UID_list!!.size) {
                         if (membersPerProject!!.UID_list!![i].equals(myUID)) {
+                            myProjectDTOs.add(projectDTO)
                             myProjectPIDlist.add(snapshot.key.toString())
                         }
                     }
                 }
-                //                setListener_DataFromMyProjects();
+                progressbarAdapterMain.notifyDataSetChanged()
             }
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.w("ExtraUserInfoActivity", "loadPost:onCancelled", databaseError.toException())
