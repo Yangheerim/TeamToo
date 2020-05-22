@@ -69,7 +69,7 @@ class FileActivity : AppCompatActivity(){
         file_recycler_view.adapter = myAdapter
     }
 
-<<<<<<< HEAD
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean
     {
         menuInflater.inflate(R.menu.menu_file_toolbar, menu)
@@ -124,8 +124,6 @@ class FileActivity : AppCompatActivity(){
         }
     }
 
-=======
->>>>>>> f7cd51467299528024adc8b5bd0694cc9b2f18a1
     private fun uploadFile(filename: String?)
     { //업로드할 파일이 있으면 수행
         if (filePath != null)
@@ -191,67 +189,9 @@ class FileActivity : AppCompatActivity(){
 
     }
 
-<<<<<<< HEAD
-=======
-    override fun onCreateOptionsMenu(menu: Menu): Boolean
-    {
-        menuInflater.inflate(R.menu.menu_file_toolbar, menu)
-        return true
-    }
-
-    private fun getFileName(uri: Uri) : String? {
-        var result : String? = null
-        if (uri.scheme!!.equals("content"))
-        {
-            var cursor : Cursor? = contentResolver.query(uri, null, null, null, null)
-            try {
-                if (cursor != null && cursor.moveToFirst()) {
-                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
-                }
-            } finally {
-                cursor?.close()
-            }
-        }
-        if (result == null) {
-            result = uri.getLastPathSegment();
-        }
-        return result
-    }
-
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                onBackPressed()
-                true
-            }
-            R.id.upload -> {
-                val intent = Intent()
-                intent.type = "*/*"
-                intent.action = Intent.ACTION_GET_CONTENT
-                startActivityForResult(Intent.createChooser(intent, "파일을 선택하세요."), 0)
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        //request코드가 0이고 OK를 선택했고 data에 뭔가가 들어 있다면
-        if (requestCode == 0 && resultCode == Activity.RESULT_OK) {
-            Log.e("data", data.toString())
-            filePath = data!!.data!!
-            val fileName: String? = getFileName(filePath)
-            uploadFile(fileName)
-        }
-    }
->>>>>>> f7cd51467299528024adc8b5bd0694cc9b2f18a1
-
     override fun onStop() {
         databaseReference?.removeEventListener(listener)
         super.onStop()
     }
-
 
 }
