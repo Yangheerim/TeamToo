@@ -7,19 +7,25 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.teamtotest.R
+import com.example.teamtotest.adapter.FileRVAdapterMain
 import com.example.teamtotest.adapter.ProgressbarAdapterMain
 import com.example.teamtotest.adapter.TodoRVAdapterMain
+import com.example.teamtotest.dto.FileDTO
 import com.example.teamtotest.dto.MembersDTO
 import com.example.teamtotest.dto.ProjectDTO
 import com.example.teamtotest.dto.TodoDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import kotlinx.android.synthetic.main.bottombar_fragment1.*
 import kotlinx.android.synthetic.main.bottombar_fragment1.view.*
 
 class Frag1 : Fragment (){
 
     private var todoList: ArrayList<TodoDTO> = ArrayList<TodoDTO>()
+    private var fileList: ArrayList<FileDTO> = ArrayList<FileDTO>()
+
     private lateinit var todoRVAdapter: TodoRVAdapterMain
+    private lateinit var fileRVAdapter: FileRVAdapterMain
     private lateinit var progressbarAdapterMain: ProgressbarAdapterMain
     var myProjectPIDlist: ArrayList<String> = ArrayList<String>()
     var myProjectDTOs : ArrayList<ProjectDTO?> = ArrayList<ProjectDTO?>()
@@ -46,13 +52,18 @@ class Frag1 : Fragment (){
         progressbarAdapterMain.notifyDataSetChanged()
 
 
-        view.dashboard_recycler_view.setHasFixedSize(true)
+        view.dashboard_todo_recycler_view.setHasFixedSize(true)
         todoRVAdapter = TodoRVAdapterMain(requireActivity(), todoList)
-        view.dashboard_recycler_view.adapter = todoRVAdapter
+        view.dashboard_todo_recycler_view.adapter = todoRVAdapter
         todoRVAdapter.notifyDataSetChanged()
 
+        view.dashboard_file_recycler_view.setHasFixedSize(true)
+        fileRVAdapter = FileRVAdapterMain(requireActivity(), fileList)
+        view.dashboard_file_recycler_view.adapter = fileRVAdapter
+        fileRVAdapter.notifyDataSetChanged()
 
         setTodoListListener()
+        setFileListListener()
 
         return view
     }
@@ -60,8 +71,6 @@ class Frag1 : Fragment (){
     private fun sortByDate(){
         //Bubble sort
         for(i in 0 until todoList.size-1){
-//            Log.d("index--->", i.toString())
-//            Log.d("todoList.size--->", todoList.size.toString())
             for(j  in 0 until todoList.size-1-i) {
                 if (todoList[j].deadLine > todoList[j + 1].deadLine) {
                     val temp = todoList[j]
@@ -69,7 +78,6 @@ class Frag1 : Fragment (){
                     todoList[j + 1] = temp
                 }
             }
-//            Log.d("Sorting--->", todoList.toString())
         }
     }
 
@@ -80,6 +88,7 @@ class Frag1 : Fragment (){
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 todoList.clear()
                 for (projectData in dataSnapshot.children){
+                    val projectDTO : ProjectDTO = projectData.getValue(ProjectDTO::class.java)!!
                     if(myProjectPIDlist.contains(projectData.key.toString())) {
 //                        Log.d("TodoList1--->", projectData.key.toString())
                         for(data in projectData.children) {
@@ -87,6 +96,7 @@ class Frag1 : Fragment (){
                                 for(todoData in data.children) {
                                     val todoDTO = todoData.getValue(TodoDTO::class.java)
                                     if(todoDTO!!.performers.contains(myUID)) { // 내 할일일 경우에만 리스트에 표시
+                                        todoDTO.projectdata = projectDTO
                                         todoList.add(todoDTO!!)
                                     }
                                 }
@@ -106,9 +116,41 @@ class Frag1 : Fragment (){
         databaseReference = firebaseDatabase.getReference("ProjectList")
         databaseReference.addValueEventListener(dbTodoEventListener)
     }
+    private fun setFileListListener(){
+        val dbFileEventListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                fileList.clear()
+                for (projectData in dataSnapshot.children){
+                    val projectDTO : ProjectDTO = projectData.getValue(ProjectDTO::class.java)!!
+                    if(myProjectPIDlist.contains(projectData.key.toString())) {
+                        for(data in projectData.children) {
+                            if(data.key=="file") {
+                                for(fileData in data.children) {
+                                    val fileDTO = fileData.getValue(FileDTO::class.java)
+                                    fileDTO!!.projectdata = projectDTO
+                                    fileList.add(fileDTO!!)
+                                }
+                            }
+                        }
+                    }
+                }
+                fileRVAdapter.notifyDataSetChanged()
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.e("TAG", databaseError.toString())
+            }
+
+        }
+        databaseReference = firebaseDatabase.getReference("ProjectList")
+        databaseReference.addValueEventListener(dbFileEventListener)
+    }
+
+
 
     private fun findMyProjectFromFirebaseDB() {
         myProjectPIDlist.clear()
+        myProjectDTOs.clear()
         val myUID = firebaseAuth.currentUser!!.uid
 
         databaseReference = firebaseDatabase.getReference("ProjectList")
@@ -127,10 +169,14 @@ class Frag1 : Fragment (){
                     }
                 }
                 progressbarAdapterMain.notifyDataSetChanged()
+                todoRVAdapter.notifyDataSetChanged()
             }
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.w("ExtraUserInfoActivity", "loadPost:onCancelled", databaseError.toException())
             }
         })
     }
+
+
+
 }

@@ -5,5 +5,6 @@ data class TodoDTO(
     var note: String? = "",
     var deadLine: Long = 0,
     var performers : ArrayList<String> = arrayListOf(),
-    var alarm: Int = 0
+    var alarm: Int = 0,
+    var projectdata : ProjectDTO? =null
 )

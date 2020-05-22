@@ -9,7 +9,7 @@ import com.example.teamtotest.fragment.*
 import kotlinx.android.synthetic.main.bottom_navigation_layout.*
 
 class NavigationbarActivity : AppCompatActivity() {
-
+    lateinit var fragment1 : Frag1
     lateinit var fragment2 : Frag2
     lateinit var fragment3 : CalendarFragment
 
@@ -17,6 +17,7 @@ class NavigationbarActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.bottom_navigation_layout)
 
+        fragment1= Frag1()
         fragment2= Frag2()
         fragment3= CalendarFragment()
 
@@ -37,7 +38,7 @@ class NavigationbarActivity : AppCompatActivity() {
         val ft = supportFragmentManager.beginTransaction()
         when (n) {
             0 -> {
-                ft.replace(R.id.Main_Frame, Frag1())
+                ft.replace(R.id.Main_Frame, fragment1)
                 ft.commit()
             }
 
