@@ -44,14 +44,14 @@ class TodoRVAdapterMain(private val context: Context, private var todoDTO: Array
             val diff = deadCal.get(Calendar.DAY_OF_YEAR) - today.get(Calendar.DAY_OF_YEAR)
             when {
                 diff == 0 -> {
-                    holder.itemView.d_todo_tv_d_day.text = "D - day"
+                    holder.itemView.d_todo_tv_d_day.text = "D-day"
                 }
                 diff < 0 -> {
-                    holder.itemView.d_todo_tv_d_day.text = "D + ${diff.absoluteValue}"
+                    holder.itemView.d_todo_tv_d_day.text = "D+${diff.absoluteValue}"
 //                    holder.itemView.d_todo_tv_d_day.visibility = View.INVISIBLE
                 }
                 else -> {
-                    holder.itemView.d_todo_tv_d_day.text = "D - $diff"
+                    holder.itemView.d_todo_tv_d_day.text = "D-$diff"
                 }
             }
         }
