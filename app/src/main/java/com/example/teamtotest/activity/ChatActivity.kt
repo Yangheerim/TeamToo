@@ -162,8 +162,8 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        getUserInfos()
-        Thread.sleep(300)
+//        getUserInfos()
+//        Thread.sleep(300)
         setListener_MessageData()
         setListener_theNumOfMembersFromMyProjects()
         readCheckToDB()
@@ -373,8 +373,6 @@ class ChatActivity : AppCompatActivity() {
 
     private fun setListener_MessageData() {
 
-
-
         dbMessageeventListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 ChatMessageList.clear()    // 갱신될 때 이미 있던 데이터는 날리기
@@ -395,16 +393,21 @@ class ChatActivity : AppCompatActivity() {
                     ChatMessageData["isRead"] = (Integer.parseInt(howManyMembers!!) - messageDTO.read!!.size).toString()
 
                     if(messageDTO.todoData != null){
-                        ChatMessageData["todoName"] = messageDTO!!.todoData!!.name.toString()
-                        var deadline = convertLongToTime(messageDTO!!.todoData!!.deadLine)
+                        ChatMessageData["todoName"] = messageDTO.todoData.name.toString()
+                        val deadline = convertLongToTime(messageDTO.todoData.deadLine)
                         ChatMessageData["deadline"] = "$deadline 까지"
                         var performers : String = ""
-                        for(i in messageDTO!!.todoData!!.performers){
-                            val name = getNamefromUID(i)
-                            performers += "$name "
-                            Log.d("performers --->", performers)
+                        if(messageDTO.todoData.performers_name!=null) {
+                            for (name in messageDTO.todoData.performers_name!!) {
+//                            val name = getNamefromUID(i)
+                                performers += "$name "
+                                Log.d("performers --->", performers)
+                            }
+                            ChatMessageData["performer"] = performers
+                        }else{
+                            ChatMessageData["performer"] = ""
                         }
-                        ChatMessageData["performer"] = performers
+
                     }
 
                     ChatMessageList.add(ChatMessageData)
@@ -412,11 +415,12 @@ class ChatActivity : AppCompatActivity() {
                 }
 //                mergeSort(ChatMessageList!!)
                 myAdapter!!.notifyDataSetChanged()
+                readCheckToDB()
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.w("ExtraUserInfoActivity", "loadPost:onCancelled",
-                    databaseError.toException()!!
+                    databaseError.toException()
                 )
             }
         }
@@ -431,27 +435,27 @@ class ChatActivity : AppCompatActivity() {
         return format.format(date)
     }
 
-    private fun getUserInfos() {
+//    private fun getUserInfos() {
+//
+//        userDTOList= HashMap<String, UserDTO>()
+//        databaseReference = firebaseDatabase!!.getReference("UserList")
+//        databaseReference!!.addListenerForSingleValueEvent(object : ValueEventListener {
+//            override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                for (snapshot in dataSnapshot.children) {
+//                    val userDTO: UserDTO = snapshot.getValue(UserDTO::class.java)!!
+//                    userDTOList!![snapshot.key.toString()]=userDTO
+//                    Log.d("getUserInfo--->", userDTO.toString())
+//                }
+//            }
+//            override fun onCancelled(databaseError: DatabaseError) {
+//                Log.w("ExtraUserInfoActivity", "loadPost:onCancelled", databaseError.toException()!! )
+//            }
+//        })
+//    }
 
-        userDTOList= HashMap<String, UserDTO>()
-        databaseReference = firebaseDatabase!!.getReference("UserList")
-        databaseReference!!.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                for (snapshot in dataSnapshot.children) {
-                    val userDTO: UserDTO = snapshot.getValue(UserDTO::class.java)!!
-                    userDTOList!![snapshot.key.toString()]=userDTO
-                    Log.d("getUserInfo--->", userDTO.toString())
-                }
-            }
-            override fun onCancelled(databaseError: DatabaseError) {
-                Log.w("ExtraUserInfoActivity", "loadPost:onCancelled", databaseError.toException()!! )
-            }
-        })
-    }
-
-    private fun getNamefromUID(uid : String) :String{
-        return userDTOList!![uid]!!.name
-    }
+//    private fun getNamefromUID(uid : String) :String{
+//        return userDTOList!![uid]!!.name
+//    }
 
     private fun setListener_theNumOfMembersFromMyProjects() {
         members_listener = object : ValueEventListener {
