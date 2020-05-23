@@ -10,10 +10,7 @@ import com.example.teamtotest.R
 import com.example.teamtotest.adapter.FileRVAdapterMain
 import com.example.teamtotest.adapter.ProgressbarAdapterMain
 import com.example.teamtotest.adapter.TodoRVAdapterMain
-import com.example.teamtotest.dto.FileDTO
-import com.example.teamtotest.dto.MembersDTO
-import com.example.teamtotest.dto.ProjectDTO
-import com.example.teamtotest.dto.TodoDTO
+import com.example.teamtotest.dto.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.bottombar_fragment1.*
@@ -51,7 +48,7 @@ class Frag1 : Fragment (){
 
         //
         view.dashboard_progress_recycler_view.setHasFixedSize(true)
-        progressbarAdapterMain = ProgressbarAdapterMain(requireActivity(), myProjectDTOs)
+        progressbarAdapterMain = ProgressbarAdapterMain(requireActivity(), myProjectDTOs, myProjectPIDlist)
         view.dashboard_progress_recycler_view.adapter = progressbarAdapterMain
         progressbarAdapterMain.notifyDataSetChanged()
 
@@ -146,6 +143,7 @@ class Frag1 : Fragment (){
         databaseReference = firebaseDatabase.getReference("ProjectList")
         databaseReference.addValueEventListener(dbTodoEventListener)
     }
+
     private fun setFileListListener(){
         val dbFileEventListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -188,18 +186,25 @@ class Frag1 : Fragment (){
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // 각각 프로젝트별로, 멤버중에 나 자신이 있는지 확인.
                 for (snapshot in dataSnapshot.children) {
-                    val membersPerProject = snapshot.child("members")
-                        .getValue(MembersDTO::class.java) // memberUID 정보를 가져옴.
+                    val membersPerProject = snapshot.child("members").getValue(MembersDTO::class.java) // memberUID 정보를 가져옴.
                     val projectDTO : ProjectDTO? = snapshot.getValue(ProjectDTO::class.java)
+
+                    for(projectSnapshot in snapshot.children) {
+
+                        if (projectSnapshot.key == "progress") {
+                            val progressDTO: ProgressDTO = snapshot.child("progress").getValue(ProgressDTO::class.java)!!
+                            projectDTO!!.progressData = progressDTO
+                            Log.d("Frag1 ProgressBar---->", progressDTO.toString())
+                        }
+                    }
                     for (i in 0 until membersPerProject!!.UID_list!!.size) {
-                        if (membersPerProject!!.UID_list!![i].equals(myUID)) {
+                        if (membersPerProject.UID_list!![i].equals(myUID)) {
                             myProjectDTOs.add(projectDTO)
                             myProjectPIDlist.add(snapshot.key.toString())
                         }
                     }
                 }
                 progressbarAdapterMain.notifyDataSetChanged()
-//                todoRVAdapter.notifyDataSetChanged()
             }
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.w("ExtraUserInfoActivity", "loadPost:onCancelled", databaseError.toException())

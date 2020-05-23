@@ -4,14 +4,12 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
-
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
-                     android:maxSdkVersion="18"/>
-
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
 
     <application
         android:allowBackup="true"
@@ -20,15 +18,15 @@
         android:roundIcon="@mipmap/ic_launcher_tt_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".activity.ProgressSettingActivity"></activity>
 
         <service
             android:name=".AlarmService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
 
-        <activity android:name=".activity.ModifyScheduleActivity"/>
-        <activity android:name=".activity.AlertDisplayActivity"></activity>
-
+        <activity android:name=".activity.ModifyScheduleActivity" />
+        <activity android:name=".activity.AlertDisplayActivity" />
         <activity android:name=".activity.HelpActivity" />
         <activity android:name=".activity.AlertActivity" />
         <activity android:name=".activity.TimetableActivity" />

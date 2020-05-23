@@ -61,6 +61,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             .setSound(notificationSound)
             .setContentIntent(pendingIntent)
             .setFullScreenIntent(pendingIntent, true)
+            .setVibrate(longArrayOf(0,3000))
 
         val notificationManager: NotificationManager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(0, notificationBuilder.build())
