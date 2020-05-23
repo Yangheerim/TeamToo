@@ -3,6 +3,7 @@ package com.example.teamtotest.activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.teamtotest.R
 import com.example.teamtotest.fragment.*
@@ -12,6 +13,7 @@ class NavigationbarActivity : AppCompatActivity() {
     lateinit var fragment1 : Frag1
     lateinit var fragment2 : Frag2
     lateinit var fragment3 : CalendarFragment
+    var time:Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,5 +66,12 @@ class NavigationbarActivity : AppCompatActivity() {
         startActivity(Intent(this, AddProjectActivity::class.java))
     }
 
-
+    override fun onBackPressed() {
+        if(System.currentTimeMillis()-time>2000){
+            time=System.currentTimeMillis()
+            Toast.makeText(applicationContext, "뒤로 버튼을 한번 더 누르면 종료합니다.", Toast.LENGTH_SHORT).show()
+        }else if(System.currentTimeMillis()-time<2000){
+            finish()
+        }
+    }
 }
