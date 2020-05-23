@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.teamtotest.PerformerDialog
+import com.example.teamtotest.Push
 import com.example.teamtotest.dto.TodoDTO
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_add_todo.*
@@ -127,9 +128,11 @@ class ModifyTodoActivity : AppCompatActivity() {
                     alarmPosition
                 )
                 //DB에 업로드
-
                 databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("todoList").child(todoID.toString())
                 databaseReference.setValue(todoDTO)
+
+                // 할일 수정 푸시 알림
+                Push(PID.toString(), todo_et_name.text.toString(),"Todo2")
 
                 finish()
             }

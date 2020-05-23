@@ -10,6 +10,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.teamtotest.Push
 import com.example.teamtotest.R
 import com.example.teamtotest.dto.ScheduleDTO
 import com.example.teamtotest.dto.TodoDTO
@@ -145,6 +146,9 @@ class ModifyScheduleActivity : AppCompatActivity() {
                 PID = intent.getStringExtra("PID")
                 databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("scheduleList").child(scheduleID.toString())
                 databaseReference.setValue(scheduleDTO)
+
+                // 스케줄 수정 푸시 알림
+                Push(PID.toString(), schedule_et_name.text.toString(),"Schedule2")
 
                 val intent = Intent(this, ScheduleActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)

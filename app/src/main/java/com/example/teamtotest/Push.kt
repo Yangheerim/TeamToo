@@ -86,6 +86,8 @@ class Push (val PID: String, private var message: String, private var type: Stri
                 message = when(type){
                     "Todo"-> "새로운 할일 : $message"
                     "Schedule"->"새로운 스케줄 : $message"
+                    "Todo2" -> "수정된 할일 : $message"
+                    "Schedule2"->"수정된 스케줄 : $message"
                     else -> message
                 }
                 notification.put("body", message)
