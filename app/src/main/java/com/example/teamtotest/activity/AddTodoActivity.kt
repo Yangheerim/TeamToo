@@ -1,8 +1,13 @@
 package com.example.teamtotest.activity
 
+import android.app.AlarmManager
 import android.app.DatePickerDialog
+import android.app.PendingIntent
 import android.app.TimePickerDialog
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
@@ -40,6 +45,8 @@ class AddTodoActivity : AppCompatActivity() {
 
     private var performerUIDList : ArrayList<String> = arrayListOf()
     private var performerNameList : ArrayList<String> = arrayListOf()
+
+    lateinit var mAlarmManager: AlarmManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -124,7 +131,17 @@ class AddTodoActivity : AppCompatActivity() {
 
                 databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("todoList")
                 databaseReference.push().setValue(todoDTO)
+
+
+                val mAlarmIntent = Intent("com.example.teamtotest.ALARM_START")
+                val mPendingIntent = PendingIntent.getBroadcast(this, 0, mAlarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                mAlarmManager= getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                mAlarmManager.set(AlarmManager.RTC_WAKEUP, deadline.timeInMillis, mPendingIntent)
+
+                Log.e("add",mAlarmManager.toString())
+
                 addMessageNotificationToDB(todoDTO)
+
                 finish()
             }
         }
