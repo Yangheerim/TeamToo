@@ -4,17 +4,24 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
+import android.media.AudioManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.view.MenuItem
 import android.view.View
 import android.widget.CompoundButton
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat.getSystemService
 import com.example.teamtotest.R
 import kotlinx.android.synthetic.main.activity_alert.*
 
 class AlertActivity : AppCompatActivity() {
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alert)
@@ -65,6 +72,19 @@ class AlertActivity : AppCompatActivity() {
 
 
 
+        }
+
+        // 진동 switch On
+        // API Level 26 이상(VibrationEffect)
+        alert_vibrate_switch.setOnCheckedChangeListener{compoundButton, b ->
+            if (b) {
+               val vib = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                // Switch On으로 변경시 진동효과
+                val vibrationEffect = VibrationEffect.createOneShot(300,200)
+                vib.vibrate(vibrationEffect)
+
+
+            }
         }
     }
 
