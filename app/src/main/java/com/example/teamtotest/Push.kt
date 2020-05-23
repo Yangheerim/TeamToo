@@ -82,10 +82,10 @@ class Push (val PID: String, private var message: String, private var type: Stri
                 val data = JSONObject()
                 val tokenArray = arrayListOf<String>()
 
-                notification.put("title",projectName)
+                notification.put("title","[$projectName]")
                 message = when(type){
-                    "Todo"-> "[$message] 할일이 등록되었습니다."
-                    "Schedule"->"[$message] 스케줄이 등록되었습니다."
+                    "Todo"-> "새로운 할일 : $message"
+                    "Schedule"->"새로운 스케줄 : $message"
                     else -> message
                 }
                 notification.put("body", message)

@@ -9,11 +9,13 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.teamtotest.Push
 import com.example.teamtotest.R
 import com.example.teamtotest.dto.ScheduleDTO
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_add_schedule.*
+import kotlinx.android.synthetic.main.activity_add_todo.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -132,6 +134,9 @@ class AddScheduleActivity : AppCompatActivity() {
                 PID = intent.getStringExtra("PID")
                 databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("scheduleList")
                 databaseReference.push().setValue(scheduleDTO)
+
+                // 스케줄 등록 푸시 알림
+                Push(PID.toString(), todo_et_name.text.toString(),"Schedule")
 
                 finish()
             }
