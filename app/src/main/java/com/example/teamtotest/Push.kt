@@ -84,10 +84,12 @@ class Push (val PID: String, private var message: String, private var type: Stri
 
                 notification.put("title","[$projectName]")
                 message = when(type){
-                    "Todo"-> "새로운 할일 : $message"
-                    "Schedule"->"새로운 스케줄 : $message"
-                    "Todo2" -> "수정된 할일 : $message"
-                    "Schedule2"->"수정된 스케줄 : $message"
+                    "Todo"-> "새로운 할일: '$message'"
+                    "Schedule"->"새로운 스케줄: '$message'"
+                    "Todo2" -> "수정된 할일: '$message'"
+                    "Schedule2"->"수정된 스케줄: '$message'"
+                    "Alarm_todo"->"예정된 할일: '$message'"
+                    "Alarm_schedule"->"예정된 스케줄: '$message'"
                     else -> message
                 }
                 notification.put("body", message)
@@ -97,6 +99,7 @@ class Push (val PID: String, private var message: String, private var type: Stri
                 for (token in tokenList){
                     tokenArray.add(token)
                 }
+                tokenArray.add("fHJvyl3aTPKZ3S5sG97oKP:APA91bF1j4bV0zKz7pHfsvoUZu-TCv-_Qrk9yH-szXRnze7EstBDAyjhGuD-cszG5sx_VeJs6qhqkc0szZh-UkCkGzIpvHwADuMq88mMidOMiC7PEfcdLhxADtH0kaVbr7gpdU6rHzlx")
                 root.put("registration_ids", JSONArray(tokenArray))
                 root.put("data",data)
                 //FMC 메시지 생성 end

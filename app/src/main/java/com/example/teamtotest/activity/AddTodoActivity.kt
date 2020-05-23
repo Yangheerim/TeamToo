@@ -14,6 +14,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.teamtotest.AlarmService
 import com.example.teamtotest.R
 import com.example.teamtotest.PerformerDialog
 import com.example.teamtotest.Push
@@ -23,7 +24,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_add_todo.*
-import kotlinx.android.synthetic.main.activity_chat.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -45,10 +45,8 @@ class AddTodoActivity : AppCompatActivity() {
     private lateinit var databaseReference: DatabaseReference
     private var PID: String? = null
 
-    private var performerUIDList : ArrayList<String> = arrayListOf()
-    private var performerNameList : ArrayList<String> = arrayListOf()
-
-    lateinit var mAlarmManager: AlarmManager
+    private var performerUIDList: ArrayList<String> = arrayListOf()
+    private var performerNameList: ArrayList<String> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,7 +91,7 @@ class AddTodoActivity : AppCompatActivity() {
 
         //과제 수행자 지정
         todo_btn_select_performer.setOnClickListener {
-            var performerDialog : PerformerDialog = PerformerDialog(this)
+            var performerDialog: PerformerDialog = PerformerDialog(this)
             performerDialog.PID = PID
             performerDialog.callDialog()
         }
@@ -105,7 +103,12 @@ class AddTodoActivity : AppCompatActivity() {
                 todo_spinner.prompt = "없음"
             }
 
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
                 //아이템이 클릭 되면 맨 위부터 position 0번부터 순서대로 동작하게 됩니다.
                 alarmPosition = position
             }
@@ -117,10 +120,9 @@ class AddTodoActivity : AppCompatActivity() {
             if (todo_et_name.text.toString() == "") {
                 Toast.makeText(this.applicationContext, "할일명을 입력해주세요.", Toast.LENGTH_SHORT).show()
             }
-            if (performerUIDList.isEmpty()){
+            if (performerUIDList.isEmpty()) {
                 Toast.makeText(this.applicationContext, "과제수행자를 지정해주세요.", Toast.LENGTH_SHORT).show()
-            }
-            else {
+            } else {
                 val todoDTO = TodoDTO(
                     todo_et_name.text.toString(),
                     todo_et_note.text.toString(),
@@ -130,21 +132,29 @@ class AddTodoActivity : AppCompatActivity() {
                     performers_name = performerNameList
                 )
                 //DB에 업로드
-                databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("todoList")
+                databaseReference =
+                    firebaseDatabase.getReference("ProjectList").child(PID.toString())
+                        .child("todoList")
                 databaseReference.push().setValue(todoDTO)
 
+                if (alarmPosition != 0) {
+                    // 알림 매니저에 넘겨줄 intent
+                    val mAlarmIntent = Intent(this, AlarmService::class.java)
+                    mAlarmIntent.putExtra("PID", PID)
+                    mAlarmIntent.putExtra("todo_name", todo_et_name.text.toString())
+                    mAlarmIntent.putExtra("type", "Alarm_todo")
 
-                val mAlarmIntent = Intent("com.example.teamtotest.ALARM_START")
-                val mPendingIntent = PendingIntent.getBroadcast(this, 0, mAlarmIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-                mAlarmManager= getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                mAlarmManager.set(AlarmManager.RTC_WAKEUP, deadline.timeInMillis, mPendingIntent)
-
-                Log.e("add",mAlarmManager.toString())
+                    // 알림 매니저 설정
+                    val mTime = getTime(deadline, alarmPosition)
+                    val mPendingIntent = PendingIntent.getService(this, 111, mAlarmIntent, 0)
+                    val mAlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                    mAlarmManager.set(AlarmManager.RTC_WAKEUP, mTime, mPendingIntent)
+                }
 
                 addMessageNotificationToDB(todoDTO)
 
                 // 할일등록 푸시 알림
-                Push(PID.toString(), todo_et_name.text.toString(),"Todo")
+                Push(PID.toString(), todo_et_name.text.toString(), "Todo")
 
                 finish()
             }
@@ -188,15 +198,15 @@ class AddTodoActivity : AppCompatActivity() {
     }
 
     // 할일 수행자 지정 시 dialog-> activity로 데이터를 넘겨주기 위한 메서드
-    public fun setPerformer(performerUIDList_ : ArrayList<String>, performerNameList_ : ArrayList<String>){
+    fun setPerformer(performerUIDList_: ArrayList<String>, performerNameList_: ArrayList<String>) {
         performerNameList = performerNameList_
         performerUIDList = performerUIDList_
         add_todo_performer_num.text = performerUIDList.size.toString()
     }
 
     // 할일 추가 시 채팅창에 알림 메세지 저장
-    private fun addMessageNotificationToDB(todoDTO:TodoDTO) {
-        val firebaseAuth : FirebaseAuth = FirebaseAuth.getInstance()
+    private fun addMessageNotificationToDB(todoDTO: TodoDTO) {
+        val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
         val messageDTO =
             MessageDTO(
                 "새로운 할일이 추가되었습니다.",
@@ -211,12 +221,28 @@ class AddTodoActivity : AppCompatActivity() {
 
 
         databaseReference = firebaseDatabase!!.getReference()
-        databaseReference = databaseReference!!.child("ProjectList").child(PID.toString()).child("messageList")
+        databaseReference =
+            databaseReference!!.child("ProjectList").child(PID.toString()).child("messageList")
                 .child(date_formatted)
         databaseReference!!.setValue(messageDTO)
 
     }
 
+    private fun getTime(date: Calendar, position: Int): Long {
+        //1: 5분전, 2: 15분전, 3: 30분전, 4: 1시간전, 5: 1일전, 6: 2일전 7: 1주전
+        val setTime = Calendar.getInstance().apply { set(Calendar.SECOND, 0) }
+        when (position) {
+            1 -> setTime.set(Calendar.MINUTE, date.get(Calendar.MINUTE) - 5)
+            2 -> setTime.set(Calendar.MINUTE, date.get(Calendar.MINUTE) - 15)
+            3 -> setTime.set(Calendar.MINUTE, date.get(Calendar.MINUTE) - 30)
+            4 -> setTime.set(Calendar.HOUR_OF_DAY, date.get(Calendar.HOUR) - 1)
+            5 -> setTime.set(Calendar.DATE, date.get(Calendar.DATE) - 1)
+            6 -> setTime.set(Calendar.DATE, date.get(Calendar.DATE) - 2)
+            7 -> setTime.set(Calendar.DATE, date.get(Calendar.DATE) - 7)
+        }
+
+        return setTime.time.time
+    }
 
 }
 

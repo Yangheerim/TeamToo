@@ -21,13 +21,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <service
-            android:name=".AlarmService"
-            android:enabled="true"
-            android:exported="true"></service>
-
         <activity android:name=".activity.ModifyScheduleActivity"/>
-        <activity android:name=".activity.AlertDisplayActivity"></activity>
+        <activity android:name=".activity.AlertDisplayActivity" />
 
         <activity android:name=".activity.HelpActivity" />
         <activity android:name=".activity.AlertActivity" />
@@ -69,11 +64,11 @@
             </intent-filter>
         </service>
 
-        <receiver android:name=".AlarmReceiver">
-            <intent-filter>
-                <action android:name="com.example.teamtotest.ALARM_START" />
-            </intent-filter>
-        </receiver>
+        <service
+            android:name=".AlarmService"
+            android:enabled="true"
+            android:exported="true" />
+
     </application>
 
 </manifest>

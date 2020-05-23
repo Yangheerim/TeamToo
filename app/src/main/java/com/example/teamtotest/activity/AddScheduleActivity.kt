@@ -1,7 +1,11 @@
 package com.example.teamtotest.activity
 
+import android.app.AlarmManager
 import android.app.DatePickerDialog
+import android.app.PendingIntent
 import android.app.TimePickerDialog
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -9,6 +13,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.teamtotest.AlarmService
 import com.example.teamtotest.Push
 import com.example.teamtotest.R
 import com.example.teamtotest.dto.ScheduleDTO
@@ -28,7 +33,11 @@ class AddScheduleActivity : AppCompatActivity() {
     private val format1 = SimpleDateFormat("yyyy / MM / dd", Locale.KOREA)
     private val format2 = SimpleDateFormat("a  h : mm", Locale.KOREA)
     private val spinnerAdapter by lazy {
-        ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, resources.getStringArray(R.array.spinner))
+        ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_dropdown_item,
+            resources.getStringArray(R.array.spinner)
+        )
     }
     private var alarmPosition = 0
     private lateinit var firebaseDatabase: FirebaseDatabase
@@ -50,7 +59,12 @@ class AddScheduleActivity : AppCompatActivity() {
                 schedule_spinner.prompt = "없음"
             }
 
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
                 //아이템이 클릭 되면 맨 위부터 position 0번부터 순서대로 동작하게 됩니다.
                 alarmPosition = position
             }
@@ -130,13 +144,28 @@ class AddScheduleActivity : AppCompatActivity() {
                 )
                 //DB에 업로드
                 firebaseDatabase = FirebaseDatabase.getInstance()
-
                 PID = intent.getStringExtra("PID")
-                databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("scheduleList")
+                databaseReference =
+                    firebaseDatabase.getReference("ProjectList").child(PID.toString())
+                        .child("scheduleList")
                 databaseReference.push().setValue(scheduleDTO)
 
+                if (alarmPosition != 0) {
+                    // 알림 매니저에 넘겨줄 intent
+                    val mAlarmIntent = Intent(this, AlarmService::class.java)
+                    mAlarmIntent.putExtra("PID", PID)
+                    mAlarmIntent.putExtra("schedule_name", schedule_et_name.text.toString())
+                    mAlarmIntent.putExtra("type", "Alarm_schedule")
+
+                    // 알림 매니저 설정
+                    val mTime = getTime(start, alarmPosition)
+                    val mPendingIntent = PendingIntent.getService(this, 222, mAlarmIntent, 0)
+                    val mAlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                    mAlarmManager.set(AlarmManager.RTC_WAKEUP, mTime, mPendingIntent)
+                }
+
                 // 스케줄 등록 푸시 알림
-                Push(PID.toString(), schedule_et_name.text.toString(),"Schedule")
+                Push(PID.toString(), schedule_et_name.text.toString(), "Schedule")
 
                 finish()
             }
@@ -228,5 +257,21 @@ class AddScheduleActivity : AppCompatActivity() {
             end_date.text = format1.format(end.time)
             end_time.text = format2.format(end.time)
         }
+    }
+
+    private fun getTime(date: Calendar, position: Int): Long {
+        //1: 5분전, 2: 15분전, 3: 30분전, 4: 1시간전, 5: 1일전, 6: 2일전 7: 1주전
+        val setTime = Calendar.getInstance().apply { set(Calendar.SECOND, 0) }
+        when (position) {
+            1 -> setTime.set(Calendar.MINUTE, date.get(Calendar.MINUTE) - 5)
+            2 -> setTime.set(Calendar.MINUTE, date.get(Calendar.MINUTE) - 15)
+            3 -> setTime.set(Calendar.MINUTE, date.get(Calendar.MINUTE) - 30)
+            4 -> setTime.set(Calendar.HOUR_OF_DAY, date.get(Calendar.HOUR) - 1)
+            5 -> setTime.set(Calendar.DATE, date.get(Calendar.DATE) - 1)
+            6 -> setTime.set(Calendar.DATE, date.get(Calendar.DATE) - 2)
+            7 -> setTime.set(Calendar.DATE, date.get(Calendar.DATE) - 7)
+        }
+
+        return setTime.time.time
     }
 }
