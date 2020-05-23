@@ -20,7 +20,6 @@ import com.example.teamtotest.adapter.ChatListAdapter
 import com.example.teamtotest.dto.FileDTO
 import com.example.teamtotest.dto.MembersDTO
 import com.example.teamtotest.dto.MessageDTO
-import com.example.teamtotest.dto.UserDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
@@ -40,7 +39,7 @@ class ChatActivity : AppCompatActivity() {
     private var PID : String? = null
     private var projectName : String? = null
     private var howManyMembers : String? = null
-    private var userDTOList : HashMap<String, UserDTO> ?= null
+//    private var userDTOList : HashMap<String, UserDTO> ?= null
     private lateinit var filePath : Uri
 
     private var ChatMessageList: ArrayList<HashMap<String, String>> = ArrayList<HashMap<String, String>>()
@@ -146,7 +145,7 @@ class ChatActivity : AppCompatActivity() {
                 true
             }
             R.id.toolbar_menu -> {
-                chat_drawer.openDrawer(GravityCompat.END);
+                chat_drawer.openDrawer(GravityCompat.END)
                 true
             }
             R.id.toolbar_file -> {
@@ -210,7 +209,7 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun uploadFileInfoToDB(fileName : String){
-        var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+        val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
         val uid : String = firebaseAuth.currentUser!!.uid
         val userName : String = firebaseAuth.currentUser!!.displayName!!
 
@@ -228,7 +227,7 @@ class ChatActivity : AppCompatActivity() {
         var result : String? = null
         if (uri.scheme!!.equals("content"))
         {
-            var cursor : Cursor? = contentResolver.query(uri, null, null, null, null)
+            val cursor : Cursor? = contentResolver.query(uri, null, null, null, null)
             try {
                 if (cursor != null && cursor.moveToFirst()) {
                     result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
@@ -282,7 +281,7 @@ class ChatActivity : AppCompatActivity() {
                                     val messageDTOtoRemove: MessageDTO? =
                                         messageSnapshot.getValue(MessageDTO::class.java)
                                     if (messageDTOtoRemove!!.read!!.contains(myUID)) {
-                                        messageDTOtoRemove!!.read!!.remove(myUID)
+                                        messageDTOtoRemove.read!!.remove(myUID)
                                         firebaseDatabase!!.getReference("ProjectList").child(PID.toString())
                                             .child("messageList").child(messageSnapshot.key.toString())
                                             .setValue(messageDTOtoRemove)
@@ -365,7 +364,7 @@ class ChatActivity : AppCompatActivity() {
             }
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.w("ExtraUserInfoActivity", "loadPost:onCancelled",
-                    databaseError.toException()!!
+                    databaseError.toException()
                 )
             }
         })
@@ -375,13 +374,12 @@ class ChatActivity : AppCompatActivity() {
 
         dbMessageeventListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                ChatMessageList.clear()    // 갱신될 때 이미 있던 데이터는 날리기
-                val myUID : String = firebaseAuth!!.currentUser!!.uid
+                ChatMessageList.clear()
 
                 // list를 보여주기 위해 db에서 데이터를 받아 adapter에 데이터 전달
                 for (snapshot in dataSnapshot.children) {
                     ChatMessageData = HashMap()
-                    var utc : Date = dateFormat.parse(snapshot.key)
+                    val utc : Date = dateFormat.parse(snapshot.key)
                     val date = Date(utc.time + Calendar.getInstance().timeZone.getOffset(utc.time))
                     val date_formatted = dateFormat.format(date)
                     ChatMessageData["date"] = date_formatted
@@ -434,28 +432,6 @@ class ChatActivity : AppCompatActivity() {
         val format = SimpleDateFormat("yyyy/MM/dd HH:mm")
         return format.format(date)
     }
-
-//    private fun getUserInfos() {
-//
-//        userDTOList= HashMap<String, UserDTO>()
-//        databaseReference = firebaseDatabase!!.getReference("UserList")
-//        databaseReference!!.addListenerForSingleValueEvent(object : ValueEventListener {
-//            override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                for (snapshot in dataSnapshot.children) {
-//                    val userDTO: UserDTO = snapshot.getValue(UserDTO::class.java)!!
-//                    userDTOList!![snapshot.key.toString()]=userDTO
-//                    Log.d("getUserInfo--->", userDTO.toString())
-//                }
-//            }
-//            override fun onCancelled(databaseError: DatabaseError) {
-//                Log.w("ExtraUserInfoActivity", "loadPost:onCancelled", databaseError.toException()!! )
-//            }
-//        })
-//    }
-
-//    private fun getNamefromUID(uid : String) :String{
-//        return userDTOList!![uid]!!.name
-//    }
 
     private fun setListener_theNumOfMembersFromMyProjects() {
         members_listener = object : ValueEventListener {
