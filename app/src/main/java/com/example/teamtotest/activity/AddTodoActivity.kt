@@ -39,6 +39,7 @@ class AddTodoActivity : AppCompatActivity() {
     private var PID: String? = null
 
     private var performerUIDList : ArrayList<String> = arrayListOf()
+    private var performerNameList : ArrayList<String> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,7 +117,8 @@ class AddTodoActivity : AppCompatActivity() {
                     todo_et_note.text.toString(),
                     deadline.time.time,
                     performerUIDList,
-                    alarmPosition
+                    alarmPosition,
+                    performers_name = performerNameList
                 )
                 //DB에 업로드
 
@@ -165,7 +167,8 @@ class AddTodoActivity : AppCompatActivity() {
     }
 
     // 할일 수행자 지정 시 dialog-> activity로 데이터를 넘겨주기 위한 메서드
-    public fun setPerformer(performerUIDList_ : ArrayList<String>){
+    public fun setPerformer(performerUIDList_ : ArrayList<String>, performerNameList_ : ArrayList<String>){
+        performerNameList = performerNameList_
         performerUIDList = performerUIDList_
         add_todo_performer_num.text = performerUIDList.size.toString()
     }

@@ -17,6 +17,7 @@ class PerformerDialog(activity : Activity){
 
     private var memberList : ArrayList<UserDTO> =  ArrayList<UserDTO>()
     private var memberUIDList : ArrayList<String> =  ArrayList<String>()
+    private var performerNameList : ArrayList<String> =  ArrayList<String>()
     private var performerUIDList : ArrayList<String> =  ArrayList<String>()
 
     private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
@@ -41,7 +42,7 @@ class PerformerDialog(activity : Activity){
             getPerformerUID()
             if(activity is AddTodoActivity){
                 val addTodoActivity = activity as AddTodoActivity
-                addTodoActivity.setPerformer(performerUIDList)
+                addTodoActivity.setPerformer(performerUIDList, performerNameList)
             }else if (activity is ModifyTodoActivity){
                 val modifyTodoActivity = activity as ModifyTodoActivity
                 modifyTodoActivity.setPerformer(performerUIDList)
@@ -56,6 +57,7 @@ class PerformerDialog(activity : Activity){
         var performerPositionList : ArrayList<Int> = myAdapter.getPerformerPositionList()
         for(position in performerPositionList){
             performerUIDList.add(memberUIDList[position])
+            performerNameList.add(memberList[position].name)
         }
     }
 
@@ -86,7 +88,6 @@ class PerformerDialog(activity : Activity){
                 for (snapshot in dataSnapshot.children) {
                     for(i in memberUIDList.indices) {
                         if (snapshot.key == memberUIDList[i]) {
-                            // member로 등록되어있는 user의 UID를 가진 정보를 찾으면 다른 info를 DTO로 가져와서 일단 이름만 저장! -> 이름 동그라미로 리스트 보여줘야하니깐!
                             val userDTO : UserDTO = snapshot.getValue(UserDTO::class.java)!!
                             memberList.set(i, userDTO)
                             uidList.set(i, snapshot.key.toString())
