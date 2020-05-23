@@ -13,7 +13,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.Charset
 
-class Push (val PID: String, private val message: String) {
+class Push (val PID: String, private var message: String, private var type: String) {
     val TAG : String = "Push Class"
     private var firebaseAuth = FirebaseAuth.getInstance()
     private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
@@ -83,7 +83,13 @@ class Push (val PID: String, private val message: String) {
                 val tokenArray = arrayListOf<String>()
 
                 notification.put("title",projectName)
+                message = when(type){
+                    "Todo"-> "[$message] 할일이 등록되었습니다."
+                    "Schedule"->"[$message] 스케줄이 등록되었습니다."
+                    else -> message
+                }
                 notification.put("body", message)
+
                 data.put("pid", PID)
                 root.put("notification", notification)
                 for (token in tokenList){

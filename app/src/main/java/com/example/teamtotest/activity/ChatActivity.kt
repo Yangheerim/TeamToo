@@ -126,7 +126,7 @@ class ChatActivity : AppCompatActivity() {
         sendButton.setOnClickListener{
             if (message.length() > 0) {
                 addMessageInfoToDB()
-                Push(PID.toString(), message.text.toString())
+                Push(PID.toString(), message.text.toString(),"Chat")
                 message.setText("")
             }
         }

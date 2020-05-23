@@ -16,12 +16,14 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.teamtotest.R
 import com.example.teamtotest.PerformerDialog
+import com.example.teamtotest.Push
 import com.example.teamtotest.dto.MessageDTO
 import com.example.teamtotest.dto.TodoDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_add_todo.*
+import kotlinx.android.synthetic.main.activity_chat.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -126,7 +128,6 @@ class AddTodoActivity : AppCompatActivity() {
                     alarmPosition
                 )
                 //DB에 업로드
-
                 databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("todoList")
                 databaseReference.push().setValue(todoDTO)
 
@@ -139,6 +140,9 @@ class AddTodoActivity : AppCompatActivity() {
                 Log.e("add",mAlarmManager.toString())
 
                 addMessageNotificationToDB(todoDTO)
+
+                // 할일등록 푸시 알림
+                Push(PID.toString(), todo_et_name.text.toString(),"Todo")
 
                 finish()
             }
