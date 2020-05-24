@@ -114,87 +114,30 @@ class FileAdapter(private var get_fileInfoList: ArrayList<HashMap<String, FileDT
             builder.setNegativeButton("아니오",DialogInterface.OnClickListener { dialog, which ->  }) //아무액션없다
             builder.setPositiveButton("네",
                 DialogInterface.OnClickListener { dialogInterface, which ->
-
+                    val fileName = holder.itemView.file_title.text.toString()
                     val storage = FirebaseStorage.getInstance()
                     val storageRef = storage.getReferenceFromUrl("gs://teamtogether-bdfc9.appspot.com")
-                    var state = Environment.getExternalStorageState()
-//                    var file = File(Environment.getExternalStoragePublicDirectory(
-//                        Environment.DIRECTORY_DOWNLOADS), "YourAppDirectory")
-//                    file.mkdirs()
+                    val islandRef = storageRef.child(fileName)
 
-                    val savePath = Environment.getExternalStorageDirectory().absolutePath + "/download"
-//                    val dir = File(savePath)
-//                    if(!dir.exists()){
-//                        dir.mkdir()
-//                    }
-                    /* Checks if external storage is available for read and write */
-                    fun isExternalStorageWritable(): Boolean {
-                        return Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
+                    val rootPath = File(Environment.getExternalStorageDirectory(), "TeamTo")
+                    if(!rootPath.exists()){
+                        rootPath.mkdirs()
                     }
+                    val localFile = File(rootPath, fileName)
+                    islandRef.getFile(localFile).addOnSuccessListener {
+                        // 다운로드 성공 시
 
-                    /* Checks if external storage is available to at least read */
-                    fun isExternalStorageReadable(): Boolean {
-                        return Environment.getExternalStorageState() in
-                                setOf(Environment.MEDIA_MOUNTED, Environment.MEDIA_MOUNTED_READ_ONLY)
+                    }.addOnFailureListener {
+                        // 다운로드 실패 시
+                        Log.e("FileDownloadTask", it.toString())
+                    }.addOnProgressListener {
+
                     }
-
-//                    val dir = File(Environment.DIRECTORY_DOWNLOADS)
-                    val localFile:File = File.createTempFile("File",null)
-
-                    if(isExternalStorageWritable()){
-                        storageRef.getFile(localFile).addOnSuccessListener {
-                            Log.e("File","success")
-                            Log.e("LocalFile", localFile.path)
-                        }.addOnFailureListener{
-                            Log.e("File","fail")
-                        }
-                    }
-
-
-//                    try {
-//                        //로컬에 저장할 폴더의 위치
-//                        val path = File("Folder path")
-//
-//                        //저장하는 파일의 이름
-//                        val file = File(path, "File name")
-//                        try {
-//                            if (!path.exists()) {
-//                                //저장할 폴더가 없으면 생성
-//                                path.mkdirs()
-//                            }
-//                            file.createNewFile()
-//
-//                            //파일을 다운로드하는 Task 생성, 비동기식으로 진행
-//                            val fileDownloadTask: FileDownloadTask = storageRef.getFile(file)
-//                            fileDownloadTask.addOnSuccessListener {
-//                                //다운로드 성공 후 할 일
-//                            }.addOnFailureListener {
-//                                //다운로드 실패 후 할 일
-//                            }.addOnProgressListener {
-////                                var progress : Int = ((100 * it.getBytesTransferred()) / it.getTotalByteCount()) as Int
-////                                progress.setProgress(progress)
-//
-//                            }
-//                        } catch (e: IOException) {
-//                            e.printStackTrace()
-//                        }
-//                    } catch (e: Exception) {
-//                        e.printStackTrace()
-//                    }
-
-
-
-
                 }) //positive btn
             builder.show()
             return@setOnClickListener
         } //Onclick->다운받기
-
-
-
-
     }//ViewHolder
-
 
     override fun getItemCount(): Int {
         return fileInfoList.size // Return the size of your dataset (invoked by the layout manager)
