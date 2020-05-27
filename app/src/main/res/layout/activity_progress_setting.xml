@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activity.ProgressSettingActivity">
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/final_test_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:elevation="3dp"
+        app:title="진행현황 등록" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="프로젝트명"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:textColor="#000000"
+            android:textSize="16dp" />
+        <TextView
+            android:id="@+id/progress_project_name"
+            android:layout_width="0dp"
+            android:gravity="center|right"
+            android:paddingRight="20dp"
+            android:layout_height="match_parent"
+            android:text="데이터과학"
+            android:layout_weight="2"
+            android:textColor="#1C296C"
+            android:textSize="16dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="시작일"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:textColor="#000000"
+            android:textSize="16dp" />
+        <TextView
+            android:id="@+id/progress_startday"
+            android:layout_width="0dp"
+            android:gravity="center|right"
+            android:paddingRight="20dp"
+            android:layout_height="match_parent"
+            android:text="2020 / 01 / 01"
+            android:layout_weight="2"
+            android:textColor="#1C296C"
+            android:textSize="16dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="종료일"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:textColor="#000000"
+            android:textSize="16dp" />
+        <TextView
+            android:id="@+id/progress_endday"
+            android:layout_width="0dp"
+            android:gravity="center|right"
+            android:paddingRight="20dp"
+            android:layout_height="match_parent"
+            android:text="2020 / 01 / 01"
+            android:layout_weight="2"
+            android:textColor="#1C296C"
+            android:textSize="16dp" />
+    </LinearLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <Button
+            android:id="@+id/progress_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="30dp"
+            android:background="@drawable/button3"
+            android:padding="10dp"
+            android:text="적용하기"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:textSize="14dp" />
+
+    </RelativeLayout>
+</LinearLayout>
