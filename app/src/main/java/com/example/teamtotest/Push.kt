@@ -1,14 +1,11 @@
 package com.example.teamtotest
 
-import android.content.Context
-import android.content.Intent
 import android.util.Log
 import com.example.teamtotest.dto.MembersDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import org.json.JSONArray
 import org.json.JSONObject
-import java.lang.Exception
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.Charset

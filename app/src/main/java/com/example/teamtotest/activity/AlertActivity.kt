@@ -2,20 +2,14 @@ package com.example.teamtotest.activity
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.graphics.Color
-import android.media.AudioManager
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.view.MenuItem
-import android.view.View
-import android.widget.CompoundButton
-import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat.getSystemService
+import androidx.appcompat.app.AppCompatActivity
 import com.example.teamtotest.R
 import kotlinx.android.synthetic.main.activity_alert.*
 
@@ -52,6 +46,12 @@ class AlertActivity : AppCompatActivity() {
         alert_display.isEnabled = sf.getBoolean("display_enable", true)
         display.setTextColor(sf.getInt("display_text", Color.BLACK))
 
+        // 저장할 AlertFile 생성
+        val sharedPreferences = getSharedPreferences("alertFile", Context.MODE_PRIVATE)
+
+        // editor에 알람 스위치 상태 저장
+        val editor = sharedPreferences.edit()
+
         // "메시지 알림" 스위치 설정
         // 메시지 알림이 off면 소리, 진동 switch disable
         alert_msg_switch.setOnCheckedChangeListener{compoundButton, b ->
@@ -63,11 +63,29 @@ class AlertActivity : AppCompatActivity() {
                 sound.setTextColor(Color.LTGRAY)
                 vibrate.setTextColor(Color.LTGRAY)
                 display.setTextColor(Color.LTGRAY)
+
+                editor.putBoolean("msg_switch",alert_msg_switch.isChecked)
+                editor.putBoolean("sound_switch_enable",alert_sound_switch.isEnabled)
+                editor.putInt("sound_text",sound.currentTextColor)
+                editor.putBoolean("vibrate_switch_enable",alert_vibrate_switch.isEnabled)
+                editor.putInt("vibrate_text",vibrate.currentTextColor)
+                editor.putBoolean("display_enable",alert_display.isEnabled)
+                editor.putInt("display_text",display.currentTextColor)
+                editor.commit()
             }
             else {
                 sound.setTextColor(Color.BLACK)
                 vibrate.setTextColor(Color.BLACK)
                 display.setTextColor(Color.BLACK)
+
+                editor.putBoolean("msg_switch",alert_msg_switch.isChecked)
+                editor.putBoolean("sound_switch_enable",alert_sound_switch.isEnabled)
+                editor.putInt("sound_text",sound.currentTextColor)
+                editor.putBoolean("vibrate_switch_enable",alert_vibrate_switch.isEnabled)
+                editor.putInt("vibrate_text",vibrate.currentTextColor)
+                editor.putBoolean("display_enable",alert_display.isEnabled)
+                editor.putInt("display_text",display.currentTextColor)
+                editor.commit()
             }
 
 
@@ -83,7 +101,24 @@ class AlertActivity : AppCompatActivity() {
                 val vibrationEffect = VibrationEffect.createOneShot(300,200)
                 vib.vibrate(vibrationEffect)
 
+                editor.putBoolean("vibrate_switch",alert_vibrate_switch.isChecked)
+                editor.commit()
 
+            }
+            else {
+                editor.putBoolean("vibrate_switch", alert_vibrate_switch.isChecked)
+                editor.commit()
+            }
+        }
+
+        alert_sound_switch.setOnCheckedChangeListener { compoundButton, b ->
+            if (b) {
+                editor.putBoolean("sound_switch",alert_sound_switch.isChecked)
+                editor.commit()
+            }
+            else {
+                editor.putBoolean("sound_switch", alert_sound_switch.isChecked)
+                editor.commit()
             }
         }
     }
@@ -99,29 +134,5 @@ class AlertActivity : AppCompatActivity() {
         }
     }
 
-    override fun onStop(){
-        super.onStop()
-
-        // 저장할 AlertFile 생성
-        val sharedPreferences = getSharedPreferences("alertFile", Context.MODE_PRIVATE)
-
-        // editor에 알람 스위치 상태 저장
-        val editor = sharedPreferences.edit()
-        editor.putBoolean("msg_switch",alert_msg_switch.isChecked)
-
-        editor.putBoolean("sound_switch",alert_sound_switch.isChecked)
-        editor.putBoolean("sound_switch_enable",alert_sound_switch.isEnabled)
-        editor.putInt("sound_text",sound.currentTextColor)
-
-        editor.putBoolean("vibrate_switch",alert_vibrate_switch.isChecked)
-        editor.putBoolean("vibrate_switch_enable",alert_vibrate_switch.isEnabled)
-        editor.putInt("vibrate_text",vibrate.currentTextColor)
-
-        editor.putBoolean("display_enable",alert_display.isEnabled)
-        editor.putInt("display_text",display.currentTextColor)
-
-        editor.commit()
-
-    }
 
 }
