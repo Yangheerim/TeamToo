@@ -54,6 +54,7 @@ class FinalTestActivity : AppCompatActivity() {
 
     private lateinit var listener: ValueEventListener
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(com.example.teamtotest.R.layout.activity_final_test)
@@ -110,7 +111,7 @@ class FinalTestActivity : AppCompatActivity() {
     private fun recyclerviewInit() {
         final_test_recycler_view.setHasFixedSize(true)
         memberNameList = ArrayList<String>()
-        myAdapter = FinalTestMemberListAdapter(memberNameList, this)
+        myAdapter = FinalTestMemberListAdapter(memberNameList, this, final_test_date.text.toString())
         final_test_recycler_view.adapter = myAdapter
     }
 
@@ -123,7 +124,7 @@ class FinalTestActivity : AppCompatActivity() {
         date_listener = DatePickerDialog.OnDateSetListener{ datePicker: DatePicker, year: Int, month: Int, day: Int ->
             val builder = AlertDialog.Builder(this)
             builder.setTitle("평가 날짜 지정")
-            builder.setMessage("평가 날짜를 $year / ${month+1} / $day 로 지정하시겠습니까?")
+            builder.setMessage("평가 날짜를 $year/${month+1}/$day 로 지정하시겠습니까?")
             builder.setPositiveButton("예",
                 DialogInterface.OnClickListener { dialog, which ->
                     val cal : Calendar = Calendar.getInstance()
@@ -137,7 +138,8 @@ class FinalTestActivity : AppCompatActivity() {
                         firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("finalTest").child("test_date")
                     databaseReference.setValue(ftdate)
                     Toast.makeText(this, "평가 날짜 지정이 완료되었습니다.", Toast.LENGTH_SHORT).show()
-                    final_test_date.text = "$year/${month+1}/$day"
+                    final_test_date.text = ftdate.date.substring(0, 4) + "/" + ftdate.date.substring(4, 6) + "/" + ftdate.date.substring(6, 8)
+                    myAdapter.final_test_date_ = final_test_date.text.toString()
                 })
             builder.setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, which -> })
             builder.show()
@@ -153,20 +155,7 @@ class FinalTestActivity : AppCompatActivity() {
             )
             dateDialog.show()
         }
-        final_test_recycler_view.setOnClickListener{
-            val current = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                LocalDateTime.now()
-            } else {
-                TODO("VERSION.SDK_INT < O")
-            }
-            val formatted_current = dateFormat.format(current)
-            val today = formatted_current.substring(0, 4)+"/"+ formatted_current.substring(4, 6)+"/"+ formatted_current.substring(6, 8)
-            if(final_test_date.text != today){
-                final_test_recycler_view.isEnabled=false
-                Toast.makeText(this, "평가 날짜가 오늘이 아닙니다", Toast.LENGTH_SHORT).show()
-                final_test_recycler_view.isEnabled=true
-            }
-        }
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -258,6 +247,7 @@ class FinalTestActivity : AppCompatActivity() {
                         }
                     }
                 }
+                myAdapter.final_test_date_ = final_test_date.text.toString()
             }
             override fun onCancelled(p0: DatabaseError) { Log.d("ExtraUserInfoActivity", "loadPost:onCancelled") }
         })
