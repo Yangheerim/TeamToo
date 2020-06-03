@@ -16,14 +16,10 @@ import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.android.synthetic.main.activity_extra_user_info.*
 
 class ExtraUserInfoActivity :AppCompatActivity(){
-//    public lateinit var userID: EditText
-//    public lateinit var duplicate_confirm_button: Button
-//    public lateinit var idOkBtn: Button
-//    public lateinit var stateText: TextView
+
     public var duplicateComplete : Boolean = false
 
     private lateinit var firebaseAuth: FirebaseAuth
-//    private lateinit var firebaseDatabase: FirebaseDatabase
     private lateinit var databaseReference: DatabaseReference
 
     public var UserIdList:ArrayList<String> = ArrayList<String>()
@@ -58,9 +54,7 @@ class ExtraUserInfoActivity :AppCompatActivity(){
             if (duplicateComplete) {
                 //DB에 user정보 저장 (UID는 가져와서, 입력받은id, getCurrentUser-> email, name)
                 var id : String = userID.text.toString()
-//                Log.e("TAG","add")
                 addUserInfoToDB(id)
-//                Log.e("TAG","finish")
 
                 finish()
             } else {
@@ -114,8 +108,8 @@ class ExtraUserInfoActivity :AppCompatActivity(){
             }
         })
     }
+    // 최초로그인일 때 DB에 user 정보 저장
     private fun addUserInfoToDB(extraID: String) {
-        // 최초로그인일 때 DB에 user 정보 저장
         val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
         user?.let {
             val userDTO = UserDTO(
@@ -124,7 +118,6 @@ class ExtraUserInfoActivity :AppCompatActivity(){
                 it.displayName.toString(),
                 FirebaseInstanceId.getInstance().token.toString()
             )
-            //databaseReference = firebaseDatabase.reference
             databaseReference.child(it.uid).setValue(userDTO)
             startActivity(
                 Intent(applicationContext, NavigationbarActivity::class.java )

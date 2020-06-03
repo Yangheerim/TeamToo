@@ -48,11 +48,22 @@ class ProgressbarAdapterMain(private val context: Context,
             val start_day = dateFormat.parse(progressData.startDate)
             val end_day = dateFormat.parse(progressData.endDate)
 
+            val start_cal = Calendar.getInstance()
+            val end_cal = Calendar.getInstance()
+            start_cal.time = start_day
+            end_cal.time = end_day
 
-            val diffTime : Long = (end_day.time - start_day.time) //ms -> day로 변환
+            val diffTime = end_cal.get(Calendar.DAY_OF_YEAR) - start_cal.get(Calendar.DAY_OF_YEAR)
+
+//            val diffTime : Int = Date(end_day.time).day - Date(start_day.time).day //ms -> day로 변환
             val today : Date = Date()
-            val progressDay : Long = (end_day.time - today.time)
-            val progressPercent : Int = (progressDay*100 / diffTime).toInt()
+            val today_cal = Calendar.getInstance()
+            today_cal.time = today
+//            val progressDay : Long = (end_day.time - today.time)
+
+            val progressDay = today_cal.get(Calendar.DAY_OF_YEAR) - start_cal.get(Calendar.DAY_OF_YEAR)
+
+            val progressPercent : Int = (progressDay*100 / diffTime)
             Log.d("ProgressBar2-1---->", diffTime.toString())
             Log.d("ProgressBar2-2---->", progressDay.toString())
             Log.d("ProgressBar2-3---->", progressPercent.toString())
@@ -64,6 +75,9 @@ class ProgressbarAdapterMain(private val context: Context,
         holder.itemView.setOnClickListener{
             val intent : Intent = Intent(context, ProgressSettingActivity::class.java)
             intent.putExtra("PID", myProjectPIDlist[position])
+            intent.putExtra("projectName", projectDTOList[position]!!.projectName)
+            intent.putExtra("startDay", projectDTOList[position]!!.progressData!!.startDate)
+            intent.putExtra("endDay", projectDTOList[position]!!.progressData!!.endDate)
             context.startActivity(intent)
         }
     }

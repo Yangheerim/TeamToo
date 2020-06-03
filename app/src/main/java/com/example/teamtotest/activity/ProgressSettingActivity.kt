@@ -42,39 +42,24 @@ class ProgressSettingActivity : AppCompatActivity() {
         val getintent = intent /*데이터 수신*/
         if (getintent != null) {
             PID = getintent.extras!!.getString("PID")
-        }
-        getProjectInfo()
+            val start = getintent.extras!!.getString("startDay")
+            val end = getintent.extras!!.getString("endDay")
+            progress_startday.text = "${start!!.substring(0,4)} / ${start.substring(4,6)} / ${start.substring(6,8)}"
+            progress_endday.text = "${end!!.substring(0,4)} / ${end.substring(4,6)} / ${end.substring(6,8)}"
+            progress_project_name.text = getintent.extras!!.getString("projectName")
 
+            start_day = dateFormat.parse(start)
+            end_day = dateFormat.parse(end)
+
+        }
         calendarInit()
+
+
         progress_button.setOnClickListener {
             setProgressDateInfoToDB()
         }
     }
 
-    private fun getProjectInfo(){
-
-        databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                for (snapshot in dataSnapshot.children) {
-                    if(snapshot.key == PID){
-                        myProjectDTO  = snapshot.getValue(ProjectDTO::class.java)!!
-                        progress_project_name.text = myProjectDTO!!.projectName
-                        if(myProjectDTO!!.progressData!=null){
-                            val start = myProjectDTO!!.progressData!!.startDate
-                            val end = myProjectDTO!!.progressData!!.endDate
-                            progress_startday.text = "${start.substring(0,4)} / ${start.substring(4,6)} / ${start.substring(6,8)}"
-                            progress_endday.text = "${end.substring(0,4)} / ${end.substring(4,6)} / ${end.substring(6,8)}"
-                        }
-                    }
-                }
-            }
-            override fun onCancelled(databaseError: DatabaseError) {
-                Log.w("ExtraUserInfoActivity", "loadPost:onCancelled",
-                    databaseError.toException()
-                )
-            }
-        })
-    }
 
     private fun setProgressDateInfoToDB(){
 
@@ -99,8 +84,10 @@ class ProgressSettingActivity : AppCompatActivity() {
         val calendar : Calendar = Calendar.getInstance()
 
         // default는 오늘날짜
-        progress_startday.text = ""+calendar.get(Calendar.YEAR)+" / "+(calendar.get((Calendar.MONTH))+1)+" / "+calendar.get(Calendar.DAY_OF_MONTH)
-        progress_endday.text = ""+calendar.get(Calendar.YEAR)+" / "+(calendar.get((Calendar.MONTH))+1)+" / "+calendar.get(Calendar.DAY_OF_MONTH)
+//        progress_startday.text = ""+calendar.get(Calendar.YEAR)+" / "+(calendar.get((Calendar.MONTH))+1)+" / "+calendar.get(Calendar.DAY_OF_MONTH)
+//        progress_endday.text = ""+calendar.get(Calendar.YEAR)+" / "+(calendar.get((Calendar.MONTH))+1)+" / "+calendar.get(Calendar.DAY_OF_MONTH)
+//        progress_startday.text = "미설정"
+////        progress_endday.text = "미설정"
 
         date_listener = DatePickerDialog.OnDateSetListener{ datePicker: DatePicker, year: Int, month: Int, day: Int ->
 
@@ -116,13 +103,13 @@ class ProgressSettingActivity : AppCompatActivity() {
 
         date_listener2 = DatePickerDialog.OnDateSetListener{ datePicker: DatePicker, year: Int, month: Int, day: Int ->
 
-                    val tmpCal : Calendar = Calendar.getInstance()
-                    tmpCal.timeInMillis=0
-                    tmpCal.set(year, month, day)
-                    end_day = Date()
-                    end_day = tmpCal.time
-                    progress_endday.text = "$year / ${month+1} / $day"
-                    Log.d("End Date --->", end_day.toString())
+            val tmpCal : Calendar = Calendar.getInstance()
+            tmpCal.timeInMillis=0
+            tmpCal.set(year, month, day)
+            end_day = Date()
+            end_day = tmpCal.time
+            progress_endday.text = "$year / ${month+1} / $day"
+            Log.d("End Date --->", end_day.toString())
 
         }
 
