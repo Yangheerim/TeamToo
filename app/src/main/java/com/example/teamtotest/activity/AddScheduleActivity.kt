@@ -141,7 +141,7 @@ class AddScheduleActivity : AppCompatActivity() {
                 addMessageNotificationToDB(scheduleDTO)
 
                 // 스케줄 등록 푸시 알림
-//                Push(PID.toString(), todo_et_name.text.toString(),"Schedule")
+                Push(PID.toString(), schedule_et_name.text.toString(),"Schedule")
 
                 finish()
             }

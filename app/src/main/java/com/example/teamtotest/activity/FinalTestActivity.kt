@@ -4,12 +4,14 @@ import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.DialogInterface
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.DatePicker
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.get
 import com.example.teamtotest.FinalTestResultDialog
@@ -23,6 +25,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_final_test.*
 import kotlinx.android.synthetic.main.item_final_test_member.view.*
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -38,12 +42,15 @@ class FinalTestActivity : AppCompatActivity() {
     private lateinit var firebaseDatabase: FirebaseDatabase
     private lateinit var databaseReference: DatabaseReference
 
+    private val dateFormat = SimpleDateFormat("yyyyMMddHHmmss")
+
     private var finalTestResultList : ArrayList<HashMap<String, String>> = ArrayList<HashMap<String, String>>()
     private lateinit var finalTestResult : HashMap<String, String>
 
     private var PID : String? = null
     private var complete : Boolean = false
-    val myUID: String = FirebaseAuth.getInstance().currentUser!!.uid
+    private val myUID: String = FirebaseAuth.getInstance().currentUser!!.uid
+//    private var final_test_day :Date = null
 
     private lateinit var listener: ValueEventListener
 
@@ -64,7 +71,6 @@ class FinalTestActivity : AppCompatActivity() {
 
         recyclerviewInit()
 
-
         // DB init
         firebaseDatabase = FirebaseDatabase.getInstance()
 
@@ -74,11 +80,8 @@ class FinalTestActivity : AppCompatActivity() {
         findMembersUIDFromDB()
         findUserInfoOfMembersFromDB()
 
-        // 내가 이미 평가를 완료했는지 봄
-        amICompleteTest()
 
         // 평가 완료 후 결과 전송 버튼
-//        final_test_send_result_button.isEnabled = false
         final_test_send_result_button.setOnClickListener{
             addFinalTestResultToDB()
         }
@@ -111,9 +114,11 @@ class FinalTestActivity : AppCompatActivity() {
         final_test_recycler_view.adapter = myAdapter
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun calendarInit(){
         val calendar : Calendar = Calendar.getInstance()
-        final_test_date.text = ""+calendar.get(Calendar.YEAR)+" / "+(calendar.get((Calendar.MONTH))+1)+" / "+calendar.get(Calendar.DAY_OF_MONTH) // default는 오늘날짜
+//        final_test_date.text = ""+calendar.get(Calendar.YEAR)+" / "+(calendar.get((Calendar.MONTH))+1)+" / "+calendar.get(Calendar.DAY_OF_MONTH) // default는 오늘날짜
+
 
         date_listener = DatePickerDialog.OnDateSetListener{ datePicker: DatePicker, year: Int, month: Int, day: Int ->
             val builder = AlertDialog.Builder(this)
@@ -121,20 +126,46 @@ class FinalTestActivity : AppCompatActivity() {
             builder.setMessage("평가 날짜를 $year / ${month+1} / $day 로 지정하시겠습니까?")
             builder.setPositiveButton("예",
                 DialogInterface.OnClickListener { dialog, which ->
-                    val ftdate : FinalTestDateDTO = FinalTestDateDTO("$year / ${month+1} / $day")
+                    val cal : Calendar = Calendar.getInstance()
+                    cal.set(Calendar.YEAR, year)
+                    cal.set(Calendar.MONTH, month)
+                    cal.set(Calendar.DAY_OF_MONTH, day)
+                    val test_date : Date = cal.time
+                    val date_formatted = dateFormat.format(test_date)
+                    val ftdate : FinalTestDateDTO = FinalTestDateDTO(date_formatted)
                     databaseReference =
                         firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("finalTest").child("test_date")
                     databaseReference.setValue(ftdate)
                     Toast.makeText(this, "평가 날짜 지정이 완료되었습니다.", Toast.LENGTH_SHORT).show()
-                    final_test_date.text = "$year / ${month+1} / $day"
+                    final_test_date.text = "$year/${month+1}/$day"
                 })
             builder.setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, which -> })
             builder.show()
         }
         final_test_date.setOnClickListener {
-            val dateDialog : DatePickerDialog
-                    = DatePickerDialog(this, date_listener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+
+            val dateDialog: DatePickerDialog = DatePickerDialog(
+                this,
+                date_listener,
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+            )
             dateDialog.show()
+        }
+        final_test_recycler_view.setOnClickListener{
+            val current = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                LocalDateTime.now()
+            } else {
+                TODO("VERSION.SDK_INT < O")
+            }
+            val formatted_current = dateFormat.format(current)
+            val today = formatted_current.substring(0, 4)+"/"+ formatted_current.substring(4, 6)+"/"+ formatted_current.substring(6, 8)
+            if(final_test_date.text != today){
+                final_test_recycler_view.isEnabled=false
+                Toast.makeText(this, "평가 날짜가 오늘이 아닙니다", Toast.LENGTH_SHORT).show()
+                final_test_recycler_view.isEnabled=true
+            }
         }
     }
 
@@ -172,20 +203,12 @@ class FinalTestActivity : AppCompatActivity() {
         Log.d("Now PID ---> ", PID.toString())
         databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                Log.d("Now snapshot ---> ", dataSnapshot.key)
                 for(snapshot in dataSnapshot.children){ // 누가했는지
-                    Log.d("Now UID ---> ", snapshot.key)
                     for(resultSnapshot  in snapshot.children){ // 누구를했는지
-
-                        Log.d("Now Key ---> ", resultSnapshot.key)
                         val resultDTO: FinalTestResultDTO = resultSnapshot.getValue(FinalTestResultDTO::class.java)!!
                         val scoreStorage : HashMap<String, Double> = resultScoreList[resultSnapshot.key]!!
                         scoreStorage["result1"] = scoreStorage["result1"]!! + (resultDTO.result1).toDouble()
-                        Log.d("Now RESULT1-1 ---> ", scoreStorage["result1"]!!.toString())
-                        Log.d("Now RESULT1-2 ---> ", (resultDTO.result1).toDouble().toString())
                         scoreStorage["result2"] = scoreStorage["result2"]!! + (resultDTO.result2).toDouble()
-                        Log.d("Now RESULT2-1 ---> ", scoreStorage["result2"]!!.toString())
-                        Log.d("Now RESULT2-2 ---> ", (resultDTO.result2).toDouble().toString())
                         scoreStorage["result3"] = scoreStorage["result3"]!! + (resultDTO.result3).toDouble()
                         scoreStorage["result4"] = scoreStorage["result4"]!! + (resultDTO.result4).toDouble()
                         resultScoreList[resultSnapshot.key!!] = scoreStorage
@@ -216,21 +239,21 @@ class FinalTestActivity : AppCompatActivity() {
                 for( snapshot in dataSnapshot.children){
                     if(snapshot.key=="test_date") {
                         val tmp :FinalTestDateDTO = snapshot.getValue(FinalTestDateDTO::class.java)!!
-                        final_test_date.text = tmp.date
+                        Log.e("FINALTEST", tmp.toString())
+                        final_test_date.text = tmp.date.substring(0, 4)+"/"+ tmp.date.substring(4, 6)+"/"+ tmp.date.substring(6, 8)
+//                        final_test_day = dateFormat.parse(tmp.date)
                     }
                     if(snapshot.key=="result") {
                         for(resultSnapshot in snapshot.children) {
+                            Log.e("myUID-->", myUID)
                             if (resultSnapshot.key == myUID) {
-                                    for (j in 1..myAdapter.itemCount) {
-                                        final_test_recycler_view[j - 1].item_final_test_isComplete.text =
-                                            " 완료"
-                                        final_test_recycler_view[j - 1].item_final_test_isComplete.setTextColor(
-                                            Color.parseColor("#00B700")
-                                        )
-                                        final_test_recycler_view[j - 1].isEnabled = false   // 리스트뷰 비활성화
-                                        final_test_send_result_button.visibility = View.INVISIBLE
-                                        final_test_show_result_button.visibility = View.VISIBLE
-                                    }
+                                for (j in 1..myAdapter.itemCount) {
+                                    final_test_recycler_view[j-1].item_final_test_isComplete.text =" 완료"
+                                    final_test_recycler_view[j-1].item_final_test_isComplete.setTextColor(Color.parseColor("#00B700"))
+                                    final_test_recycler_view[j-1].isEnabled = false   // 리스트뷰 비활성화
+                                    final_test_send_result_button.visibility = View.INVISIBLE
+                                    final_test_show_result_button.visibility = View.VISIBLE
+                                }
                             }
                         }
                     }
@@ -341,11 +364,11 @@ class FinalTestActivity : AppCompatActivity() {
                             // member로 등록되어있는 user의 UID를 가진 정보를 찾으면 다른 info를 DTO로 가져와서 일단 이름만 저장! -> 이름 동그라미로 리스트 보여줘야하니깐!
                             val userDTO : UserDTO = snapshot.getValue(UserDTO::class.java)!!
                             memberNameList.add(userDTO.name)
-//                            Log.d("LOG: 찾음!! ---->", userDTO.name);
                         }
                     }
                 }
                 myAdapter.notifyDataSetChanged()    // 리스트 바뀌었으니 adapter에 알려줌
+                amICompleteTest()
             }
             override fun onCancelled(dataSnapshot: DatabaseError) {
                 Log.w("ExtraUserInfoActivity", "loadPost:onCancelled")

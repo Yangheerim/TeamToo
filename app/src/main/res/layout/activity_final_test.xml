@@ -30,10 +30,10 @@
             android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="2020 / 03 / 25"
+            android:text="미설정"
             android:layout_gravity="center"
             android:gravity="center"
-            android:textColor="@color/black"
+            android:textColor="@color/darkGray2"
             android:textSize="16dp"
             android:background="?attr/selectableItemBackgroundBorderless"/>
     </LinearLayout>
