@@ -11,7 +11,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.teamtotest.Push
 import com.example.teamtotest.R
+import com.example.teamtotest.dto.MessageDTO
 import com.example.teamtotest.dto.ScheduleDTO
+import com.example.teamtotest.dto.TodoDTO
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_add_schedule.*
@@ -135,13 +138,39 @@ class AddScheduleActivity : AppCompatActivity() {
                 databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("scheduleList")
                 databaseReference.push().setValue(scheduleDTO)
 
+                addMessageNotificationToDB(scheduleDTO)
+
                 // 스케줄 등록 푸시 알림
-                Push(PID.toString(), todo_et_name.text.toString(),"Schedule")
+//                Push(PID.toString(), todo_et_name.text.toString(),"Schedule")
 
                 finish()
             }
         }
     }
+
+    // 스케줄 추가 시 채팅창에 알림 메세지 저장
+    private fun addMessageNotificationToDB(scheduleDTO: ScheduleDTO) {
+        val firebaseAuth : FirebaseAuth = FirebaseAuth.getInstance()
+        val messageDTO =
+            MessageDTO(
+                "새로운 스케줄이 추가되었습니다.",
+                firebaseAuth.currentUser!!.displayName.toString(),
+                firebaseAuth.currentUser!!.uid.toString(),
+                scheduleData = scheduleDTO
+            )
+        val current = Date()
+        val utc = Date(current.time - Calendar.getInstance().timeZone.getOffset(current.time))
+        val dateFormat = SimpleDateFormat("yyyyMMddHHmmss")
+        val date_formatted = dateFormat.format(utc)
+
+
+        databaseReference = firebaseDatabase!!.getReference()
+        databaseReference = databaseReference!!.child("ProjectList").child(PID.toString()).child("messageList")
+            .child(date_formatted)
+        databaseReference!!.setValue(messageDTO)
+
+    }
+
 
     //상단바 눌렸을 때
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
