@@ -79,6 +79,7 @@ class Push (val PID: String, private var message: String, private var type: Stri
                 val data = JSONObject()
                 val tokenArray = arrayListOf<String>()
 
+                // notification object에 메시지 내용 넣어주기
                 notification.put("title","[$projectName]")
                 message = when(type){
                     "Todo"-> "새로운 할일: '$message'"
@@ -91,12 +92,17 @@ class Push (val PID: String, private var message: String, private var type: Stri
                 }
                 notification.put("body", message)
 
-                data.put("pid", PID)
-                root.put("notification", notification)
+                // 메시지 받을 사람 token array
                 for (token in tokenList){
                     tokenArray.add(token)
                 }
-                tokenArray.add("fHJvyl3aTPKZ3S5sG97oKP:APA91bF1j4bV0zKz7pHfsvoUZu-TCv-_Qrk9yH-szXRnze7EstBDAyjhGuD-cszG5sx_VeJs6qhqkc0szZh-UkCkGzIpvHwADuMq88mMidOMiC7PEfcdLhxADtH0kaVbr7gpdU6rHzlx")
+                tokenArray.add("fEF-AKW6T_aqKDYukJd400:APA91bECLLZjp4rjqpy4cDL9G24QByAjuebUmqUB1_hutI5flwn4xhZu1Gv0iBBMLbogjycqngVFcxxfRbmS9skdC1LRkd6r2-Q28lTqv_ZFK86hupwG6sFC2AM3iJBij443SG9lOZsM")
+
+                // data object에 PID 넣어주기
+                data.put("pid", PID)
+
+                // root object에 다 넣어주기
+                root.put("notification", notification)
                 root.put("registration_ids", JSONArray(tokenArray))
                 root.put("data",data)
                 //FMC 메시지 생성 end
