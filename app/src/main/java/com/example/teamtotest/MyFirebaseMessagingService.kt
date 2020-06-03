@@ -55,8 +55,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             putExtra("projectName", projectName)
         }
         Log.e(TAG,"sendNotification")
-        Log.e(TAG, remoteMessage.data.getValue("pid"))
-        Log.e(TAG, projectName)
 
         // 알람 스위치 상태가 저장된 파일 불러오기
         val sf = getSharedPreferences("alertFile", Context.MODE_PRIVATE)

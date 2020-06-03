@@ -1,8 +1,13 @@
 package com.example.teamtotest.activity
 
+import android.app.AlarmManager
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.app.PendingIntent
+import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
+import android.content.ReceiverCallNotAllowedException
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -14,7 +19,9 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.get
+import com.example.teamtotest.AlarmService
 import com.example.teamtotest.FinalTestResultDialog
+import com.example.teamtotest.Push
 import com.example.teamtotest.R
 import com.example.teamtotest.adapter.FinalTestMemberListAdapter
 import com.example.teamtotest.dto.FinalTestDateDTO
@@ -23,6 +30,7 @@ import com.example.teamtotest.dto.MembersDTO
 import com.example.teamtotest.dto.UserDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import kotlinx.android.synthetic.main.activity_add_schedule.*
 import kotlinx.android.synthetic.main.activity_final_test.*
 import kotlinx.android.synthetic.main.item_final_test_member.view.*
 import java.text.SimpleDateFormat
@@ -127,7 +135,11 @@ class FinalTestActivity : AppCompatActivity() {
             builder.setMessage("평가 날짜를 $year/${month+1}/$day 로 지정하시겠습니까?")
             builder.setPositiveButton("예",
                 DialogInterface.OnClickListener { dialog, which ->
-                    val cal : Calendar = Calendar.getInstance()
+                    val cal : Calendar = Calendar.getInstance().apply {
+                        set(Calendar.HOUR_OF_DAY, 9)
+                        set(Calendar.MINUTE, 0)
+                        set(Calendar.SECOND, 0)
+                    }
                     cal.set(Calendar.YEAR, year)
                     cal.set(Calendar.MONTH, month)
                     cal.set(Calendar.DAY_OF_MONTH, day)
@@ -140,6 +152,22 @@ class FinalTestActivity : AppCompatActivity() {
                     Toast.makeText(this, "평가 날짜 지정이 완료되었습니다.", Toast.LENGTH_SHORT).show()
                     final_test_date.text = ftdate.date.substring(0, 4) + "/" + ftdate.date.substring(4, 6) + "/" + ftdate.date.substring(6, 8)
                     myAdapter.final_test_date_ = final_test_date.text.toString()
+
+                    // 최종평가 날짜 지정 푸시 알림
+                        // 알림 매니저에 넘겨줄 intent
+                        val mAlarmIntent = Intent(this, AlarmService::class.java)
+                        mAlarmIntent.putExtra("PID", PID)
+                        mAlarmIntent.putExtra("final_text", "오늘은 최종평가 날입니다. 팀원들의 평가를 완료해주세요. ^ㅡ^")
+                        mAlarmIntent.putExtra("type", "Alarm_final")
+
+                        // 알림 매니저 설정
+                        val mTime = cal.time.time
+                        val mPendingIntent = PendingIntent.getService(this, 333, mAlarmIntent, 0)
+                        val mAlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                        mAlarmManager.set(AlarmManager.RTC_WAKEUP, mTime, mPendingIntent)
+
+                    Log.e("Date",cal.toString())
+
                 })
             builder.setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, which -> })
             builder.show()
