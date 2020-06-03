@@ -12,6 +12,7 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import com.example.teamtotest.activity.ChatActivity
 import com.example.teamtotest.activity.NavigationbarActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -45,10 +46,17 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     //push알림 보내주는 메소드
     @RequiresApi(Build.VERSION_CODES.O)
     private fun sendNotification(remoteMessage: RemoteMessage) {
-        val intent = Intent(this, NavigationbarActivity::class.java).apply {
+        val projectName = remoteMessage.notification?.title?.replace("[","")?.replace("]","")
+
+        val intent = Intent(this, ChatActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+
+            putExtra("PID",remoteMessage.data.getValue("pid"))
+            putExtra("projectName", projectName)
         }
         Log.e(TAG,"sendNotification")
+        Log.e(TAG, remoteMessage.data.getValue("pid"))
+        Log.e(TAG, projectName)
 
         // 알람 스위치 상태가 저장된 파일 불러오기
         val sf = getSharedPreferences("alertFile", Context.MODE_PRIVATE)
@@ -97,7 +105,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             .setContentIntent(pendingIntent)
             .setFullScreenIntent(pendingIntent, true)
             .setVibrate(longArrayOf(0,3000))
-
 
         val notificationManager: NotificationManager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(0, notificationBuilder.build())

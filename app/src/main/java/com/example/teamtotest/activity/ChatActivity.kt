@@ -163,7 +163,7 @@ class ChatActivity : AppCompatActivity() {
         super.onStart()
 //        getUserInfos()
 //        Thread.sleep(300)
-        setListener_MessageData()
+//        setListener_MessageData()
         setListener_theNumOfMembersFromMyProjects()
         readCheckToDB()
     }
@@ -440,6 +440,8 @@ class ChatActivity : AppCompatActivity() {
                 val membersDTO = dataSnapshot.getValue(MembersDTO::class.java)
                 howManyMembers = membersDTO!!.UID_list!!.size.toString()
                 chat_how_many_members.text = howManyMembers
+                setListener_MessageData()
+
             }
 
             override fun onCancelled(p0: DatabaseError) {
