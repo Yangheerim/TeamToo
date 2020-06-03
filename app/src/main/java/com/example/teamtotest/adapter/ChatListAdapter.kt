@@ -40,6 +40,10 @@ class ChatListAdapter(var ChatMessage : ArrayList<HashMap<String,String>>) //MyA
             return 4;
         if(ChatMessageList!![position]["todoName"]!=null && firebaseAuth.currentUser!!.uid == userUID)
             return 5;
+        if(ChatMessageList!![position]["scheduleName"]!=null && firebaseAuth.currentUser!!.uid != userUID)
+            return 6;
+        if(ChatMessageList!![position]["scheduleName"]!=null && firebaseAuth.currentUser!!.uid == userUID)
+            return 7;
         return if (firebaseAuth.currentUser!!.uid == userUID) { //** 이거 UID로 비교하는걸로 바꿔야함
             2
         } else {
@@ -60,6 +64,10 @@ class ChatListAdapter(var ChatMessage : ArrayList<HashMap<String,String>>) //MyA
         } else if (viewType == 4) {  // 남일때
             layoutId = R.layout.item_chat_noti1
         } else if (viewType == 5) {
+            layoutId = R.layout.item_chat_noti2
+        } else if (viewType == 6) {  // 남일때
+            layoutId = R.layout.item_chat_noti1
+        } else if (viewType == 7) {
             layoutId = R.layout.item_chat_noti2
         } else {
             Log.d("View type 오류 : ", viewType.toString() + "")
@@ -131,6 +139,41 @@ class ChatListAdapter(var ChatMessage : ArrayList<HashMap<String,String>>) //MyA
                 holder.itemView.noti2_isRead.text = ChatMessageList!!.get(position)["isRead"]
                 holder.itemView.noti2_isRead.visibility = View.VISIBLE
             }
+
+        }else if (viewType == 6) {  // schedule
+            val tmpDate :String = ChatMessageList!![position]["date"]!!
+            holder.itemView.noti1_message.text = ChatMessageList!!.get(position)["who"].toString()+"님이 스케줄을 추가했습니다."
+            holder.itemView.noti1_message_sent_time.text = tmpDate.substring(8, 10)+":"+ tmpDate.substring(10, 12)
+            holder.itemView.noti1_member_name.text = ChatMessageList!!.get(position)["who"]
+
+            holder.itemView.noti1_todoName.text = ChatMessageList!!.get(position)["scheduleName"]
+            holder.itemView.noti1_deadline.text = ChatMessageList!!.get(position)["startDate"]
+            holder.itemView.noti1_performer.text = ChatMessageList!!.get(position)["endDate"]
+
+            if(ChatMessageList!!.get(position)["isRead"]=="0") {
+                holder.itemView.noti1_isRead.visibility = View.INVISIBLE
+            }else{
+                holder.itemView.noti1_isRead.text = ChatMessageList!!.get(position)["isRead"]
+                holder.itemView.noti1_isRead.visibility = View.VISIBLE
+            }
+
+        }else if (viewType == 7) {  // schedule
+            val tmpDate :String = ChatMessageList!![position]["date"]!!
+            holder.itemView.noti2_message.text = ChatMessageList!!.get(position)["who"].toString()+"님이 스케줄을 추가했습니다."
+            holder.itemView.noti2_message_sent_time.text = tmpDate.substring(8, 10)+":"+ tmpDate.substring(10, 12)
+            holder.itemView.noti2_member_name.text = ChatMessageList!!.get(position)["who"]
+
+            holder.itemView.noti2_todoName.text = ChatMessageList!!.get(position)["scheduleName"]
+            holder.itemView.noti2_deadline.text = "시작 시간 : "+ ChatMessageList!!.get(position)["startDate"]
+            holder.itemView.noti2_performer.text = "종료 시간 : "+ ChatMessageList!!.get(position)["endDate"]
+
+            if(ChatMessageList!!.get(position)["isRead"]=="0") {
+                holder.itemView.noti2_isRead.visibility = View.INVISIBLE
+            }else{
+                holder.itemView.noti2_isRead.text = ChatMessageList!!.get(position)["isRead"]
+                holder.itemView.noti2_isRead.visibility = View.VISIBLE
+            }
+
         }else {
             Log.d("View type 오류 : ", viewType.toString() + "")
         }

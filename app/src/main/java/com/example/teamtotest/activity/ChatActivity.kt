@@ -397,15 +397,18 @@ class ChatActivity : AppCompatActivity() {
                         var performers : String = ""
                         if(messageDTO.todoData.performers_name!=null) {
                             for (name in messageDTO.todoData.performers_name!!) {
-//                            val name = getNamefromUID(i)
                                 performers += "$name "
-                                Log.d("performers --->", performers)
                             }
                             ChatMessageData["performer"] = performers
                         }else{
                             ChatMessageData["performer"] = ""
                         }
+                    }
 
+                    if(messageDTO.scheduleData!=null){
+                        ChatMessageData["scheduleName"] = messageDTO.scheduleData.name.toString()
+                        ChatMessageData["startDate"] = convertLongToTime(messageDTO.scheduleData.startTime)
+                        ChatMessageData["endDate"] = convertLongToTime(messageDTO.scheduleData.endTime)
                     }
 
                     ChatMessageList.add(ChatMessageData)
