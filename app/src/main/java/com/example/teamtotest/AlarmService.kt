@@ -15,10 +15,12 @@ class AlarmService : Service() {
         val PID = intent?.getStringExtra("PID")
         val todoName = intent?.getStringExtra("todo_name")
         val scheduleName = intent?.getStringExtra("schedule_name")
+        val finalText=intent?.getStringExtra("final_text")
 
         when(val type = intent?.getStringExtra("type")){
             "Alarm_todo"->Push(PID.toString(), todoName.toString(), type.toString())
             "Alarm_schedule"->Push(PID.toString(), scheduleName.toString(), type.toString())
+            "Alarm_final"->Push(PID.toString(), finalText.toString(), type.toString())
         }
 
         return START_NOT_STICKY
