@@ -1,11 +1,13 @@
 package com.example.teamtotest.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.teamtotest.R
+import com.example.teamtotest.activity.ModifyTodoActivity
 import com.example.teamtotest.dto.ProjectDTO
 import com.example.teamtotest.dto.TodoDTO
 import com.google.firebase.database.FirebaseDatabase
@@ -51,7 +53,12 @@ class TodoRVAdapterMain(
             }
         }
 
-
+        holder.itemView.setOnClickListener{
+            val intent = Intent(context, ModifyTodoActivity::class.java)
+            intent.putExtra("PID", todoDTO[position].projectdata!!.pid)
+            intent.putExtra("todoID", todoDTO[position].todoID)
+            context.startActivity(intent)
+        }
 
     }
 

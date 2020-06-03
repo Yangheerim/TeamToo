@@ -116,13 +116,14 @@ class Frag1 : Fragment (){
                 for (projectData in dataSnapshot.children){
                     val projectDTO : ProjectDTO = projectData.getValue(ProjectDTO::class.java)!!
                     if(myProjectPIDlist.contains(projectData.key.toString())) {
-//                        Log.d("TodoList1--->", projectData.key.toString())
                         for(data in projectData.children) {
                             if(data.key=="todoList") {
                                 for(todoData in data.children) {
                                     val todoDTO = todoData.getValue(TodoDTO::class.java)
                                     if(todoDTO!!.performers.contains(myUID)) { // 내 할일일 경우에만 리스트에 표시
+                                        projectDTO.pid = projectData.key.toString()
                                         todoDTO.projectdata = projectDTO
+                                        todoDTO.todoID = todoData.key
                                         todoList.add(todoDTO!!)
                                     }
                                 }
@@ -155,6 +156,7 @@ class Frag1 : Fragment (){
                             if(data.key=="file") {
                                 for(fileData in data.children) {
                                     val fileDTO = fileData.getValue(FileDTO::class.java)
+                                    projectDTO.pid = projectData.key.toString()
                                     fileDTO!!.projectdata = projectDTO
                                     fileList.add(fileDTO!!)
                                 }
