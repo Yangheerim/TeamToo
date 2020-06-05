@@ -93,14 +93,19 @@ class AlertActivity : AppCompatActivity() {
         }
 
         // 진동 switch On
-        // API Level 26 이상(VibrationEffect)
         alert_vibrate_switch.setOnCheckedChangeListener{compoundButton, b ->
             if (b) {
-               val vib = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-                // Switch On으로 변경시 진동효과
-                val vibrationEffect = VibrationEffect.createOneShot(300,200)
-                vib.vibrate(vibrationEffect)
-
+                val vib = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                // API Level 26 이상(VibrationEffect)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    // Switch On으로 변경시 진동효과
+                    val vibrationEffect = VibrationEffect.createOneShot(300, 200)
+                    vib.vibrate(vibrationEffect)
+                }
+                else {
+                    // Switch On으로 변경시 진동효과
+                    vib.vibrate(1000)
+                }
                 editor.putBoolean("vibrate_switch",alert_vibrate_switch.isChecked)
                 editor.commit()
 

@@ -54,7 +54,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val sf = getSharedPreferences("alertFile", Context.MODE_PRIVATE)
 
         // 알람 스위치 상태 불러오기, 저장된 상태없으면 default값은 true
-//        val massage_state= sf.getBoolean("msg_switch", true)
         val sound_state = sf.getBoolean("sound_switch", true)
         val vibrate_state = sf.getBoolean("vibrate_switch", true)
         val msg_state = sf.getBoolean("msg_switch", true)
@@ -84,23 +83,95 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         //Notification 소리 설정
         val notificationSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationBuilder = NotificationCompat.Builder(this, channel_id)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_tt))
+                .setSmallIcon(R.mipmap.ic_launcher_tt)
+                .setContentTitle(remoteMessage.notification?.title)
+                .setContentText(remoteMessage.notification?.body)
+                .setSound(notificationSound)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
+                .setFullScreenIntent(pendingIntent, true)
 
-        val notificationBuilder = NotificationCompat.Builder(this,channel_id)
-            .setDefaults(Notification.DEFAULT_ALL)
-            .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_tt))
-            .setSmallIcon(R.mipmap.ic_launcher_tt)
-            .setContentTitle(remoteMessage.notification?.title)
-            .setContentText(remoteMessage.notification?.body)
-            .setSound(notificationSound)
-            .setAutoCancel(true)
-            .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setContentIntent(pendingIntent)
-            .setFullScreenIntent(pendingIntent, true)
-            .setVibrate(longArrayOf(0,3000))
+            val notificationManager: NotificationManager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.notify(0, notificationBuilder.build())
+        }
+        else {
+            val notificationBuilder = NotificationCompat.Builder(this)
+            Log.e(TAG,"notificationBuilder_Low then Oreo")
+            if (!msg_state) {
+                Log.e(TAG,"Low then Oreo_ Message off")
+                notificationBuilder
+                    .setPriority(NotificationCompat.PRIORITY_MIN)
+                    .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_tt))
+                    .setSmallIcon(R.mipmap.ic_launcher_tt)
+                    .setContentTitle(remoteMessage.notification?.title)
+                    .setContentText(remoteMessage.notification?.body)
+                    .setAutoCancel(true)
+                    .setContentIntent(pendingIntent)
 
+            }
+            // Sound 스위치 off, Vibrate 스위치 on
+            else if (!sound_state && vibrate_state) {
+                Log.e(TAG,"Low then Oreo_ !sound_state && vibrate_state")
+                notificationBuilder.setDefaults(Notification.DEFAULT_VIBRATE)
+                    .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_tt))
+                    .setSmallIcon(R.mipmap.ic_launcher_tt)
+                    .setContentTitle(remoteMessage.notification?.title)
+                    .setContentText(remoteMessage.notification?.body)
+                    .setAutoCancel(true)
+                    .setPriority(NotificationCompat.PRIORITY_MAX)
+                    .setContentIntent(pendingIntent)
+                    .setFullScreenIntent(pendingIntent, true)
+            }
+            // Sound 스위치 on, Vibrate 스위치 off
+            else if (sound_state && !vibrate_state) {
+                Log.e(TAG,"Low then Oreo_ sound_state && !vibrate_state")
+                notificationBuilder.setDefaults(Notification.DEFAULT_SOUND)
+                    .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_tt))
+                    .setSmallIcon(R.mipmap.ic_launcher_tt)
+                    .setContentTitle(remoteMessage.notification?.title)
+                    .setContentText(remoteMessage.notification?.body)
+                    .setSound(notificationSound)
+                    .setAutoCancel(true)
+                    .setPriority(NotificationCompat.PRIORITY_MAX)
+                    .setContentIntent(pendingIntent)
+                    .setFullScreenIntent(pendingIntent, true)
+            }
+            // Sound, Vibrate 둘다 off
+            else if (!sound_state && !vibrate_state){
+                Log.e(TAG,"Low then Oreo_ !sound_state && !vibrate_state")
+                notificationBuilder
+                    .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_tt))
+                    .setSmallIcon(R.mipmap.ic_launcher_tt)
+                    .setContentTitle(remoteMessage.notification?.title)
+                    .setContentText(remoteMessage.notification?.body)
+                    .setAutoCancel(true)
+                    .setPriority(NotificationCompat.PRIORITY_MAX)
+                    .setContentIntent(pendingIntent)
+                    .setFullScreenIntent(pendingIntent, true)
+            }
+            // Default (모두 on)
+            else {
+                Log.e(TAG,"Low then Oreo_ Default")
+                notificationBuilder.setDefaults(Notification.DEFAULT_ALL)
+                    .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_tt))
+                    .setSmallIcon(R.mipmap.ic_launcher_tt)
+                    .setContentTitle(remoteMessage.notification?.title)
+                    .setContentText(remoteMessage.notification?.body)
+                    .setSound(notificationSound)
+                    .setAutoCancel(true)
+                    .setPriority(NotificationCompat.PRIORITY_MAX)
+                    .setContentIntent(pendingIntent)
+                    .setFullScreenIntent(pendingIntent, true)
+            }
 
-        val notificationManager: NotificationManager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(0, notificationBuilder.build())
+            val notificationManager: NotificationManager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.notify(0, notificationBuilder.build())
+        }
+
     }
 
     private fun createNotificationChannel() {
