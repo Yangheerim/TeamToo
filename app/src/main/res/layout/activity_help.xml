@@ -11,4 +11,48 @@
         android:layout_height="?android:attr/actionBarSize"
         app:title="도움말"/>
 
+    <LinearLayout
+        android:id="@+id/help_QnA"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/color_change"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingVertical="15dp"
+            android:text="문의하기"
+            android:textSize="20dp"
+            android:layout_marginLeft="15dp"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray"/>
+
+    <LinearLayout
+        android:id="@+id/help_open_sc"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/color_change"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingVertical="15dp"
+            android:text="오픈소스 라이선스"
+            android:textSize="20dp"
+            android:layout_marginLeft="15dp"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray"/>
+
 </LinearLayout>

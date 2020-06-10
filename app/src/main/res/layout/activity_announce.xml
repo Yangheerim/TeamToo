@@ -11,4 +11,9 @@
         android:layout_height="?android:attr/actionBarSize"
         app:title="공지사항"/>
 
+    <ExpandableListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
 </LinearLayout>
