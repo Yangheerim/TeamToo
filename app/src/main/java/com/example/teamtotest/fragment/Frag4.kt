@@ -2,21 +2,15 @@ package com.example.teamtotest.fragment
 
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.teamtotest.R
 import com.example.teamtotest.activity.*
-import kotlinx.android.synthetic.main.activity_version_info.*
 import kotlinx.android.synthetic.main.activity_version_info.view.*
-import kotlinx.android.synthetic.main.bottombar_fragment4.*
 import kotlinx.android.synthetic.main.bottombar_fragment4.view.*
-import kotlinx.android.synthetic.main.bottombar_fragment4.view.setting_ver_txt
-import org.w3c.dom.Text
 
 class Frag4 : Fragment (){
 
@@ -48,9 +42,9 @@ class Frag4 : Fragment (){
             startActivity(Intent(requireActivity(), VersionInfoActivity::class.java))
         }
 
-        view.setting_timeTable.setOnClickListener {
-            startActivity(Intent(requireActivity(), TimetableActivity::class.java))
-        }
+//        view.setting_timeTable.setOnClickListener {
+//            startActivity(Intent(requireActivity(), TimetableActivity::class.java))
+//        }
 
         view.setting_alert.setOnClickListener {
             startActivity(Intent(requireActivity(), AlertActivity::class.java))

@@ -107,28 +107,28 @@
             android:layout_height="1dp"
             android:background="@color/gray"/>
 
-        <LinearLayout
-            android:id="@+id/setting_timeTable"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:background="@drawable/color_change"
-            android:orientation="horizontal">
+<!--        <LinearLayout-->
+<!--            android:id="@+id/setting_timeTable"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="60dp"-->
+<!--            android:background="@drawable/color_change"-->
+<!--            android:orientation="horizontal">-->
 
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="match_parent"
-                android:layout_marginVertical="10dp"
-                android:padding="5dp"
-                android:src="@drawable/ic_access_time_black_24dp"/>
+<!--            <ImageView-->
+<!--                android:layout_width="50dp"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:layout_marginVertical="10dp"-->
+<!--                android:padding="5dp"-->
+<!--                android:src="@drawable/ic_access_time_black_24dp"/>-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:paddingVertical="15dp"
-                android:text="시간표"
-                android:textSize="20dp" />
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:paddingVertical="15dp"-->
+<!--                android:text="시간표"-->
+<!--                android:textSize="20dp" />-->
 
-        </LinearLayout>
+<!--        </LinearLayout>-->
 
         <View
             android:layout_width="match_parent"

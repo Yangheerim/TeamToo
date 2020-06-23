@@ -1,7 +1,6 @@
 package com.example.teamtotest.activity
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -24,11 +23,11 @@ class AlertActivity : AppCompatActivity() {
         setSupportActionBar(alert_toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        // "알림 표시" 누르면 Activity 호출
-        alert_display.setOnClickListener {
-            intent = Intent(this, AlertDisplayActivity::class.java)
-            startActivity(intent)
-        }
+//        // "알림 표시" 누르면 Activity 호출
+//        alert_display.setOnClickListener {
+//            intent = Intent(this, AlertDisplayActivity::class.java)
+//            startActivity(intent)
+//        }
 
         // 저장된 스위치 상태 불러오기
         val sf = getSharedPreferences("alertFile", Context.MODE_PRIVATE)
@@ -43,8 +42,8 @@ class AlertActivity : AppCompatActivity() {
         alert_vibrate_switch.isEnabled = sf.getBoolean("vibrate_switch_enable", true)
         vibrate.setTextColor(sf.getInt("vibrate_text", Color.BLACK))
 
-        alert_display.isEnabled = sf.getBoolean("display_enable", true)
-        display.setTextColor(sf.getInt("display_text", Color.BLACK))
+//        alert_display.isEnabled = sf.getBoolean("display_enable", true)
+//        display.setTextColor(sf.getInt("display_text", Color.BLACK))
 
         // 저장할 AlertFile 생성
         val sharedPreferences = getSharedPreferences("alertFile", Context.MODE_PRIVATE)
@@ -57,34 +56,34 @@ class AlertActivity : AppCompatActivity() {
         alert_msg_switch.setOnCheckedChangeListener{compoundButton, b ->
             alert_sound_switch.isEnabled = b == true
             alert_vibrate_switch.isEnabled = b == true
-            alert_display.isEnabled = b == true
+//            alert_display.isEnabled = b == true
 
             if (!b) {
                 sound.setTextColor(Color.LTGRAY)
                 vibrate.setTextColor(Color.LTGRAY)
-                display.setTextColor(Color.LTGRAY)
+//                display.setTextColor(Color.LTGRAY)
 
                 editor.putBoolean("msg_switch",alert_msg_switch.isChecked)
                 editor.putBoolean("sound_switch_enable",alert_sound_switch.isEnabled)
                 editor.putInt("sound_text",sound.currentTextColor)
                 editor.putBoolean("vibrate_switch_enable",alert_vibrate_switch.isEnabled)
                 editor.putInt("vibrate_text",vibrate.currentTextColor)
-                editor.putBoolean("display_enable",alert_display.isEnabled)
-                editor.putInt("display_text",display.currentTextColor)
+//                editor.putBoolean("display_enable",alert_display.isEnabled)
+//                editor.putInt("display_text",display.currentTextColor)
                 editor.commit()
             }
             else {
                 sound.setTextColor(Color.BLACK)
                 vibrate.setTextColor(Color.BLACK)
-                display.setTextColor(Color.BLACK)
+//                display.setTextColor(Color.BLACK)
 
                 editor.putBoolean("msg_switch",alert_msg_switch.isChecked)
                 editor.putBoolean("sound_switch_enable",alert_sound_switch.isEnabled)
                 editor.putInt("sound_text",sound.currentTextColor)
                 editor.putBoolean("vibrate_switch_enable",alert_vibrate_switch.isEnabled)
                 editor.putInt("vibrate_text",vibrate.currentTextColor)
-                editor.putBoolean("display_enable",alert_display.isEnabled)
-                editor.putInt("display_text",display.currentTextColor)
+//                editor.putBoolean("display_enable",alert_display.isEnabled)
+//                editor.putInt("display_text",display.currentTextColor)
                 editor.commit()
             }
 

@@ -7,91 +7,91 @@
     tools:context=".activity.ChatActivity"
     android:orientation="vertical">
     <androidx.drawerlayout.widget.DrawerLayout
-        android:id="@+id/chat_drawer"
+android:id="@+id/chat_drawer"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:openDrawer="right">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/chat_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:openDrawer="right">
-        <LinearLayout
+        android:layout_height="?android:attr/actionBarSize"
+        app:title="프로젝트명">
+
+        <TextView
+            android:id="@+id/chat_how_many_members"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:text="5"
+            android:textColor="@color/gray"
+            android:textSize="18dp" />
+        <!--                <ImageView-->
+        <!--                    android:id="@+id/chat_menu"-->
+        <!--                    android:layout_width="wrap_content"-->
+        <!--                    android:layout_height="wrap_content"-->
+        <!--                    android:src="@drawable/ic_menu_black"/>-->
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="11"
+        android:background="#EAEAEA">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/chatList_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:background="@drawable/border_layout"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_chat_list1" />
+    </LinearLayout>
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/chat_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?android:attr/actionBarSize"
-                app:title="프로젝트명">
-
-                <TextView
-                    android:id="@+id/chat_how_many_members"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
-                    android:text="5"
-                    android:textColor="@color/gray"
-                    android:textSize="18dp" />
-                <!--                <ImageView-->
-                <!--                    android:id="@+id/chat_menu"-->
-                <!--                    android:layout_width="wrap_content"-->
-                <!--                    android:layout_height="wrap_content"-->
-                <!--                    android:src="@drawable/ic_menu_black"/>-->
-
-            </androidx.appcompat.widget.Toolbar>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/gray"/>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="11"
-                android:background="#EAEAEA">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/chatList_recycler_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/border_layout"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/item_chat_list1" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:orientation="horizontal">
-                <EditText
-                    android:layout_margin="5dp"
-                    android:id="@+id/message"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/style1"
-                    android:layout_weight="5"></EditText>
-                <com.skydoves.elasticviews.ElasticButton
-                    android:layout_margin="5dp"
-                    android:id="@+id/sendButton"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:text="OK"
-                    android:layout_weight="1"
-
-                    android:background="@drawable/button1"></com.skydoves.elasticviews.ElasticButton>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <com.google.android.material.navigation.NavigationView
-            android:id="@+id/nav_view"
-            android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal">
+        <EditText
+            android:layout_margin="5dp"
+            android:id="@+id/message"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_gravity="right"
-            android:fitsSystemWindows="true"
-            app:menu="@menu/menu_drawer"
-            app:itemTextColor="@color/black"
-            app:itemIconTint="@color/black"
-            app:headerLayout="@layout/header_chat_drawer" />
+            android:background="@drawable/style1"
+            android:layout_weight="5"></EditText>
+        <com.skydoves.elasticviews.ElasticButton
+            android:layout_margin="5dp"
+            android:id="@+id/sendButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="OK"
+            android:layout_weight="1"
 
-    </androidx.drawerlayout.widget.DrawerLayout>
+            android:background="@drawable/button1"></com.skydoves.elasticviews.ElasticButton>
+
+    </LinearLayout>
+
 </LinearLayout>
+
+<com.google.android.material.navigation.NavigationView
+    android:id="@+id/nav_view"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_gravity="right"
+    android:fitsSystemWindows="true"
+    app:menu="@menu/menu_drawer"
+    app:itemTextColor="@color/black"
+    app:itemIconTint="@color/black"
+    app:headerLayout="@layout/header_chat_drawer" />
+
+</androidx.drawerlayout.widget.DrawerLayout>
+    </LinearLayout>
