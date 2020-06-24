@@ -48,17 +48,17 @@ class Frag4 : Fragment (){
             startActivity(Intent(requireActivity(), VersionInfoActivity::class.java))
         }
 
-        view.setting_timeTable.setOnClickListener {
-            startActivity(Intent(requireActivity(), TimetableActivity::class.java))
-        }
+//        view.setting_timeTable.setOnClickListener {
+//            startActivity(Intent(requireActivity(), TimetableActivity::class.java))
+//        }
 
         view.setting_alert.setOnClickListener {
             startActivity(Intent(requireActivity(), AlertActivity::class.java))
         }
 
-        view.setting_help.setOnClickListener {
-            startActivity(Intent(requireActivity(), HelpActivity::class.java))
-        }
+//        view.setting_help.setOnClickListener {
+//            startActivity(Intent(requireActivity(), HelpActivity::class.java))
+//        }
 
         return view
     }

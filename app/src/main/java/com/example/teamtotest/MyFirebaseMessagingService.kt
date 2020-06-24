@@ -95,8 +95,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         val notificationBuilder = NotificationCompat.Builder(this,channel_id)
             .setDefaults(Notification.DEFAULT_ALL)
-            .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_tt))
-            .setSmallIcon(R.mipmap.ic_launcher_tt)
+            .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_tt2_foreground))
+            .setSmallIcon(R.mipmap.ic_launcher_tt2_round)
             .setContentTitle(remoteMessage.notification?.title)
             .setContentText(remoteMessage.notification?.body)
             .setSound(notificationSound)
