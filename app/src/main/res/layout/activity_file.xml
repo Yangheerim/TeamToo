@@ -18,6 +18,13 @@
         android:layout_height="match_parent"
         android:background="#F6F6F6"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_file" />
+        tools:listitem="@layout/item_file"
+
+        />
+
+    <include
+        android:id="@+id/file_loadingCircle"
+        android:visibility="gone"
+        layout="@layout/dialog_progress"/>
 
 </LinearLayout>

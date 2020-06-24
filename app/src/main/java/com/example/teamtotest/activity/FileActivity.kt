@@ -24,6 +24,10 @@ import java.text.SimpleDateFormat
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.collections.set
+import android.app.ProgressDialog
+import android.os.Message
+import android.view.View
+import android.widget.ProgressBar
 
 
 class FileActivity : AppCompatActivity(){
@@ -43,6 +47,11 @@ class FileActivity : AppCompatActivity(){
 //    private val TAG : String = "FileActivity"
 
     private lateinit var filePath : Uri
+    lateinit var  progrssBar: ProgressBar
+    private var progressDialog : ProgressDialog ?= null
+    private val START_PROGRESSDIALOG = 100
+    private val END_PROGRESSDIALOG = 101
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,7 +74,7 @@ class FileActivity : AppCompatActivity(){
     private fun recyclerviewInit() {
         file_recycler_view.setHasFixedSize(true)
 
-        myAdapter = FileAdapter(fileInfoList, this, PID)
+        myAdapter = FileAdapter(fileInfoList, this, PID, file_loadingCircle)
         file_recycler_view.adapter = myAdapter
     }
 
@@ -124,7 +133,6 @@ class FileActivity : AppCompatActivity(){
         }
     }
 
-
     private fun uploadFile(filename: String?)
     { //업로드할 파일이 있으면 수행
         if (filePath != null)
@@ -135,8 +143,13 @@ class FileActivity : AppCompatActivity(){
             val storageRef = storage.getReferenceFromUrl("gs://teamtogether-bdfc9.appspot.com")
 
             storageRef.child(filename!!).putFile(filePath) //성공시
-                .addOnSuccessListener { Toast.makeText(applicationContext, "업로드 완료!", Toast.LENGTH_SHORT).show() } //실패시
-                .addOnFailureListener { Toast.makeText(applicationContext, "업로드 실패!", Toast.LENGTH_SHORT).show() } //진행중
+                .addOnSuccessListener {
+                    myAdapter.notifyDataSetChanged()
+                    file_loadingCircle.visibility = View.INVISIBLE
+                    Toast.makeText(applicationContext, "업로드 완료!", Toast.LENGTH_SHORT).show()
+                } //완료
+                .addOnProgressListener { file_loadingCircle.visibility = View.VISIBLE    }
+                .addOnFailureListener { Toast.makeText(applicationContext, "업로드 실패!", Toast.LENGTH_SHORT).show() } //실패
 
 
 

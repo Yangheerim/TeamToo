@@ -22,12 +22,13 @@ import com.google.firebase.storage.FileDownloadTask
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.OnProgressListener
 import com.google.firebase.storage.StorageReference
+import kotlinx.android.synthetic.main.activity_file.*
 import kotlinx.android.synthetic.main.item_file.view.*
 import java.io.File
 import java.io.IOException
 
 
-class FileAdapter(private var get_fileInfoList: ArrayList<HashMap<String, FileDTO>>, private val activity: FileActivity, private var PID: String? )//MyAdapter의 constructor
+class FileAdapter(private var get_fileInfoList: ArrayList<HashMap<String, FileDTO>>, private val activity: FileActivity, private var PID: String?,private var file_loadingCircle:View )//MyAdapter의 constructor
     : RecyclerView.Adapter<FileAdapter.MyViewHolder>() {
 
     private var fileInfoList: List<HashMap<String, FileDTO>> = get_fileInfoList
@@ -91,7 +92,6 @@ class FileAdapter(private var get_fileInfoList: ArrayList<HashMap<String, FileDT
 
                             if(myUID == userID)
                             {    //올린 사람이랑 삭제하려는 사람이랑 같은 경우
-                                databaseReference!!.removeValue()
                                 activity.setListener_FileInfoFromDB()
                                 Log.e("delete","삭제완료!")
                                 notifyDataSetChanged()
@@ -124,8 +124,10 @@ class FileAdapter(private var get_fileInfoList: ArrayList<HashMap<String, FileDT
                         rootPath.mkdirs()
                     }
                     val localFile = File(rootPath, fileName)
+                    file_loadingCircle.visibility = View.VISIBLE
                     islandRef.getFile(localFile).addOnSuccessListener {
                         // 다운로드 성공 시
+                    file_loadingCircle.visibility = View.INVISIBLE
 
                     }.addOnFailureListener {
                         // 다운로드 실패 시
@@ -142,4 +144,5 @@ class FileAdapter(private var get_fileInfoList: ArrayList<HashMap<String, FileDT
     override fun getItemCount(): Int {
         return fileInfoList.size // Return the size of your dataset (invoked by the layout manager)
     }
+
 }
