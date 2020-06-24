@@ -89,12 +89,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         //Notification 소리 설정
         val notificationSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationBuilder = NotificationCompat.Builder(this, channel_id)
                 .setDefaults(Notification.DEFAULT_ALL)
-                .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_tt2_foreground))
-                .setSmallIcon(R.mipmap.ic_launcher_tt2_round)
+                .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_tt))
+                .setSmallIcon(R.mipmap.ic_launcher_tt)
                 .setContentTitle(remoteMessage.notification?.title)
                 .setContentText(remoteMessage.notification?.body)
                 .setSound(notificationSound)
@@ -112,8 +111,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 Log.e(TAG,"Low then Oreo_ Message off")
                 notificationBuilder
                     .setPriority(NotificationCompat.PRIORITY_MIN)
-                    .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_tt2_foreground))
-                    .setSmallIcon(R.mipmap.ic_launcher_tt2_round)
+                    .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_tt))
+                    .setSmallIcon(R.mipmap.ic_launcher_tt)
                     .setContentTitle(remoteMessage.notification?.title)
                     .setContentText(remoteMessage.notification?.body)
                     .setAutoCancel(true)
@@ -124,8 +123,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             else if (!sound_state && vibrate_state) {
                 Log.e(TAG,"Low then Oreo_ !sound_state && vibrate_state")
                 notificationBuilder.setDefaults(Notification.DEFAULT_VIBRATE)
-                    .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_tt2_foreground))
-                    .setSmallIcon(R.mipmap.ic_launcher_tt2_round)
+                    .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_tt))
+                    .setSmallIcon(R.mipmap.ic_launcher_tt)
                     .setContentTitle(remoteMessage.notification?.title)
                     .setContentText(remoteMessage.notification?.body)
                     .setAutoCancel(true)
@@ -137,8 +136,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             else if (sound_state && !vibrate_state) {
                 Log.e(TAG,"Low then Oreo_ sound_state && !vibrate_state")
                 notificationBuilder.setDefaults(Notification.DEFAULT_SOUND)
-                    .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_tt2_foreground))
-                    .setSmallIcon(R.mipmap.ic_launcher_tt2_round)
+                    .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_tt))
+                    .setSmallIcon(R.mipmap.ic_launcher_tt)
                     .setContentTitle(remoteMessage.notification?.title)
                     .setContentText(remoteMessage.notification?.body)
                     .setSound(notificationSound)
@@ -151,8 +150,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             else if (!sound_state && !vibrate_state){
                 Log.e(TAG,"Low then Oreo_ !sound_state && !vibrate_state")
                 notificationBuilder
-                    .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_tt2_foreground))
-                    .setSmallIcon(R.mipmap.ic_launcher_tt2_round)
+                    .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_tt))
+                    .setSmallIcon(R.mipmap.ic_launcher_tt)
                     .setContentTitle(remoteMessage.notification?.title)
                     .setContentText(remoteMessage.notification?.body)
                     .setAutoCancel(true)
@@ -164,8 +163,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             else {
                 Log.e(TAG,"Low then Oreo_ Default")
                 notificationBuilder.setDefaults(Notification.DEFAULT_ALL)
-                    .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_tt2_foreground))
-                    .setSmallIcon(R.mipmap.ic_launcher_tt2_round)
+                    .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_tt))
+                    .setSmallIcon(R.mipmap.ic_launcher_tt)
                     .setContentTitle(remoteMessage.notification?.title)
                     .setContentText(remoteMessage.notification?.body)
                     .setSound(notificationSound)
