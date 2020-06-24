@@ -30,7 +30,7 @@ import android.view.View
 import android.widget.ProgressBar
 
 
-class FileActivity : AppCompatActivity(){
+class FileActivity : AppCompatActivity() {
 
 
     private var firebaseDatabase: FirebaseDatabase? = null
@@ -40,15 +40,15 @@ class FileActivity : AppCompatActivity(){
 
     private lateinit var listener: ValueEventListener
 
-    private var PID: String?=null
+    private var PID: String? = null
 
     lateinit var myAdapter: FileAdapter
 
 //    private val TAG : String = "FileActivity"
 
-    private lateinit var filePath : Uri
-    lateinit var  progrssBar: ProgressBar
-    private var progressDialog : ProgressDialog ?= null
+    private lateinit var filePath: Uri
+    lateinit var progrssBar: ProgressBar
+    private var progressDialog: ProgressDialog? = null
     private val START_PROGRESSDIALOG = 100
     private val END_PROGRESSDIALOG = 101
 
@@ -63,10 +63,15 @@ class FileActivity : AppCompatActivity(){
         val intent = intent /*데이터 수신*/
         PID = intent.extras!!.getString("PID")
 
+    }
+
+    override fun onStart() {
+        super.onStart()
+
         recyclerviewInit()
 
         firebaseDatabase = FirebaseDatabase.getInstance()
-        databaseReference= firebaseDatabase!!.reference
+        databaseReference = firebaseDatabase!!.reference
 
         setListener_FileInfoFromDB()
     }
@@ -79,17 +84,15 @@ class FileActivity : AppCompatActivity(){
     }
 
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean
-    {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_file_toolbar, menu)
         return true
     }
 
-    private fun getFileName(uri: Uri) : String? {
-        var result : String? = null
-        if (uri.scheme!!.equals("content"))
-        {
-            var cursor : Cursor? = contentResolver.query(uri, null, null, null, null)
+    private fun getFileName(uri: Uri): String? {
+        var result: String? = null
+        if (uri.scheme!!.equals("content")) {
+            var cursor: Cursor? = contentResolver.query(uri, null, null, null, null)
             try {
                 if (cursor != null && cursor.moveToFirst()) {
                     result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
@@ -133,48 +136,55 @@ class FileActivity : AppCompatActivity(){
         }
     }
 
-    private fun uploadFile(filename: String?)
-    { //업로드할 파일이 있으면 수행
-        if (filePath != null)
-        { //storage
+    private fun uploadFile(filename: String?) { //업로드할 파일이 있으면 수행
+        if (filePath != null) { //storage
             val storage = FirebaseStorage.getInstance()
 
             //storage 주소와 폴더 파일명을 지정해 준다.
             val storageRef = storage.getReferenceFromUrl("gs://teamtogether-bdfc9.appspot.com")
 
+            file_loadingCircle.visibility = View.VISIBLE
+
             storageRef.child(filename!!).putFile(filePath) //성공시
                 .addOnSuccessListener {
-                    myAdapter.notifyDataSetChanged()
                     file_loadingCircle.visibility = View.INVISIBLE
                     Toast.makeText(applicationContext, "업로드 완료!", Toast.LENGTH_SHORT).show()
+                    myAdapter.notifyDataSetChanged()
                 } //완료
-                .addOnProgressListener { file_loadingCircle.visibility = View.VISIBLE    }
-                .addOnFailureListener { Toast.makeText(applicationContext, "업로드 실패!", Toast.LENGTH_SHORT).show() } //실패
-
-
-
+//                .addOnProgressListener {
+//                    Toast.makeText(applicationContext, "업로드 중...", Toast.LENGTH_SHORT).show()
+//                }
+                .addOnFailureListener {
+                    Toast.makeText(
+                        applicationContext,
+                        "업로드 실패!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } //실패
         } else {
             Toast.makeText(applicationContext, "파일을 먼저 선택하세요.", Toast.LENGTH_SHORT).show()
         }
         uploadFileInfoToDB(filename!!)
     }
 
-    private fun uploadFileInfoToDB(fileName : String){
+    private fun uploadFileInfoToDB(fileName: String) {
         var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
-        val uid : String = firebaseAuth.currentUser!!.uid
-        val userName : String = firebaseAuth.currentUser!!.displayName!!
+        val uid: String = firebaseAuth.currentUser!!.uid
+        val userName: String = firebaseAuth.currentUser!!.displayName!!
 
         val date_format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         val date = date_format.format(System.currentTimeMillis())
 
-        val fileDTO : FileDTO = FileDTO(fileName, date, uid, userName)
+        val fileDTO: FileDTO = FileDTO(fileName, date, uid, userName)
 
-        databaseReference = firebaseDatabase!!.reference.child("ProjectList").child(PID.toString()).child("file").push()
+        databaseReference =
+            firebaseDatabase!!.reference.child("ProjectList").child(PID.toString()).child("file")
+                .push()
         databaseReference!!.setValue(fileDTO)
 
     }
 
-    fun setListener_FileInfoFromDB(){
+    fun setListener_FileInfoFromDB() {
         listener = object : ValueEventListener {
             @RequiresApi(Build.VERSION_CODES.KITKAT)
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -190,21 +200,21 @@ class FileActivity : AppCompatActivity(){
                     fileInfoList.add(hashMap)
                 }
                 myAdapter.notifyDataSetChanged()
-                Log.e("myAdapter",myAdapter.toString())
+                Log.e("myAdapter", myAdapter.toString())
             }
+
             override fun onCancelled(databaseError: DatabaseError) {
-                Log.w("FileActivity", "loadPost:onCancelled",
+                Log.w(
+                    "FileActivity", "loadPost:onCancelled",
                     databaseError.toException()
                 )
             }
         }
-        databaseReference = firebaseDatabase!!.getReference("ProjectList").child(PID.toString()).child("file")
+        databaseReference =
+            firebaseDatabase!!.getReference("ProjectList").child(PID.toString()).child("file")
         databaseReference!!.addValueEventListener(listener)
 
     }
-
-
-
 
 
     override fun onStop() {
