@@ -145,6 +145,7 @@ class FileAdapter(
                     }.addOnFailureListener {
                         // 다운로드 실패 시
                         Log.e("FileDownloadTask", it.toString())
+                        file_loadingCircle.visibility = View.INVISIBLE
                         Toast.makeText(activity,"다운실패!",Toast.LENGTH_SHORT).show()
 
                     }.addOnProgressListener {
