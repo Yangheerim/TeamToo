@@ -28,22 +28,29 @@ import java.io.File
 import java.io.IOException
 
 
-class FileAdapter(private var get_fileInfoList: ArrayList<HashMap<String, FileDTO>>, private val activity: FileActivity, private var PID: String?,private var file_loadingCircle:View )//MyAdapter의 constructor
+class FileAdapter(
+    private var get_fileInfoList: ArrayList<HashMap<String, FileDTO>>,
+    private val activity: FileActivity,
+    private var PID: String?,
+    private var file_loadingCircle: View
+)//MyAdapter의 constructor
     : RecyclerView.Adapter<FileAdapter.MyViewHolder>() {
 
     private var fileInfoList: List<HashMap<String, FileDTO>> = get_fileInfoList
     private var firebaseAuth = FirebaseAuth.getInstance()
     private var firebaseDatabase: FirebaseDatabase? = FirebaseDatabase.getInstance()
     private var databaseReference: DatabaseReference? = null
-    private var firebaseStorage: FirebaseStorage ? =null
+    private var firebaseStorage: FirebaseStorage? = null
 
     inner class MyViewHolder(v: View) :
         RecyclerView.ViewHolder(v)
 
 
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder { // create a new view
-        get_fileInfoList?.let{
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): MyViewHolder { // create a new view
+        get_fileInfoList?.let {
             fileInfoList = get_fileInfoList.reversed()
         }
 
@@ -59,8 +66,7 @@ class FileAdapter(private var get_fileInfoList: ArrayList<HashMap<String, FileDT
 
 
     @RequiresApi(Build.VERSION_CODES.N)
-    override fun onBindViewHolder(holder: MyViewHolder, position: Int)
-    {
+    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         var key = ""
         fileInfoList[position].forEach { k, v ->
             holder.itemView.file_title.text = fileInfoList[position][k]?.fileName
@@ -70,39 +76,40 @@ class FileAdapter(private var get_fileInfoList: ArrayList<HashMap<String, FileDT
         }
         //삭제하기
         holder.itemView.setOnLongClickListener {
-            
+
             val builder = AlertDialog.Builder(activity)
             builder.setMessage("삭제하시겠습니까?")
-            builder.setNegativeButton("아니오",DialogInterface.OnClickListener { dialog, which ->  })
+            builder.setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, which -> })
             builder.setPositiveButton("예",
                 DialogInterface.OnClickListener { dialog, which ->
+                    file_loadingCircle.visibility = View.VISIBLE
                     val myUID = firebaseAuth.currentUser!!.uid
                     var userID: String? = null
-                    databaseReference = firebaseDatabase!!.getReference("ProjectList").child(PID.toString()).child("file").child(key)
-                    databaseReference!!.addListenerForSingleValueEvent(object : ValueEventListener
-                    {
-                        override fun onCancelled(p0: DatabaseError)
-                        {
+                    databaseReference =
+                        firebaseDatabase!!.getReference("ProjectList").child(PID.toString())
+                            .child("file").child(key)
+                    databaseReference!!.addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onCancelled(p0: DatabaseError) {
                             Log.d("FileAdapter", "loadPost:onCancelled")
                         }
 
-                        override fun onDataChange(snapshot: DataSnapshot)
-                        {
+                        override fun onDataChange(snapshot: DataSnapshot) {
                             userID = snapshot.child("uid").value.toString()
 
-                            if(myUID == userID)
-                            {    //올린 사람이랑 삭제하려는 사람이랑 같은 경우
+
+                            if (myUID == userID) {    //올린 사람이랑 삭제하려는 사람이랑 같은 경우
+                                databaseReference!!.removeValue()
                                 activity.setListener_FileInfoFromDB()
-                                Log.e("delete","삭제완료!")
+                                file_loadingCircle.visibility = View.INVISIBLE
+                                Toast.makeText(activity, "삭제 완료!", Toast.LENGTH_SHORT).show()
+
                                 notifyDataSetChanged()
-                            }
-                            else
-                            {   //올린 사람이 아닌 경우
-                                Toast.makeText(activity,"삭제 하실 수 없습니다!",Toast.LENGTH_SHORT).show()
+                            } else {   //올린 사람이 아닌 경우
+                                Toast.makeText(activity, "삭제 하실 수 없습니다!", Toast.LENGTH_SHORT).show()
                             }
                         }
                     })
-                    }) //positive btn
+                }) //positive btn
             builder.show()
             return@setOnLongClickListener true // LongClick + Onclick
         } //LongClick->삭제하기
@@ -111,28 +118,37 @@ class FileAdapter(private var get_fileInfoList: ArrayList<HashMap<String, FileDT
 
             val builder = AlertDialog.Builder(activity)
             builder.setMessage("다운로드 하시겠습니까?")
-            builder.setNegativeButton("아니오",DialogInterface.OnClickListener { dialog, which ->  }) //아무액션없다
+            builder.setNegativeButton(
+                "아니오",
+                DialogInterface.OnClickListener { dialog, which -> }) //아무액션없다
             builder.setPositiveButton("네",
                 DialogInterface.OnClickListener { dialogInterface, which ->
                     val fileName = holder.itemView.file_title.text.toString()
                     val storage = FirebaseStorage.getInstance()
-                    val storageRef = storage.getReferenceFromUrl("gs://teamtogether-bdfc9.appspot.com")
+                    val storageRef =
+                        storage.getReferenceFromUrl("gs://teamtogether-bdfc9.appspot.com")
                     val islandRef = storageRef.child(fileName)
 
                     val rootPath = File(Environment.getExternalStorageDirectory(), "TeamTo")
-                    if(!rootPath.exists()){
+                    if (!rootPath.exists()) {
                         rootPath.mkdirs()
                     }
                     val localFile = File(rootPath, fileName)
+
                     file_loadingCircle.visibility = View.VISIBLE
+
+
                     islandRef.getFile(localFile).addOnSuccessListener {
-                        // 다운로드 성공 시
-                    file_loadingCircle.visibility = View.INVISIBLE
+                        file_loadingCircle.visibility = View.INVISIBLE
+                        Toast.makeText(activity, "다운로드 완료!", Toast.LENGTH_SHORT).show()
 
                     }.addOnFailureListener {
                         // 다운로드 실패 시
                         Log.e("FileDownloadTask", it.toString())
+                        Toast.makeText(activity,"다운실패!",Toast.LENGTH_SHORT).show()
+
                     }.addOnProgressListener {
+                        file_loadingCircle.visibility = View.VISIBLE
 
                     }
                 }) //positive btn
