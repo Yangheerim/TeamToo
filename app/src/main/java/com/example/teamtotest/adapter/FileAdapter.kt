@@ -92,8 +92,10 @@ class FileAdapter(private var get_fileInfoList: ArrayList<HashMap<String, FileDT
 
                             if(myUID == userID)
                             {    //올린 사람이랑 삭제하려는 사람이랑 같은 경우
+                                databaseReference!!.removeValue()
                                 activity.setListener_FileInfoFromDB()
                                 Log.e("delete","삭제완료!")
+                                Toast.makeText(activity,"삭제완료!",Toast.LENGTH_SHORT).show()
                                 notifyDataSetChanged()
                             }
                             else
@@ -124,15 +126,20 @@ class FileAdapter(private var get_fileInfoList: ArrayList<HashMap<String, FileDT
                         rootPath.mkdirs()
                     }
                     val localFile = File(rootPath, fileName)
-                    file_loadingCircle.visibility = View.VISIBLE
+
                     islandRef.getFile(localFile).addOnSuccessListener {
+                        file_loadingCircle.visibility = View.INVISIBLE
+                        Toast.makeText(activity,"다운완료!",Toast.LENGTH_SHORT).show()
                         // 다운로드 성공 시
-                    file_loadingCircle.visibility = View.INVISIBLE
+
 
                     }.addOnFailureListener {
                         // 다운로드 실패 시
                         Log.e("FileDownloadTask", it.toString())
+                        Toast.makeText(activity,"다운실패!",Toast.LENGTH_SHORT).show()
+
                     }.addOnProgressListener {
+                        file_loadingCircle.visibility = View.VISIBLE
 
                     }
                 }) //positive btn
