@@ -96,6 +96,7 @@ class FileAdapter(
                         override fun onDataChange(snapshot: DataSnapshot) {
                             userID = snapshot.child("uid").value.toString()
 
+
                             if (myUID == userID) {    //올린 사람이랑 삭제하려는 사람이랑 같은 경우
                                 databaseReference!!.removeValue()
                                 activity.setListener_FileInfoFromDB()
@@ -133,17 +134,21 @@ class FileAdapter(
                         rootPath.mkdirs()
                     }
                     val localFile = File(rootPath, fileName)
+
                     file_loadingCircle.visibility = View.VISIBLE
 
+
                     islandRef.getFile(localFile).addOnSuccessListener {
-                        // 다운로드 성공 시
                         file_loadingCircle.visibility = View.INVISIBLE
                         Toast.makeText(activity, "다운로드 완료!", Toast.LENGTH_SHORT).show()
 
                     }.addOnFailureListener {
                         // 다운로드 실패 시
                         Log.e("FileDownloadTask", it.toString())
+                        Toast.makeText(activity,"다운실패!",Toast.LENGTH_SHORT).show()
+
                     }.addOnProgressListener {
+                        file_loadingCircle.visibility = View.VISIBLE
 
                     }
                 }) //positive btn
