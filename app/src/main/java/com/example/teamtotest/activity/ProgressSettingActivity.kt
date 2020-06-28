@@ -40,7 +40,7 @@ class ProgressSettingActivity : AppCompatActivity() {
         setContentView(R.layout.activity_progress_setting)
 
         val getintent = intent /*데이터 수신*/
-        if (getintent != null) {
+        if (getintent != null && getintent.extras!!.getString("startDay")!=null) {
             PID = getintent.extras!!.getString("PID")
             val start = getintent.extras!!.getString("startDay")
             val end = getintent.extras!!.getString("endDay")
@@ -50,7 +50,9 @@ class ProgressSettingActivity : AppCompatActivity() {
 
             start_day = dateFormat.parse(start)
             end_day = dateFormat.parse(end)
-
+        }else if(getintent != null && getintent.extras!!.getString("startDay")==null){
+            PID = getintent.extras!!.getString("PID")
+            progress_project_name.text = getintent.extras!!.getString("projectName")
         }
         calendarInit()
 

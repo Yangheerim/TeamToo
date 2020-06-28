@@ -41,7 +41,12 @@ class ProgressbarAdapterMain(private val context: Context,
             holder.itemView.item_progress_bar.progress = 0
             holder.itemView.item_progress_percent.text = "(No data)"
             holder.itemView.item_progress_project_name.text = projectDTOList[position]!!.projectName
-
+            holder.itemView.setOnClickListener{
+                val intent : Intent = Intent(context, ProgressSettingActivity::class.java)
+                intent.putExtra("PID", myProjectPIDlist[position])
+                intent.putExtra("projectName", projectDTOList[position]!!.projectName)
+                context.startActivity(intent)
+            }
         }else{ // 시작일과 마감일 데이터가 있을 때
             Log.d("ProgressBar---->", projectDTOList[position]!!.progressData.toString())
             val progressData : ProgressDTO = projectDTOList[position]!!.progressData!!
@@ -71,15 +76,17 @@ class ProgressbarAdapterMain(private val context: Context,
             holder.itemView.item_progress_bar.progress = progressPercent
             holder.itemView.item_progress_percent.text = "($progressPercent %)"
             holder.itemView.item_progress_project_name.text = projectDTOList[position]!!.projectName
+
+            holder.itemView.setOnClickListener{
+                val intent : Intent = Intent(context, ProgressSettingActivity::class.java)
+                intent.putExtra("PID", myProjectPIDlist[position])
+                intent.putExtra("projectName", projectDTOList[position]!!.projectName)
+                intent.putExtra("startDay", projectDTOList[position]!!.progressData!!.startDate)
+                intent.putExtra("endDay", projectDTOList[position]!!.progressData!!.endDate)
+                context.startActivity(intent)
+            }
         }
-        holder.itemView.setOnClickListener{
-            val intent : Intent = Intent(context, ProgressSettingActivity::class.java)
-            intent.putExtra("PID", myProjectPIDlist[position])
-            intent.putExtra("projectName", projectDTOList[position]!!.projectName)
-            intent.putExtra("startDay", projectDTOList[position]!!.progressData!!.startDate)
-            intent.putExtra("endDay", projectDTOList[position]!!.progressData!!.endDate)
-            context.startActivity(intent)
-        }
+
     }
 }
 

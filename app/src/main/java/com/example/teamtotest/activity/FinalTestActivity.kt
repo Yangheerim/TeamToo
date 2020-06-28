@@ -106,7 +106,7 @@ class FinalTestActivity : AppCompatActivity() {
     }
 
     override fun onStart() {
-        setListener_finalTestCompleteState()
+
         super.onStart()
     }
 
@@ -286,6 +286,7 @@ class FinalTestActivity : AppCompatActivity() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if((dataSnapshot.childrenCount).toInt() == memberNameList.size){  // 모든 멤버가 평가를 완료했으면
                     // 결과확인 버튼 활성화 (회색 -> 노란색으로 변경)
+                    Log.e("member number --->", memberNameList.size.toString())
                     final_test_show_result_button.setBackgroundResource(R.drawable.button1)
                     complete = true
 
@@ -387,6 +388,7 @@ class FinalTestActivity : AppCompatActivity() {
                 }
                 myAdapter.notifyDataSetChanged()    // 리스트 바뀌었으니 adapter에 알려줌
                 amICompleteTest()
+                setListener_finalTestCompleteState()
             }
             override fun onCancelled(dataSnapshot: DatabaseError) {
                 Log.w("ExtraUserInfoActivity", "loadPost:onCancelled")
