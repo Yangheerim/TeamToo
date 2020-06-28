@@ -59,16 +59,13 @@ class ProgressbarAdapterMain(private val context: Context,
             end_cal.time = end_day
 
             val diffTime = end_cal.get(Calendar.DAY_OF_YEAR) - start_cal.get(Calendar.DAY_OF_YEAR)
-
-//            val diffTime : Int = Date(end_day.time).day - Date(start_day.time).day //ms -> day로 변환
             val today : Date = Date()
             val today_cal = Calendar.getInstance()
             today_cal.time = today
-//            val progressDay : Long = (end_day.time - today.time)
-
             val progressDay = today_cal.get(Calendar.DAY_OF_YEAR) - start_cal.get(Calendar.DAY_OF_YEAR)
-
             val progressPercent : Int = (progressDay*100 / diffTime)
+
+
             Log.d("ProgressBar2-1---->", diffTime.toString())
             Log.d("ProgressBar2-2---->", progressDay.toString())
             Log.d("ProgressBar2-3---->", progressPercent.toString())

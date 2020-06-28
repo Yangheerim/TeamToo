@@ -186,7 +186,7 @@ class Frag1 : Fragment (){
         databaseReference = firebaseDatabase.getReference("ProjectList")
         databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                // 각각 프로젝트별로, 멤버중에 나 자신이 있는지 확인.
+                // 내 프로젝트 찾기
                 for (snapshot in dataSnapshot.children) {
                     val membersPerProject = snapshot.child("members").getValue(MembersDTO::class.java) // memberUID 정보를 가져옴.
                     val projectDTO : ProjectDTO? = snapshot.getValue(ProjectDTO::class.java)

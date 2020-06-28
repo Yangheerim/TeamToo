@@ -26,5 +26,4 @@
             android:icon="@drawable/ic_exit2"
             android:title="던지고 이름빼기" />
     </group>
-
 </menu>

@@ -149,20 +149,16 @@ class AddProjectActivity : AppCompatActivity() {
                 }
 
                 for (i in UserIdList.indices) {
-                    //Log.d("저장된userlist ---> ", UserIdList.get(i));
                     if (UserIdList[i] == inputID) { // 입력한 id를 가진 user를 찾으면
                         Log.e("FIND THIS ID!! ---> ", inputID)
                         Log.e("index ---> ", index.toString() + "")
                         userInfo.text = "" + UserNameList[i] + " / " + UserIdList[i]
                         //userInfo.setVisibility(View.VISIBLE); // 숨겨놨던 뷰에 데이터를 담아서 보여주고
                         add_members_text.visibility = View.VISIBLE // 추가기능도 활성화
-                        index =
-                            i // user의 UID와 name이 담긴 index 저장해두기. --> 나중에 DB에 데이터 넣을때랑, 동그라미이름으로 보여줄 때 사용
+                        index = i
                         break
                     } else {
                         userInfo.text = "검색 결과가 없습니다"
-                        //userInfo.setTextColor(Color.GRAY);
-                        //userInfo.setVisibility(View.VISIBLE); // 숨겨놨던 뷰에 데이터를 담아서 보여줌
                     }
                 }
             }
@@ -179,7 +175,6 @@ class AddProjectActivity : AppCompatActivity() {
             project_name.text.toString().isEmpty() -> Toast.makeText(this@AddProjectActivity, "프로젝트 이름을 입력해주세요", Toast.LENGTH_SHORT).show()
             memberUIDList.size <= 1 -> Toast.makeText(this@AddProjectActivity, "팀원을 추가해주세요", Toast.LENGTH_SHORT).show()
             else -> {
-//                val user = FirebaseAuth.getInstance().currentUser
                 val projectDTO = ProjectDTO(project_name.text.toString())
                 val membersDTO = MembersDTO(memberUIDList)
                 databaseReference = firebaseDatabase.reference

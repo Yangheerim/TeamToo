@@ -204,7 +204,6 @@ class FinalTestActivity : AppCompatActivity() {
 
         // init score storage
         for(i in memberUIDList.indices){
-            Log.d("Now i ---> ", i.toString())
             val tmpUID : String = memberUIDList[i]
             val resultScoreStorage = HashMap<String, Double>()
             resultScoreStorage["result1"]=0.0
@@ -212,12 +211,11 @@ class FinalTestActivity : AppCompatActivity() {
             resultScoreStorage["result3"]=0.0
             resultScoreStorage["result4"]=0.0
             resultScoreList[tmpUID] = resultScoreStorage
-            Log.d("Now UID ---> ", tmpUID)
         }
         // DB에서 데이터 불러와서 각각 저장
         firebaseDatabase = FirebaseDatabase.getInstance()
-        databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString()).child("finalTest").child("result")
-        Log.d("Now PID ---> ", PID.toString())
+        databaseReference = firebaseDatabase.getReference("ProjectList").child(PID.toString())
+            .child("finalTest").child("result")
         databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 for(snapshot in dataSnapshot.children){ // 누가했는지
@@ -232,7 +230,6 @@ class FinalTestActivity : AppCompatActivity() {
                     }
                 }
                 val myResultScore: HashMap<String, Double> = resultScoreList[myUID]!!
-                Log.d("Now hashMap ---> ", myResultScore.toString())
                 val finalRestResultDialog = FinalTestResultDialog(tmp, FirebaseAuth.getInstance().currentUser!!.displayName.toString())
                 val totalScore : Double = myResultScore["result1"]!!+myResultScore["result2"]!!+myResultScore["result3"]!!+myResultScore["result4"]!!
                 finalRestResultDialog.callDialog(
@@ -325,13 +322,11 @@ class FinalTestActivity : AppCompatActivity() {
 
     private fun addFinalTestResultToDB(){
         if(finalTestResultList.size == memberNameList.size) {
-
             val builder = AlertDialog.Builder(this)
             builder.setTitle("평가 결과 전송")
             builder.setMessage("평가 결과를 전송하시겠습니까? \n전송 후에는 다시 평가할 수 없습니다.")
             builder.setPositiveButton("예",
                 DialogInterface.OnClickListener { dialog, which ->
-
                     for (i in finalTestResultList.indices) {
                         var tmpResult: HashMap<String, String> = finalTestResultList[i]
                         val ftDTO: FinalTestResultDTO = FinalTestResultDTO(
@@ -353,7 +348,6 @@ class FinalTestActivity : AppCompatActivity() {
                 })
             builder.setNegativeButton("아니오", DialogInterface.OnClickListener { dialog, which -> })
             builder.show()
-
         }else{
             Toast.makeText(this, "모든 팀원의 평가를 완료해주세요", Toast.LENGTH_SHORT).show()
         }

@@ -86,17 +86,14 @@ class LoginActivity : AppCompatActivity() {
         val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    // 인증 성공.
+                if (task.isSuccessful) {// 인증 성공.
                     Toast.makeText(this, "구글 로그인 성공", Toast.LENGTH_SHORT).show()
                     isFirstLogin()
                     finish()
-                } else {
-                    // 인증 실패.
+                } else {// 인증 실패.
                     Toast.makeText(this, "구글 로그인 실패", Toast.LENGTH_SHORT).show()
                 }
             }
-//        Log.e("TAG", "error")
     }
 
     private fun signOut() {
@@ -127,29 +124,15 @@ class LoginActivity : AppCompatActivity() {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val user = dataSnapshot.getValue<UserDTO>(UserDTO::class.java)
                     if (user != null) {//파이어베이스 DB에 구글 로그인 한 유저의 UID 정보가 등록되어있다면
-//                        Toast.makeText(this@LoginActivity, "최초로그인 아님", Toast.LENGTH_SHORT).show()
-                        startActivity(
-                            Intent(
-                                this@LoginActivity,
-                                NavigationbarActivity::class.java
-                            )
-                        )    // 메인화면으로 이동
+                        startActivity(Intent(this@LoginActivity,NavigationbarActivity::class.java))    // 메인화면으로 이동
                         finish()
                     } else {
                         Toast.makeText(this@LoginActivity, "최초로그인입니다.", Toast.LENGTH_SHORT).show()
-                        startActivity(
-                            Intent(
-                                this@LoginActivity,
-                                ExtraUserInfoActivity::class.java
-                            )
-                        ) //추가정보 입력 창으로 이동
+                        startActivity(Intent(this@LoginActivity, ExtraUserInfoActivity::class.java)) //추가정보 입력 창으로 이동
                         finish()
                     }
                 }
-
-                override fun onCancelled(databaseError: DatabaseError) {
-
-                }
+                override fun onCancelled(databaseError: DatabaseError) {}
             }
         )
     }

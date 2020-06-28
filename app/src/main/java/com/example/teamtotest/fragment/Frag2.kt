@@ -126,9 +126,7 @@ class Frag2 : Fragment() {
                             val membersDTO = snapshot.child("members").getValue(MembersDTO::class.java)
                             projectInfo["howManyMembers"] = membersDTO!!.UID_list!!.size.toString()
 
-
                             val dateFormat = SimpleDateFormat("yyyyMMddHHmmss")
-//                            val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
                             var date : String?= null
                             var latestmessageDTO : MessageDTO?=null
                             var date_formatted :String ?= null
@@ -140,9 +138,7 @@ class Frag2 : Fragment() {
                                 val date_original = Date(utc.time + Calendar.getInstance().timeZone.getOffset(utc.time))
                                 date_formatted = dateFormat.format(date_original)
 
-//                                var tmp = messageSnapshot.key.toString()
                                 if(date==null || date < date_formatted){
-
                                     date = date_formatted
                                     latest_date_original = date_original
                                     latestmessageDTO = messageSnapshot.getValue(MessageDTO::class.java)!!
@@ -155,11 +151,6 @@ class Frag2 : Fragment() {
                             projectInfo["noReadMessageCount"] = readCnt.toString()
                             readCnt=0 // 안읽은 메세지 개수 알려주고 다시 초기화~
 
-//                            for(messageSnapshot : DataSnapshot in snapshot.child("messageList").children){
-//                                if(date == messageSnapshot.key.toString()){
-//                                    latestmessageDTO = messageSnapshot.getValue(MessageDTO::class.java)!!
-//                                }
-//                            }
                             if(latestmessageDTO!=null){
                                 projectInfo["lastMessage"] = latestmessageDTO!!.message
 

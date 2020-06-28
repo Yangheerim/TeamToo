@@ -61,11 +61,11 @@ class ChatListAdapter(var ChatMessage : ArrayList<HashMap<String,String>>) //MyA
             layoutId = R.layout.item_chat_list2
         } else if (viewType == 3) {
             layoutId = R.layout.item_chat_notification
-        } else if (viewType == 4) {  // 남일때
+        } else if (viewType == 4) {
             layoutId = R.layout.item_chat_noti1
         } else if (viewType == 5) {
             layoutId = R.layout.item_chat_noti2
-        } else if (viewType == 6) {  // 남일때
+        } else if (viewType == 6) {
             layoutId = R.layout.item_chat_noti1
         } else if (viewType == 7) {
             layoutId = R.layout.item_chat_noti2
