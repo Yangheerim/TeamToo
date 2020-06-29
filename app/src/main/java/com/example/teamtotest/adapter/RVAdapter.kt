@@ -163,7 +163,7 @@ class RVAdapter(private val context: Context) : RecyclerView.Adapter<RVAdapter.V
 
     inner class ViewHolder(view: View, val adapter: ScheduleRVAdapter) : RecyclerView.ViewHolder(view) {
         init {
-            view.rv_schedule.adapter = adapter
+            view.rv_item_schedule.adapter = adapter
         }
     }
 

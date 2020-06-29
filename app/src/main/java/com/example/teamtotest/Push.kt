@@ -96,7 +96,7 @@ class Push (val PID: String, private var message: String, private var type: Stri
                 for (token in tokenList){
                     tokenArray.add(token)
                 }
-                tokenArray.add("fEF-AKW6T_aqKDYukJd400:APA91bECLLZjp4rjqpy4cDL9G24QByAjuebUmqUB1_hutI5flwn4xhZu1Gv0iBBMLbogjycqngVFcxxfRbmS9skdC1LRkd6r2-Q28lTqv_ZFK86hupwG6sFC2AM3iJBij443SG9lOZsM")
+//                tokenArray.add("fEF-AKW6T_aqKDYukJd400:APA91bECLLZjp4rjqpy4cDL9G24QByAjuebUmqUB1_hutI5flwn4xhZu1Gv0iBBMLbogjycqngVFcxxfRbmS9skdC1LRkd6r2-Q28lTqv_ZFK86hupwG6sFC2AM3iJBij443SG9lOZsM")
 
                 // data object에 PID 넣어주기
                 data.put("pid", PID)
