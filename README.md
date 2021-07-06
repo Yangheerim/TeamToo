@@ -1,4 +1,9 @@
-### TeamToo
+# TeamToo
+
+If you want to check Wiki, please click [here](https://github.com/hammii/TeamToo/wiki).
+<br>
+
+### What is TeamToo?
 ```
 Team Project Management Android App
 ```
@@ -42,14 +47,13 @@ Team Project Management Android App
 ![image](https://user-images.githubusercontent.com/37904738/124616750-4ef21e00-deb1-11eb-9ef1-367a54f677a2.png)
 ![image](https://user-images.githubusercontent.com/37904738/124616758-50bbe180-deb1-11eb-9840-9bd1bbda7970.png)
 ![image](https://user-images.githubusercontent.com/37904738/124616479-105c6380-deb1-11eb-8c20-384b6f011add.png)
-<br>
 
 #### To-do List
 ![image](https://user-images.githubusercontent.com/37904738/124617164-ad1f0100-deb1-11eb-9149-65ee0199282f.png)
 ![image](https://user-images.githubusercontent.com/37904738/124617175-b019f180-deb1-11eb-959b-8ebeabd70f7b.png)
 ![image](https://user-images.githubusercontent.com/37904738/124617191-b3ad7880-deb1-11eb-8961-ca96047739e7.png)
 <br>
-
+<br>
 
 ### Technologe Stack
 - Kotlin
