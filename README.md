@@ -1,6 +1,19 @@
-# TeamToo
-[Android app] TeamToo - 팀프로젝트 관리 어플리케이션
+### TeamToo
+```
+Team Project Management Android App
+```
 
-[소개 영상]
-https://www.youtube.com/watch?v=-s47wKdk5JI&list=LLpztclijcfU-VQXEmF37icw&index=6&t=0s
+### Function
+1. Live Chat
+2. File Sharing
+3. Schedule Management
+4. To-do List Management
+5. Peer Evaluation
+
+### Technologe Stack
+- Kotlin
+- Firebase
+
+### Demo
+[![YouTube URL](https://github.com/hammii/TeamToo/blob/master/TeamTo-master/youtube.png)](https://www.youtube.com/watch?v=-s47wKdk5JI)
 
